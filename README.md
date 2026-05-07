@@ -102,7 +102,7 @@ A setup és a Partctl UI-ban a nyelv a menüből választható, és a beállít�
 
 ### `command not found` admin eszközöknél (Debian/Ubuntu)
 
-Egyes admin parancsok (`fdisk`, `sfdisk`, `lvm2` eszközök, stb.) gyakran `/usr/sbin` alatt vannak.
+Egyes admin parancsok (`fdisk`, `sfdisk`, `lvm2` eszközök, stb.) gyakran `/usr/sbin` alatt vannak (Debian OS).
 Az indítók ezért kiegészítik a PATH-ot:
 
 - `export PATH="/usr/sbin:/sbin:${PATH}"`
