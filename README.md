@@ -124,6 +124,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] SWAP beállítás menedzselése (swapon, swapoff)
 - [ ] Lemeztitkosítási módszer menedzselése (LUKS)
 - [ ] Web UI bevezetés
+- [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
 ### Támogatás
 
