@@ -123,6 +123,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] Tartós kötet felcsatolása és menedzselése (fstab)
 - [ ] SWAP beállítás menedzselése (swapon, swapoff)
 - [ ] Lemeztitkosítási módszer menedzselése (LUKS)
+- [ ] További fájlrendszer támogatás bevezetése: btrfs, xfs, zfs, jfs
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
