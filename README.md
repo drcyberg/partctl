@@ -1,4 +1,4 @@
-# Partctl — Felhasználói kézikönyv
+# Partctl V1.0.0 — Felhasználói kézikönyv
 
 A `Partctl` program egy ncurses (pythone) alapú terminal (CLI) lemez-, és partíció kezelő eszköz Linuxra OS rendszerekhez tervezve. Az ötletet a GParted program adta. A projekt két fő belépési pontra bontható:
 
@@ -32,7 +32,7 @@ bash partctl.sh
 
 - Linux OS: Debian, Ubuntu
 - Program: python3, util-linux, parted, gdisk, lvm2, e2fsprogs, dosfstools, ntfs, kpartx, fuser
-- Terminál méret: javasolt legalább kb. **80×24** (a nagyon kicsi termináloknál a UI korlátozott)
+- Terminál méret: javasolt legalább kb. **124×24** (a nagyon kicsi termináloknál a UI korlátozott)
 - Minimum képernyőfelbontás: 1024x768
 
 A pontos függőségi listát a `setup.sh` **Ellenőrzés** menüpontja kijelzi.
@@ -68,11 +68,12 @@ bash partctl.sh
 
 ### Fő funkciók (röviden)
 
-- **Lemez kiválasztás** és áttekintés
+- **Lemez kezelés**: Lemez kiválasztása és áttekintése, partíció és a kötet részletek megtekintése
 - **Partíció menedzsment**: létrehozás, törlés, átnevezés, méretezés, formázás, flag-ek, typecode (MBR/GPT), GPT műveletek, LVM kezelés
 - **Lemez menedzsment**: ideiglenes csatolás/leválasztás, fájlrendszer javítás (támogatott típusoknál), wipe (aláírások törlése)
 - **Napló panel**: a műveletek és a UI üzenetek is visszakereshetők
 - **Jelzések**: menü elemeknek a sorszám színjelzései: sárga = további almenü; zöld = művelet indító
+- **Navigálás**: numerikus számkombináció és a kurzor billentyű (navigációs billentyű) = menü elemek kiválasztása; backspace = vissza; enter = művelet indítás; tab = opció kiválasztása, R = újratöltés; PgUp/PgDown/Home/End = gyors lapozás
 
 ## Naplózás (logok)
 
