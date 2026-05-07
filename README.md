@@ -116,7 +116,7 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 
 A projekt információi a program **About / Rólunk** menüpontjában találhatók.
 
-### További fejlesztési pontok
+## További fejlesztési pontok
 
 - [ ] További támogatott OS: Windows (WSL), Fedora, Arch
 - [ ] S.M.A.R.T. támogatás (smartmontools)
