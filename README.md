@@ -125,7 +125,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] SWAP beállítás menedzselése (swapon, swapoff)
 - [ ] Lemeztitkosítási módszer menedzselése (LUKS)
 - [ ] További fájlrendszer támogatás bevezetése: btrfs, xfs, zfs, jfs
-- [ ] Lemez monitorozása grafikon ábrával ()
+- [ ] Lemez monitorozása grafikon ábrával (iostat, ttyplot, iotop)
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
