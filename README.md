@@ -11,7 +11,7 @@ Ez az eszköz **adatvesztést okozó** műveletekre képes (tábla törlés/újr
 
 ## Gyors kezdés
 
-1. Terminálban lépj a projekt mappájába (Partctl-1-0-0)
+1. Terminálban lépj a projekt mappájába (Partctl-V1-0-0)
 2. Futtasd a telepítőt/ellenőrzőt rendszergazdai jogosúltsággal (sudo/root):
 
 <kép>
