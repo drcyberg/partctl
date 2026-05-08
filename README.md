@@ -126,6 +126,8 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] Lemeztitkosítási módszer menedzselése (LUKS)
 - [ ] További fájlrendszer támogatás bevezetése: btrfs, xfs, zfs, jfs
 - [ ] Lemez monitorozása grafikon ábrával (iostat, ttyplot, iotop)
+- [ ] MBR partíció tábla biztonsági mentés készítés
+- [ ] Lemez-, és fájlrendszer klónozás és biztonsági mentés készítés
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
