@@ -73,7 +73,7 @@ bash partctl.sh
 - **Lemez menedzsment**: ideiglenes csatolás/leválasztás, fájlrendszer javítás (támogatott típusoknál), wipe (aláírások törlése)
 - **Napló panel**: a műveletek és a UI üzenetek is visszakereshetők
 - **(Szín)Jelzések**: menü elemeknek a sorszám színjelzései: sárga = további almenü; zöld = művelet indító; sárga panel = figyelmeztetés; zöld panel = információ ; piros panel = hiba
-- **Navigálás**: numerikus számkombináció és a kurzor billentyű (navigációs billentyű) = menü elemek kiválasztása; backspace = vissza; enter = művelet indítás; tab = opció kiválasztása, R = újratöltés; PgUp/PgDown/Home/End = gyors lapozás
+- **Navigálás**: numerikus számkombináció és a kurzor billentyű (navigációs billentyű) = menü elemek kiválasztása; backspace/q = vissza; enter = művelet indítás; tab = opció kiválasztása, R = újratöltés; PgUp/PgDown/Home/End = gyors lapozás
 - **Nyelv**: magyar, angol
 
 ## Naplózás (logok)
