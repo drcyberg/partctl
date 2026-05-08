@@ -72,8 +72,9 @@ bash partctl.sh
 - **Partíció menedzsment**: létrehozás, törlés, átnevezés, méretezés, formázás, flag-ek, typecode (MBR/GPT), GPT műveletek, LVM kezelés
 - **Lemez menedzsment**: ideiglenes csatolás/leválasztás, fájlrendszer javítás (támogatott típusoknál), wipe (aláírások törlése)
 - **Napló panel**: a műveletek és a UI üzenetek is visszakereshetők
-- **Jelzések**: menü elemeknek a sorszám színjelzései: sárga = további almenü; zöld = művelet indító
+- **(Szín)Jelzések**: menü elemeknek a sorszám színjelzései: sárga = további almenü; zöld = művelet indító; sárga panel = figyelmeztetés; zöld panel = információ ; piros panel = hiba
 - **Navigálás**: numerikus számkombináció és a kurzor billentyű (navigációs billentyű) = menü elemek kiválasztása; backspace = vissza; enter = művelet indítás; tab = opció kiválasztása, R = újratöltés; PgUp/PgDown/Home/End = gyors lapozás
+- **Nyelv**: magyar, angol
 
 ## Naplózás (logok)
 
