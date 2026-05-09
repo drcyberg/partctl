@@ -65,6 +65,8 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 **Példa (`/dev/sda`):** a lemezlista után a kiválasztott lemez **≈ 223,6 GiB**; a későbbi **Lemez attekintes** ezt a lemezt mutatja **GPT** táblával (ha már felépült a példa-elrendezés).
 
+![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_1.jpg)
+
 ---
 
 ## 3. Kiindulás: teljes lemez „wipe” (aláírások + opcionálisan tábla)
@@ -85,7 +87,11 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | **10** | **Disk cleanup (Wipe)** |
 | 11 | Back |
 
+![](https://github.com/drcyberg/partctl/blob/main/img/partctl_menu_1.jpg)
+
 Tehát: **főmenü → `4` → `10` — Disk cleanup (Wipe)**.
+
+![](https://github.com/drcyberg/partctl/blob/main/img/lemez_tisztitas_wipe_1.jpg)
 
 A varázslóban:
 
@@ -109,6 +115,8 @@ A varázslóban:
 4. Szükség esetén oldj fel **csatolásokat**, ha a program kéri (például ha a **`sda3`** még csatolva volt — a példa szerint pl. **`/media/llukacsi/Partctl1`**).
 
 **Példa eredmény (`/dev/sda`):** sikeres **`mklabel gpt`** után az áttekintőben **Partíciós tábla: GPT**, **0** partíció (vagy üres lemez-sor), majd jöhet a §5 négy **Create partition** lépése.
+
+![](https://github.com/drcyberg/partctl/blob/main/img/particio_tabla_letrehozasa_1.jpg)
 
 ---
 
@@ -146,6 +154,8 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 *(A lista a `GPT_GUID_TYPE_CHOICES` bejegyzéseit mutatja.)*
 
+![](https://github.com/drcyberg/partctl/blob/main/img/gpt_particio_tipuskod_1.jpg)
+
 ---
 
 ## 7. Formázás (ESP: vfat; Windows + WinRE: NTFS)
@@ -169,6 +179,8 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 **Példa (`sda4`):** a háttér `sgdisk` kimenetéhez hasonlóan gyakori érték: **`Attribute flags: 8000000000000001`**; a **Particio reszletek** nézetben összefoglaló hex + bit-címkék jelenhetnek meg.
 
+![](https://github.com/drcyberg/partctl/blob/main/img/gpt_attributumok.jpg)
+
 ---
 
 ## 9. Ellenőrzés a Partctl-ben (parancssor nélkül)
@@ -178,6 +190,12 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 | 1 | **főmenü → `3`** → **Verify GPT partition table** / **GPT tabla ellenorzes** | Sikeres ellenőrzés üzenet (integritás OK). |
 | 2 | **főmenü → `2` Lemez attekintes** | **GPT** tábla; sorok: **`sda1`** 512 MiB, **`sda2`** 16 MiB, **`sda3`** 120 GiB, **`sda4`** 1 GiB; típus/GUID oszlopok az §1 szerint. |
 | 3 | Áttekintőben egy partíción **Enter** — részletek | Pl. **`sda4`**: WinRE GUID; **GPT attributum** sor (ha `sgdisk` elérhető) — lásd §8. |
+
+### Lemez áttekintés
+![](https://github.com/drcyberg/partctl/blob/main/img/lemez_attekintes_1.jpg)
+
+### Partíció részletei
+![](https://github.com/drcyberg/partctl/blob/main/img/particio_reszletei_1.jpg)
 
 ---
 
