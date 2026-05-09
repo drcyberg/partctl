@@ -43,6 +43,8 @@ A lemez többi része lehet allokálatlan; ez nem akadály a Windows telepítőn
 bash partctl.sh
 ```
 
+![](https://github.com/drcyberg/partctl/blob/main/img/terminal_1.jpg)
+
 A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
 
 - **Menü:** kurzor (`Fel` / `Le`, vagy `k` / `j`), **Enter** a kiválasztott sorra.  
