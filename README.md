@@ -134,4 +134,5 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 
 ### Támogatás
 
-<buymecoffe, paypal>
+- ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
+- ***Paypal***: [LINK]()
