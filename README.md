@@ -135,4 +135,4 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 ### Támogatás
 
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
-- ***Paypal***: [LINK]()
+- ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
