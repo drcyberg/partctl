@@ -173,6 +173,8 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a varázsló **leválasztást** is kérhet.
 
+![](https://github.com/drcyberg/partctl/blob/main/img/formazas_1.jpg)
+
 ---
 
 ## 8. (Opcionális) WinRE GPT attribútum bitek
