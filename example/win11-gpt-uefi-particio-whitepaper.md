@@ -61,6 +61,8 @@ A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` 
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
+![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_2.jpg)
+
 Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sda`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
 
 **Példa (`/dev/sda`):** a lemezlista után a kiválasztott lemez **≈ 223,6 GiB**; a későbbi **Lemez attekintes** ezt a lemezt mutatja **GPT** táblával (ha már felépült a példa-elrendezés).
