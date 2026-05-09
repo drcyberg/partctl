@@ -1,4 +1,4 @@
-# Windows 11 stílusú GPT-partíciók — útmutató kizárólag a Partctl (`partctl.sh`) menüin keresztül
+# Windows 11 rendszer partíciók beállítása — útmutató kizárólag a Partctl (`partctl.sh`) menüin keresztül
 
 > **Cél:** Egy **UEFI + GPT** felépítéshez hasonló, Microsoftos sorrendű partíciók létrehozása **csak** a Partctl ncurses felületén, a **`bash partctl.sh`** indítással — **menüpont → menüpont** útvonallal.  
 > A példa a korábban ismertetett **`/dev/sda`** elrendezésre támaszkodik (ESP + MSR + Windows + WinRE).
