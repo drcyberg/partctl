@@ -132,7 +132,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
-### Támogatás
+### Köszönöm ha támogatsz
 
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
 - ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
