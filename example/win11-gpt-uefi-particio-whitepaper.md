@@ -139,6 +139,8 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 **Példa (`/dev/sda`):** a négy lépés után az áttekintőben **négy sor** (`sda1`…`sda4`), a lemez végén **allokálatlan** terület is maradhat (a példa-lemezen a partíciók összmérete kisebb, mint a teljes kapacitás).
 
+![](https://github.com/drcyberg/partctl/blob/main/img/particio_letrehozasa_1.jpg)
+
 ---
 
 ## 6. GPT típus-GUID beállítása (Partctl listából)
