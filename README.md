@@ -5,7 +5,7 @@ A `Partctl` program egy ncurses (pythone) alapú terminal (CLI) lemez-, és part
 - **`partctl.sh`**: A Partctl ncurses alkalmazás indítója.
 - **`setup.sh`**: Telepítő és egyben ellenőrző ncurses alkalmazás (függőségek ellenőrzése, telepítés Internet/Lokális módban)
 
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_attekintes_1.jpg)
+![](https://github.com/drcyberg/partctl/img/lemez_attekintes_1.jpg)
 
 ## Fontos biztonsági megjegyzés
 
