@@ -13,14 +13,14 @@ Az alábbi táblázat **ugyanazt a menetet** követi, mint a fejezetek **3–9**
 
 | Fázis | Partctl útvonal (rövid) | Példa: mit csinálsz `/dev/sda`-n | Eredmény (áttekintés / részletek) |
 |-------|-------------------------|-----------------------------------|-----------------------------------|
-| Lemez kiválasztás | Főmenü **`1`** → listában **`sda`** | Kiválasztod a **`sda`** sort | A további varázslók a **`/dev/sda`** céllemezt használják. |
-| Wipe (opcionális nulláról) | Főmenü **`4`** → **`10`** Disk cleanup (Wipe) → **whole disk** | Teljes lemez cél, szükség szerint **partíciós tábla törlés** bejelölve | Aláírások / (opcionálisan) tábla eltűnik; **üres lemez** felé haladsz. |
-| GPT tábla | Főmenü **`3`** → *Create partition table* → **`1` GPT** | Megerősíted a figyelmeztetést | **`gpt`** tábla; még nincs partíció (vagy csak a tábla új). |
-| 4× partíció | Főmenü **`3`** → *Create partition* (négy alkalommal) | Lásd §5: pl. **`+512MiB`**, **`+16MiB`**, **`+120GiB`**, **`+1024MiB`** | **`sda1`…`sda4`** létrejön a választott méretekkel. |
-| 4× típus-GUID | Főmenü **`3`** → *Partition type code (GUID, GPT)* | Mind a négy partícióra a §6 szerinti listaelem | **`PARTTYPE`** mezők: EFI / MSR / basic data / WinRE GUID (§1 táblázat). |
-| Formázás | Főmenü **`3`** → *Partition format* | `sda1` → **vfat**; `sda3` / `sda4` → **ntfs**; `sda2` MSR → kihagyva | Példa: **`sda1`** `vfat`; **`sda3`** `ntfs` (pl. csatolva: `/media/…/Partctl1`); **`sda4`** `ntfs` vagy üres FS jelzés a WinRE típus mellett. |
-| (Opc.) WinRE bitek | Főmenü **`3`** → *GPT attributes* → **`sda4`** | *Required* + *No automount* jellegű bitek | Példa `sgdisk`: **`Attribute flags: 8000000000000001`**. |
-| Ellenőrzés | Főmenü **`3`** → *Verify GPT*; majd **`2`** áttekintés + **Enter** részletek | Végigmész a négy partíción | GPT OK; áttekintőben **sorrend + méret** egyezik §1-gyel; részletekben **GPT attributum** a WinRE-n (ha `sgdisk` elérhető). |
+| 1.) Lemez kiválasztás | Főmenü **`1`** → listában **`sda`** | Kiválasztod a **`sda`** sort | A további varázslók a **`/dev/sda`** céllemezt használják. |
+| 2.) Wipe (opcionális nulláról) | Főmenü **`4`** → **`10`** Disk cleanup (Wipe) → **whole disk** | Teljes lemez cél, szükség szerint **partíciós tábla törlés** bejelölve | Aláírások / (opcionálisan) tábla eltűnik; **üres lemez** felé haladsz. |
+| 3.) GPT tábla | Főmenü **`3`** → *Create partition table* → **`1` GPT** | Megerősíted a figyelmeztetést | **`gpt`** tábla; még nincs partíció (vagy csak a tábla új). |
+| 4.) 4× partíció | Főmenü **`3`** → *Create partition* (négy alkalommal) | Lásd §5: pl. **`+512MiB`**, **`+16MiB`**, **`+120GiB`**, **`+1024MiB`** | **`sda1`…`sda4`** létrejön a választott méretekkel. |
+| 5.) 4× típus-GUID | Főmenü **`3`** → *Partition type code (GUID, GPT)* | Mind a négy partícióra a §6 szerinti listaelem | **`PARTTYPE`** mezők: EFI / MSR / basic data / WinRE GUID (§1 táblázat). |
+| 6.) Formázás | Főmenü **`3`** → *Partition format* | `sda1` → **vfat**; `sda3` / `sda4` → **ntfs**; `sda2` MSR → kihagyva | Példa: **`sda1`** `vfat`; **`sda3`** `ntfs` (pl. csatolva: `/media/…/Partctl1`); **`sda4`** `ntfs` vagy üres FS jelzés a WinRE típus mellett. |
+| 7.) (Opc.) WinRE bitek | Főmenü **`3`** → *GPT attributes* → **`sda4`** | *Required* + *No automount* jellegű bitek | Példa `sgdisk`: **`Attribute flags: 8000000000000001`**. |
+| 8.) Ellenőrzés | Főmenü **`3`** → *Verify GPT*; majd **`2`** áttekintés + **Enter** részletek | Végigmész a négy partíción | GPT OK; áttekintőben **sorrend + méret** egyezik §1-gyel; részletekben **GPT attributum** a WinRE-n (ha `sgdisk` elérhető). |
 
 ---
 
