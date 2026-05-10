@@ -1,7 +1,7 @@
 # Windows 11 rendszer partíciók beállítása — útmutató kizárólag a Partctl (`partctl.sh`) menüin keresztül
 
 > **Cél:** Egy **UEFI + GPT** felépítéshez hasonló, Microsoftos sorrendű partíciók létrehozása **csak** a Partctl ncurses felületén, a **`bash partctl.sh`** indítással — **menüpont → menüpont** útvonallal.  
-> A példa a korábban ismertetett **`/dev/sda`** elrendezésre támaszkodik (ESP + MSR + Windows + WinRE).
+> A példa a korábban ismertetett **`/dev/sda`** elrendezésre támaszkodik (Partíciók: ESP + MSR + Windows + WinRE).
 
 **Figyelem:** Wipe, particiós tábla újralétrehozása, partíciók létrehozása és formázás **adatvesztéssel** jár. Csak olyan lemezen dolgozz, amelynek minden fontos adata mentve van, és a céllemez ne legyen véletlenül a futó rendszer lemeze.
 
