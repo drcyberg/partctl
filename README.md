@@ -16,15 +16,11 @@ Ez az eszköz **adatvesztést okozó** műveletekre képes (tábla törlés/újr
 1. Terminálban lépj a projekt mappájába (Partctl-V1-0-0)
 2. Futtasd a telepítőt/ellenőrzőt rendszergazdai jogosúltsággal (sudo/root):
 
-<kép>
-
 ```bash
 bash setup.sh
 ```
 
 3. Futtasd a Partctl programot rendszergazdai jogosúltsággal (sudo/root):
-
-<kép>
 
 ```bash
 bash partctl.sh
