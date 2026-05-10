@@ -28,10 +28,10 @@ bash partctl.sh
 
 ## Követelmények
 
-- Linux OS: Debian, Ubuntu
-- Program: python3, util-linux, parted, gdisk, lvm2, e2fsprogs, dosfstools, ntfs, kpartx, fuser
-- Terminál méret: javasolt legalább kb. **124×24** (a nagyon kicsi termináloknál a UI korlátozott)
-- Minimum képernyőfelbontás: 1024x768
+- **Linux OS**: Debian, Ubuntu
+- **Program**: python3, util-linux, parted, gdisk, lvm2, e2fsprogs, dosfstools, ntfs, kpartx, fuser
+- **Terminál méret**: javasolt legalább kb. 124×24 (a nagyon kicsi termináloknál a UI korlátozott)
+- **Minimum képernyőfelbontás**: 1024x768
 
 A pontos függőségi listát a `setup.sh` **Ellenőrzés** menüpontja kijelzi.
 
@@ -130,7 +130,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
-### Whitepaper
+### Esettanulmány (Case Study)
 
 - [Windows 11 rendszer partíciók beállítása](https://drcyberg.github.io/partctl/example/win11-gpt-uefi-particio-whitepaper)
 
