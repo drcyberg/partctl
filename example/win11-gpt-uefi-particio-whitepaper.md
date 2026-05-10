@@ -43,7 +43,7 @@ A lemez többi része lehet allokálatlan; ez nem akadály a Windows telepítőn
 bash partctl.sh
 ```
 
-![](/partctl/img/terminal_1.jpg)
+![](/img/terminal_1.jpg)
 
 A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
 
