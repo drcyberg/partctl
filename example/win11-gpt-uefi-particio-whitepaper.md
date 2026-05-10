@@ -207,6 +207,9 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 ### Partíció részletei
 ![](/partctl/img/particio_reszletei_1.jpg)
 
+### GPT tábla ellenőrzése
+![](/partctl/img/gpt_tabla_ellenorzese_1.png)
+
 ---
 
 ## 9.1 Ellenőrzés a Windows 11 OS kitelepítésével
