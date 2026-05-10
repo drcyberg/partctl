@@ -211,10 +211,10 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 ## 9.1 Ellenőrzés a Windows 11 OS kitelepítésével
 
-# Helykiválasztás
+### Helykiválasztás
 ![](https://github.com/drcyberg/partctl/blob/main/img/win11_1.png)
 
-# Lemezkezelés
+### Lemezkezelés
 ![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_1.jpg)
 ![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_2.jpg)
 
