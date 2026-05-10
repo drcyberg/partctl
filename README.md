@@ -130,6 +130,10 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
+### Whitepaper
+
+- [Windows 11 rendszer partíciók beállítása](https://drcyberg.github.io/partctl/example/win11-gpt-uefi-particio-whitepaper)
+
 ### Köszönöm ha támogatsz
 
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
