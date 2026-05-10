@@ -208,7 +208,7 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 ![](/partctl/img/particio_reszletei_1.jpg)
 
 ### GPT tábla ellenőrzése
-![](/partctl/img/gpt_tabla_ellenorzese_1.png)
+![](/partctl/img/gpt_tabla_ellenorzese.png)
 
 ---
 
