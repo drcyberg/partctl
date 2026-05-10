@@ -43,7 +43,7 @@ A lemez többi része lehet allokálatlan; ez nem akadály a Windows telepítőn
 bash partctl.sh
 ```
 
-![](https://github.com/drcyberg/partctl/blob/main/img/terminal_1.jpg)
+![](/img/terminal_1.jpg)
 
 A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
 
@@ -63,13 +63,13 @@ A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` 
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_2.jpg)
+![](/img/lemez_kivalasztasa_2.jpg)
 
 Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sda`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
 
 **Példa (`/dev/sda`):** a lemezlista után a kiválasztott lemez **≈ 223,6 GiB**; a későbbi **Lemez attekintes** ezt a lemezt mutatja **GPT** táblával (ha már felépült a példa-elrendezés).
 
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_1.jpg)
+![](/img/lemez_kivalasztasa_1.jpg)
 
 ---
 
@@ -91,11 +91,11 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | **10** | **Disk cleanup (Wipe)** |
 | 11 | Back |
 
-![](https://github.com/drcyberg/partctl/blob/main/img/partctl_menu_1.jpg)
+![](/img/partctl_menu_1.jpg)
 
 Tehát: **főmenü → `4` → `10` — Disk cleanup (Wipe)**.
 
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_tisztitas_wipe_1.jpg)
+![](/img/lemez_tisztitas_wipe_1.jpg)
 
 A varázslóban:
 
@@ -120,7 +120,7 @@ A varázslóban:
 
 **Példa eredmény (`/dev/sda`):** sikeres **`mklabel gpt`** után az áttekintőben **Partíciós tábla: GPT**, **0** partíció (vagy üres lemez-sor), majd jöhet a §5 négy **Create partition** lépése.
 
-![](https://github.com/drcyberg/partctl/blob/main/img/particio_tabla_letrehozasa_1.jpg)
+![](/img/particio_tabla_letrehozasa_1.jpg)
 
 ---
 
@@ -128,7 +128,7 @@ A varázslóban:
 
 **Útvonal (mind a négy lépésnél):** **főmenü → `3`** → **Create partition** / **Particio letrehozasa**.
 
-![](https://github.com/drcyberg/partctl/blob/main/img/particio_letrehozasa_1.jpg)
+![](/img/particio_letrehozasa_1.jpg)
 
 A **Particio parameterek** panel a **Start** és **End** mezőket kéri (`parted` szintaxis: pl. `2048s`, relatív méret **`+512MiB`**, vagy a szabad tartomány **vége** `100%`). A program kiírja a szabad **szektortartományt** és a javasolt kezdőértéket — **követd a képernyőn látható** szabad sávot minden új partíció után.
 
@@ -145,7 +145,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 **Példa (`/dev/sda`):** a négy lépés után az áttekintőben **négy sor** (`sda1`…`sda4`), a lemez végén **allokálatlan** terület is maradhat (a példa-lemezen a partíciók összmérete kisebb, mint a teljes kapacitás).
 
-![](https://github.com/drcyberg/partctl/blob/main/img/particio_parameterek_1.jpg)
+![](/img/particio_parameterek_1.jpg)
 
 ---
 
@@ -162,7 +162,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 *(A lista a `GPT_GUID_TYPE_CHOICES` bejegyzéseit mutatja.)*
 
-![](https://github.com/drcyberg/partctl/blob/main/img/gpt_particio_tipuskod_1.jpg)
+![](/img/gpt_particio_tipuskod_1.jpg)
 
 ---
 
@@ -179,7 +179,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a varázsló **leválasztást** is kérhet.
 
-![](https://github.com/drcyberg/partctl/blob/main/img/formazas_1.jpg)
+![](/img/formazas_1.jpg)
 
 ---
 
@@ -189,7 +189,7 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 **Példa (`sda4`):** a háttér `sgdisk` kimenetéhez hasonlóan gyakori érték: **`Attribute flags: 8000000000000001`**; a **Particio reszletek** nézetben összefoglaló hex + bit-címkék jelenhetnek meg.
 
-![](https://github.com/drcyberg/partctl/blob/main/img/gpt_attributumok.jpg)
+![](/img/gpt_attributumok.jpg)
 
 ---
 
@@ -202,21 +202,21 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 | 3 | Áttekintőben egy partíción **Enter** — részletek | Pl. **`sda4`**: WinRE GUID; **GPT attributum** sor (ha `sgdisk` elérhető) — lásd §8. |
 
 ### Lemez áttekintés
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_attekintes_1.jpg)
+![](/img/lemez_attekintes_1.jpg)
 
 ### Partíció részletei
-![](https://github.com/drcyberg/partctl/blob/main/img/particio_reszletei_1.jpg)
+![](/img/particio_reszletei_1.jpg)
 
 ---
 
 ## 9.1 Ellenőrzés a Windows 11 OS kitelepítésével
 
 ### Helykiválasztás
-![](https://github.com/drcyberg/partctl/blob/main/img/win11_1.png)
+![](/img/win11_1.png)
 
 ### Lemezkezelés
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kezeles_1.png)
-![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kezeles_2.png)
+![](/img/lemez_kezeles_1.png)
+![](/img/lemez_kezeles_2.png)
 
 ---
 
