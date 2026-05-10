@@ -210,6 +210,7 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 ---
 
 ## 9.1 Ellenőrzés a Windows 11 OS kitelepítésével
+ISO: `Win11_25H2_Hungarian_x64_v2`
 
 ### Helykiválasztás
 ![](/partctl/img/win11_1.png)
