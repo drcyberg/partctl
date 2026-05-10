@@ -209,6 +209,17 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 ---
 
+## 9.1 Ellenőrzés a Windows 11 OS kitelepítésével
+
+# Helykiválasztás
+![](https://github.com/drcyberg/partctl/blob/main/img/win11_1.png)
+
+# Lemezkezelés
+![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_1.jpg)
+![](https://github.com/drcyberg/partctl/blob/main/img/lemez_kivalasztasa_2.jpg)
+
+---
+
 ## 10. Amit a Partctl nem pótol
 
 - **Windows telepítő** / bootmgr / BCD / **WinRE.wim** másolása és **`reagentc`** beállítások.  
