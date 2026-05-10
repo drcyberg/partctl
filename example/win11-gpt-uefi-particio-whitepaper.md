@@ -238,5 +238,5 @@ README-ből:
 
 Win11 GPT — Partctl menü útmutató
 ```markdown
-[](https://github.com/drcyberg/partctl/example/win11-gpt-uefi-particio-whitepaper.md)
+https://github.com/drcyberg/partctl/example/win11-gpt-uefi-particio-whitepaper.md
 ```
