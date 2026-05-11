@@ -139,6 +139,8 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ## 3. MBR vs GPT — összehasonlító táblázat és felhasználás
 
+![](/partctl/img/gpt-vs-mbr_1.png)
+
 | Szempont | MBR (`msdos`) | GPT |
 |-----------|----------------|-----|
 | **Boot környezet** | BIOS / CSM gyakori | **UEFI** (modern PC, Windows 11 ajánlott irány) |
