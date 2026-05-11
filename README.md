@@ -7,7 +7,7 @@ A `Partctl` program egy ncurses (pythone) alapú terminal (CLI) lemez-, és part
 
 | Telepítés | Menü rendszer | Lemez áttekintés |
 | --- | --- | --- |
-| ![telepites](/img/telepites_1.png "Telepítés") | ![menu_rendszer](/img/menu_1.png "Menü rendszer") | ![lemez_attekintes](/img/lemez_attekintes_1.jpg "Lemez áttekintes") |
+| ![telepites](/partctl/img/telepites_1.png "Telepítés") | ![menu_rendszer](/partctl/img/menu_1.png "Menü rendszer") | ![lemez_attekintes](/partctl/img/lemez_attekintes_1.jpg "Lemez áttekintes") |
 
 ## Fontos biztonsági megjegyzés
 
