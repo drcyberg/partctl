@@ -1,5 +1,7 @@
 # Windows 11 rendszer partíciók beállítása — útmutató kizárólag a Partctl (`partctl.sh`) menüin keresztül
 
+![win11_logo_1](/partctl/img/win11_logo.png "Windows 11 #1")
+
 > **Cél:** Egy **UEFI + GPT** felépítéshez hasonló, Microsoftos sorrendű partíciók létrehozása **csak** a Partctl ncurses felületén, a **`bash partctl.sh`** indítással — **menüpont → menüpont** útvonallal.  
 > A példa a korábban ismertetett **`/dev/sdc`** elrendezésre támaszkodik (Partíciók: ESP + MSR + Windows + WinRE).
 
