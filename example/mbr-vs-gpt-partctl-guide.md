@@ -11,6 +11,8 @@
 bash partctl.sh
 ```
 
+![](/img/terminal_1.jpg)
+
 A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
 
 ### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
@@ -25,6 +27,8 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
+![](/img/lemez_kivalasztasa_2.jpg)
+
 **Navigáció:** `Fel` / `Le` (vagy `k` / `j`), **Enter**; vagy a sor elején látható **`N.`** szám begépelése, majd **Enter**. **Vissza:** súgó szerint **Backspace** / **`q`**.
 
 **Particio kezeles** almenü: a tételek **ábécérendbe** vannak rendezve — a pontos **sorszámot** mindig a **képernyőn** ellenőrizd; a lenti útmutatóban a **menüpont címkéjét** (angol + magyar) használjuk.
@@ -37,9 +41,13 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 | **10** | **Disk cleanup (Wipe)** |
 | 11 | Back |
 
+Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sdc`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
+
 ---
 
-## 1. MBR (Master Boot Record / `msdos`) partíciós tábla
+## 1. MBR (Master Boot Record / `msdos`) — **Windows XP** példa (`/dev/sdb`)
+
+![](/img/xp_logo.png)
 
 ### 1.1 Rövid összefoglaló
 
@@ -85,6 +93,8 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 ---
 
 ## 2. GPT (GUID Partition Table) — **Windows 11** példa (`/dev/sda`)
+
+![](/img/win11_logo.png)
 
 ### 2.1 Rövid összefoglaló
 
