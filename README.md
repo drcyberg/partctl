@@ -123,6 +123,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 
 - [ ] További támogatott OS: Windows (WSL), Fedora, Arch
 - [ ] S.M.A.R.T. támogatás (smartmontools)
+- [ ] UEFI boot menedzsment kiépítése (efibootmgr)
 - [ ] Tartós kötet felcsatolása és menedzselése (fstab)
 - [ ] SWAP beállítás menedzselése (swapon, swapoff)
 - [ ] Lemeztitkosítási módszer menedzselése (LUKS)
