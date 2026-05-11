@@ -188,7 +188,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | Forráskód hivatkozások | `partctl_ncurses_app/ui/split_menus.py`, `partition_table_views.py` (`draw_partition_table_type_menu`), `partition_create_ops.py` |
 
 ```markdown
-https://github.com/drcyberg/partctl/blob/main/example/mbr-vs-gpt-partctl-guide
+https://github.com/drcyberg/partctl/blob/main/example/mbr-vs-gpt-partctl-guide.md
 ```
 
 ### Fő oldal (Partctl)
