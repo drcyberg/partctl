@@ -31,7 +31,7 @@ bash partctl.sh
 
 ## Követelmények
 
-- **Linux OS**: Debian, Ubuntu
+- **Linux OS**: Debian (13), Ubuntu (24.04, 26.04)
 - **Program**: python3, util-linux, parted, gdisk, lvm2, e2fsprogs, dosfstools, ntfs, kpartx, fuser
 - **Terminál méret**: javasolt legalább kb. 124×24 (a nagyon kicsi termináloknál a UI korlátozott)
 - **Minimum képernyőfelbontás**: 1024x768
