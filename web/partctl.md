@@ -134,7 +134,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 
 ### Esettanulmány (Case Study)
 
-- [Windows 11 rendszer partíciók beállítása](https://drcyberg.github.io/partctl/example/win11-gpt-uefi-particio-whitepaper)
+- [Windows 11 rendszer partíciók beállítása](https://drcyberg.github.io/partctl/web/win11-gpt-uefi-particio-whitepaper)
 
 ### Köszönöm ha támogatsz
 
