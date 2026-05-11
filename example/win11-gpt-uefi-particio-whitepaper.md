@@ -244,3 +244,12 @@ Win11 GPT — Partctl menü útmutató
 ```markdown
 https://github.com/drcyberg/partctl/example/win11-gpt-uefi-particio-whitepaper.md
 ```
+
+### Fő oldal (Partctl)
+
+- [Partctl](https://drcyberg.github.io/partctl/web/partctl)
+
+### Köszönöm ha támogatsz
+
+- ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
+- ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
