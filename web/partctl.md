@@ -15,14 +15,15 @@ Ez az eszköz **adatvesztést okozó** műveletekre képes (tábla törlés/újr
 
 ## Gyors kezdés
 
-1. Terminálban lépj a projekt mappájába (Partctl-V1-0-0)
-2. Futtasd a telepítőt/ellenőrzőt rendszergazdai jogosúltsággal (sudo/root):
+1. Töltsük le a programot majd csomagoljuk ki: [LINK](https://github.com/drcyberg/partctl/releases/latest)
+2. Terminálban lépj a projekt mappájába (Partctl-V1-0-0)
+3. Futtasd a telepítőt/ellenőrzőt rendszergazdai jogosúltsággal (sudo/root):
 
 ```bash
 bash setup.sh
 ```
 
-3. Futtasd a Partctl programot rendszergazdai jogosúltsággal (sudo/root):
+4. Futtasd a Partctl programot rendszergazdai jogosúltsággal (sudo/root):
 
 ```bash
 bash partctl.sh
