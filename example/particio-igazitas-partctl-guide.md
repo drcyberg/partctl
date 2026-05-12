@@ -185,17 +185,6 @@ Ha már **formázott** partícióid vannak és csak „javítani” szeretnél: 
 
 ---
 
-## 8. Összefoglaló táblázat — médium + fájlrendszer + fókusz + **hozzávetőleges** előtte/utána
-
-| Médium | Fájlrendszer (példa) | Igazítás hiánya hol fáj leginkább | MB/s „mítosz” | Tipikus teljesítmény-változás jó igazítás felé (§0-hoz igazítva) |
-|--------|----------------------|-----------------------------------|----------------|------------------------------------------------------------------|
-| **Consumer SSD** | ext4, NTFS | Kis **random írás**, vezérlő **RMW** | Sorozatos **MB/s** gyakran változatlan | Szekv. MB/s: **≈ 0–3%**; 4K random írás **IOPS:** **≈ 5–25%** (extrémnél több). |
-| **HDD** | ext4, NTFS | Mechanika, **sáv** pozíció | MB/s főleg **hol** van a fej a lemezen | Szekv. MB/s: **≈ 0–5%** vagy kimérhetetlen; domináns a fej/sáv. |
-| **RAID** | bármely fenti | **Stripe** vs offset | **IOPS** fontosabb, mint egyetlen MB/s | Kis blokk: **≈ 10–40%** IOPS/késleltetés javulás jó párosításnál (terhelésfüggő). |
-| **Enterprise SSD** | xfs, ext4, NTFS | Tartós **véletlen írás**, kopás | Monitoring: késleltetés, IOPS | Hasonló a consumer SSD random íráshoz; TBW / késleltetés hosszú távon számít. |
-
----
-
 Partíció-igazítás, fájlrendszer és teljesítmény — háttér és `partctl.sh` menüútmutató
 ```markdown
 https://github.com/drcyberg/partctl/blob/main/example/particio-igazitas-partctl-guide.md
