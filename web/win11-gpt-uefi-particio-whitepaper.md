@@ -20,7 +20,7 @@ Az alábbi táblázat **ugyanazt a menetet** követi, mint a fejezetek **3–9**
 | 3.) GPT tábla | Főmenü **`3`** → *Create partition table* → **`1` GPT** | Megerősíted a figyelmeztetést | **`gpt`** tábla; még nincs partíció (vagy csak a tábla új). |
 | 4.) 4× partíció | Főmenü **`3`** → *Create partition* (négy alkalommal) | Lásd §5: pl. **`+512MiB`**, **`+16MiB`**, **`+120GiB`**, **`+1024MiB`** | **`sdc1`…`sdc4`** létrejön a választott méretekkel. |
 | 5.) 4× típus-GUID | Főmenü **`3`** → *Partition type code (GUID, GPT)* | Mind a négy partícióra a §6 szerinti listaelem | **`PARTTYPE`** mezők: EFI / MSR / basic data / WinRE GUID (§1 táblázat). |
-| 6.) Formázás | Főmenü **`3`** → *Partition format* | `sdc1` → **vfat**; `sdc3` / `sdc4` → **ntfs**; `sdc2` MSR → kihagyva | Példa: **`sdc1`** `vfat`; **`sdc3`** `ntfs` (pl. csatolva: `/media/…/Partctl1`); **`sdc4`** `ntfs` vagy üres FS jelzés a WinRE típus mellett. |
+| 6.) Formázás | Főmenü **`3`** → *Partition format* | `sdc1` → **vfat**; `sdc3` / `sdc4` → **ntfs**; `sdc2` MSR → kihagyva | Példa: **`sdc1`** `vfat`; **`sdc3`** `ntfs` (pl. csatolva: `/media/…/partctl-v1-0-0`); **`sdc4`** `ntfs` vagy üres FS jelzés a WinRE típus mellett. |
 | 7.) (Opc.) WinRE bitek | Főmenü **`3`** → *GPT attributes* → **`sdc4`** | *Required* + *No automount* jellegű bitek | Példa `sgdisk`: **`Attribute flags: 8000000000000001`**. |
 | 8.) Ellenőrzés | Főmenü **`3`** → *Verify GPT*; majd **`2`** áttekintés + **Enter** részletek | Végigmész a négy partíción | GPT OK; áttekintőben **sorrend + méret** egyezik §1-gyel; részletekben **GPT attributum** a WinRE-n (ha `sgdisk` elérhető). |
 
@@ -32,7 +32,7 @@ Az alábbi táblázat **ugyanazt a menetet** követi, mint a fejezetek **3–9**
 |----------|----------------|------------------------|------------|-----------------------------------|
 | `sdc1` | 512 MiB | FAT32 / `vfat` | EFI System (ESP) | `PARTTYPE` **EFI System**; GUID **`C12A7328-F81F-11D2-BA4B-00A0C93EC93B`** |
 | `sdc2` | 16 MiB | *MSR: Windows alatt tipikusan nincs formázva* | Microsoft Reserved (MSR) | `PARTTYPE` **Microsoft reserved**; GUID **`E3C9E316-0B5C-4DB8-817D-F92DF00215AE`** (Linux néha téves FS-jelzést mutathat) |
-| `sdc3` | 120 GiB | NTFS | Microsoft basic data (rendszer) | `PARTTYPE` **Microsoft basic data**; GUID **`EBD0A0A2-B9E5-4433-87C0-68B6B72699C7`**; példa csatolás: **`/media/usbflash0/Partctl1`** |
+| `sdc3` | 120 GiB | NTFS | Microsoft basic data (rendszer) | `PARTTYPE` **Microsoft basic data**; GUID **`EBD0A0A2-B9E5-4433-87C0-68B6B72699C7`**; példa csatolás: **`/media/usbflash0/partctl-v1-0-0`** |
 | `sdc4` | 1 GiB (1024 MiB) | NTFS vagy üres FS jelzés | Windows Recovery (WinRE) | `PARTTYPE` **Windows recovery environment**; GUID **`DE94BBA4-06D1-4D40-A16A-BFD50179D6AC`**; tipikus attribútum: **`0x8000000000000001`** |
 
 A lemez többi része lehet allokálatlan; ez nem akadály a Windows telepítőnek, ha a négy partíció sorrendje és típusa rendben van.
@@ -118,7 +118,7 @@ A varázslóban:
 1. **Enter** a varázslón.  
 2. **Tábla típusa:** válaszd **`1` — GPT** (a másik opció az MBR / `msdos`).  
 3. Olvasd el a **figyelmeztetést** (minden meglévő partíció törlődik), majd erősítsd meg.  
-4. Szükség esetén oldj fel **csatolásokat**, ha a program kéri (például ha a **`sdc3`** még csatolva volt — a példa szerint pl. **`/media/usbflash0/Partctl1`**).
+4. Szükség esetén oldj fel **csatolásokat**, ha a program kéri (például ha a **`sdc3`** még csatolva volt — a példa szerint pl. **`/media/usbflash0/partctl-v1-0-0`**).
 
 **Példa eredmény (`/dev/sdc`):** sikeres **`mklabel gpt`** után az áttekintőben **Partíciós tábla: GPT**, **0** partíció (vagy üres lemez-sor), majd jöhet a §5 négy **Create partition** lépése.
 
@@ -176,7 +176,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 |----------|----------------------------------------|-------------------------------|
 | ESP (`sdc1`) | **vfat** / FAT32 (ha szerepel a listán) | **`vfat`** az áttekintőben |
 | MSR (`sdc2`) | **Hagyd üresen** (Windows tipikusan nem formázza az MSR-t). Ha mégis formázod kísérletként, az nem „Windows hivatalos” viselkedés. | FS nélkül / eszközfüggő jelzés |
-| Windows (`sdc3`) | **ntfs** | **`ntfs`**; ha csatolod: pl. **`/media/usbflash0/Partctl1`** |
+| Windows (`sdc3`) | **ntfs** | **`ntfs`**; ha csatolod: pl. **`/media/usbflash0/partctl-v1-0-0`** |
 | WinRE (`sdc4`) | **ntfs** (a valódi WinRE fájlokat később a Windows telepítő / `reagentc` kezeli) | **`ntfs`** vagy üres típus a WinRE GUID mellett, amíg nincs tartalom |
 
 Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a varázsló **leválasztást** is kérhet.
