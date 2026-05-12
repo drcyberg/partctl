@@ -1,5 +1,9 @@
 # Partctl V1.0.0 — Felhasználói kézikönyv
 
+<p align="center">
+  <img src="img/partctl_logo_banner_optimized.png" alt="Partctl — Partition & disk control for Linux" width="100%" />
+</p>
+
 A `Partctl` program egy ncurses (pythone) alapú terminal (CLI) lemez-, és partíció kezelő eszköz Linuxra OS rendszerekhez tervezve. Az ötletet a GParted program adta. A projekt két fő belépési pontra bontható:
 
 - **`partctl.sh`**: A Partctl ncurses alkalmazás indítója.
