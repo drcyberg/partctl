@@ -138,6 +138,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 
 - [Windows 11 rendszer partíciók beállítása](https://drcyberg.github.io/partctl/web/win11-gpt-uefi-particio-whitepaper)
 - [MBR és GPT partíciós tábla ismertetése](https://drcyberg.github.io/partctl/web/mbr-vs-gpt-partctl-guide)
+- [Partíció igazítás](https://drcyberg.github.io/partctl/web/particio-igazitas-partctl-guide)
 
 ### Köszönöm ha támogatsz
 
