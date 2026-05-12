@@ -1,9 +1,7 @@
 # Partíció-igazítás, fájlrendszer és teljesítmény — háttér és `partctl.sh` menüútmutató
 
-![](/img/terminal_1.jpg)
-
 > **Cél:** Összefoglalni, **mit jelent** a partíció **optimális / nem optimális** létrehozása (pl. **1 MiB** határok, **2048s** / **4096s** kezdő LBA-k, lemez eleje–vége szabad sáv), és **milyen hatása** lehet eznek a **fájlrendszerre** és a **gyakorlati teljesítményre** — **szekvenciális MB/s**, **IOPS** és **késleltetés** szempontjából, **hozzávetőleges előtte/utána** nagyságrendekkel (lásd **§0** és a **§2.3** táblázatok). **HDD**, **SSD**, **RAID** környezetben, **ext4**, **NTFS** és hasonló rendszerek mellett.  
-> **Eszköz:** minden lépés a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül — ugyanabban a stílusban, mint a [`mbr-vs-gpt-partctl-guide.md`](mbr-vs-gpt-partctl-guide.md) és a [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) (fejezet **§0** gyors áttekintés mintája).
+> **Eszköz:** minden lépés a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül.
 
 **Figyelem:** particiós tábla, partíciók, wipe és formázás **adatvesztést** okozhat. Csak **mentett**, **nem** futó rendszerlemezen, **leválasztott** (unmount) kötetekkel kísérletezz; éles környezetben mindig **biztonsági mentés**.
 
@@ -69,7 +67,7 @@ Az alábbi táblázat **nem** konkrét lemezmodell-mérések másolata, hanem **
 - **Hosszú távú** előny: kevésbé „csúsznak el” a metaadatok a fizikai blokkokhoz képest — különösen **SSD + RAID + adatbázis / VM** esetén érezhető.  
 - **Vég-oldali 1 MiB rés (V1.0.0)** — a Partctl alapértelmezésben a **lemez végén is** ~1 MiB szabad helyet hagy a partíció után. Ennek **közvetlen** értéke: **GPT tartalék (backup) fejléc** biztos helye, **LUKS / cryptsetup** fejlécek és **mdadm superblock** stabil pozíciója, valamint kisebb eséllyel ütközik **`sgdisk -v`** „doesn't end on a 32-sector boundary” típusú figyelmeztetésekkel. **MB/s-ban** nem ad mérhető nyereséget — **megbízhatósági** és **eszközkompatibilitási** előny.
 
-### 2.3 MB/s és egyéb mutatók — mit várjunk reálisan? (összhang a §0 táblázattal)
+### 2.3 Terhelés és egyéb mutatók — mit várjunk reálisan?
 
 | Terhelés típusa | Mit mérünk | Igazítás hatása (tipikus nagyságrend) | Előtte / utána (röviden) |
 |-----------------|------------|--------------------------------------|--------------------------|
@@ -78,7 +76,7 @@ Az alábbi táblázat **nem** konkrét lemezmodell-mérések másolata, hanem **
 | **Véletlen 4K írás** | IOPS / ms késleltetés | Itt **inkább** látszik az igazítás hiánya (nem feltétlenül „MB/s” mutatóban). | **IOPS:** tipikusan **≈ 5–25%** jobb jó igazításnál; extrémnél **~30–40%**. |
 | **RAID + kis blokkok** | IOPS, késleltetés | **Stripe + offset** együtt kritikus; egyetlen **MB/s** szám félrevezető lehet. | **≈ 10–40%** IOPS/késleltetés romlás rossz párosításnál nem ritka. |
 
-**Összegzés:** A **„nem optimális partíció = fix X MB/s kevesebb”** általánosítás **ritkán** igaz egyetlen **X**-szel — a §0 **százalékos** nagyságrendek **hozzávetőleges** irányt adnak. A **valós kár** inkább: **többlet írási terhelés**, **ingadozó késleltetés**, **RAID alatti szétcsúszott I/O** — ezeket **benchmark** (pl. `fio`) és **diszk monitor** segítségével érdemes a **saját** lemezen ellenőrizni.
+**Összegzés:** A **„nem optimális partíció = fix X MB/s kevesebb”** általánosítás **ritkán** igaz egyetlen **X**-szel — **százalékos** nagyságrendek **hozzávetőleges** irányt adnak. A **valós kár** inkább: **többlet írási terhelés**, **ingadozó késleltetés**, **RAID alatti szétcsúszott I/O** — ezeket **benchmark** (pl. `fio`) és **diszk monitor** segítségével érdemes a **saját** lemezen ellenőrizni.
 
 ---
 
@@ -103,6 +101,8 @@ A Partctl a **partíció létrehozás** során:
 bash partctl.sh
 ```
 
+![](/img/terminal_1.jpg)
+
 A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
 
 ### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
@@ -117,13 +117,17 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
+![](/img/lemez_kivalasztasa_2.jpg)
+
 **Navigáció:** `Fel` / `Le` (vagy `k` / `j`), **Enter**; vagy a sor elején látható **`N.`** szám begépelése, majd **Enter**. **Vissza:** súgó szerint **Backspace** / **`q`**.
 
 **Particio kezeles** almenü: a tételek **ábécérendbe** vannak rendezve — a pontos **sorszámot** mindig a **képernyőn** ellenőrizd. Az alábbi útmutatóban a **menüpont címkéjét** (angol + magyar) használjuk.
 
+Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sdb`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
+
 ---
 
-## 5. Menüút — **új partíció** „jó gyakorlat szerint” (alapértelmezett igazítás elfogadása)
+## 5. **Új partíció** „jó gyakorlat szerint” (alapértelmezett igazítás elfogadása)
 
 **Cél:** Az első partíció kezdete **1 MiB** határon legyen; a **Particio parameterek** panelen **ne** írjunk be szándékosan „furcsa” kezdő szektort (pl. **1s**, **63s** klasszikus BIOS-offset), hacsak nem tudjuk pontosan, mit csinálunk.
 
@@ -140,7 +144,7 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 
 ---
 
-## 6. Menüút — **ellenőrzés** és **„rossz” geometria** felismerése
+## 6. **Ellenőrzés** és **„rossz” geometria** felismerése
 
 | Lépés | Menüút | Mit nézel |
 |-------|--------|-----------|
@@ -150,7 +154,7 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 
 ---
 
-## 7. Menüút — **Particio igazitas** / **Partition alignment (whole disk)** (speciális eset)
+## 7. **Particio igazitas** / **Partition alignment (whole disk)** (speciális eset)
 
 **Előfeltételek (a program is blokkolja, ha nem teljesülnek):**
 
@@ -180,10 +184,19 @@ Ha már **formázott** partícióid vannak és csak „javítani” szeretnél: 
 
 ---
 
-## 9. Kapcsolódó dokumentumok a repo-ban
+Partíció-igazítás, fájlrendszer és teljesítmény — háttér és `partctl.sh` menüútmutató
+```markdown
+https://github.com/drcyberg/partctl/blob/main/example/particio-igazitas-partctl-guide.md
+```
 
-- [`mbr-vs-gpt-partctl-guide.md`](mbr-vs-gpt-partctl-guide.md) — MBR/GPT háttér és Partctl menük.  
-- [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) — GPT példa **ESP + MSR + rendszer + WinRE**, wipe és formázás lépései.
+### Fő oldal (Partctl)
+
+- [Partctl](https://drcyberg.github.io/partctl/web/partctl)
+
+### Köszönöm ha támogatsz
+
+- ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
+- ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 
 ---
 
