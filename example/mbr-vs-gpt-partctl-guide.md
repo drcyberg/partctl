@@ -190,3 +190,13 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 ```markdown
 https://github.com/drcyberg/partctl/blob/main/example/mbr-vs-gpt-partctl-guide.md
 ```
+### Fő oldal (Partctl)
+
+- [Partctl](https://drcyberg.github.io/partctl/web/partctl)
+
+### Köszönöm ha támogatsz
+
+- ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
+- ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
+
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés (`partctl.sh` → `partctl_ncurses_app`) — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
