@@ -135,6 +135,7 @@ A projekt információi a program **About / Rólunk** menüpontjában találhat�
 - [ ] Lemez monitorozása grafikon ábrával (iostat, ttyplot, iotop)
 - [ ] MBR partíció tábla biztonsági mentés készítés
 - [ ] Lemez-, és fájlrendszer klónozás és biztonsági mentés készítés
+- [ ] Telepítőkészlet elkészítése (.deb, .dnf, .pkg)
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
 
