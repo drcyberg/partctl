@@ -164,7 +164,7 @@ Ha a `usbflash0:` látszik és a `dir` üres tartalmat ad — **kész** a kötet
 
 ---
 
-## 6. Példa B — **240 GB USB 3.0 SSD (Cisco SSD-240G)** → **EXT4** (Catalyst 9300)
+## 6. Példa B — **240 GB USB 3.0 SSD (Cisco NVME SSD 240G)** → **EXT4** (Catalyst 9300)
 
 **Cél:** A Catalyst 9300 beépített USB 3.0 SSD modul (`SSD-240G`) előkészítése IOS oldali `format usbflash1: ext4` előtt — Linuxról **tiszta lap**, **GPT tábla**, **EXT4** kötet. Példa eszköznév: `/dev/sdc`, ~223,6 GiB.
 
