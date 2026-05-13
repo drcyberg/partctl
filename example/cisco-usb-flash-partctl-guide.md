@@ -186,6 +186,8 @@ Ha a `usbflash0:` látszik és a `dir` üres tartalmat ad — **kész** a kötet
 | `sdc` | `gpt` | — | — | 223,6 GiB | Cisco SSD-240G |
 | `sdc1` | — | (#1) | **`ext4`** | ~223,6 GiB | Cisco USB 3.0 SSD kötet |
 
+![](/img/cisco_ext4_1.jpg)
+
 **Switch oldal — a Catalyst 9300 saját CLI-jén** (ha a Cisco firmware újra-formázást is végez, ezt fogadd el):
 
 ```text
