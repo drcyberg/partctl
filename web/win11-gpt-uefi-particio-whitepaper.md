@@ -99,6 +99,8 @@ Tehát: **főmenü → `4` → `10` — Disk cleanup (Wipe)**.
 
 ![lemez_tisztitas_wipe_1](/partctl/img/lemez_tisztitas_wipe_1.jpg "Wipe #1")
 
+![wipe_2](//partctl/img/wipe_1.jpg "Wipe #2")
+
 A varázslóban:
 
 1. **Cél kiválasztása:** a listában válaszd a **teljes lemezt** (pl. *whole disk (/dev/sdc)* / első sor, ha így jelenik meg).  
