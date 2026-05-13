@@ -10,7 +10,6 @@
 ```bash
 bash partctl.sh
 ```
-
 ![](/img/terminal_1.jpg)
 
 A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
