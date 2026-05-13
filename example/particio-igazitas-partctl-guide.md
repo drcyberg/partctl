@@ -93,7 +93,7 @@ A Partctl a **partíció létrehozás** során:
 
 **Mit jelent a gyakorlatban?** Ha a varázsló a kezdetnél **`2048s`**-t, a végnél pl. **`488394751s`**-t kínál fel egy ~233 GiB-os szabad sávon, akkor a partíció a lemez legutolsó **~1–2 MiB-ját** szabadon hagyja, és a vég pontosan **1 MiB-os határra esik** (`(end+1) mod 2048 = 0` 512 B-nél). Ez tudatos tervezés — **ne** írd át nullára a véget abszolút `free_end`-re, hacsak nem konkrét okod van rá (pl. nem-GPT, nem-LUKS, és minden bájt számít, vállalva a `sgdisk -v` warningot).
 
-**Kiegészítő funkció:** **„Particio igazitas”** / **Partition alignment (whole disk)** — teljes lemezes **újraigazítás** (belsőleg **`sfdisk`**), **csak** akkor engedélyezett, ha **nincs** csatolt kötet, **nincs** LVM jelleg a listában, és a partíciókon **nincs** felismert fájlrendszer (tiszta, üres particiók). Ez **nem** helyettesíti az új partíció **tervezett** létrehozását — de **előkészített** lemezen segíthet.
+**Kiegészítő funkció:** **„Particio igazitas”** / **Partition alignment** — teljes lemezes **újraigazítás** (belsőleg **`sfdisk`**), **csak** akkor engedélyezett, ha **nincs** csatolt kötet, **nincs** LVM jelleg a listában, és a partíciókon **nincs** felismert fájlrendszer (tiszta, üres particiók). Ez **nem** helyettesíti az új partíció **tervezett** létrehozását — de **előkészített** lemezen segíthet.
 
 ---
 
@@ -163,7 +163,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ---
 
-## 7. **Particio igazitas** / **Partition alignment (whole disk)** (speciális eset)
+## 7. **Particio igazitas** / **Partition alignment**
 
 **Előfeltételek (a program is blokkolja, ha nem teljesülnek):**
 
@@ -174,7 +174,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | Lépés | Menüút | Megjegyzés |
 |-------|--------|------------|
 | 1 | **Főmenü → `1`** | Céllemez. |
-| 2 | **Főmenü → `3`** → **Particio igazitas** / **Partition alignment (whole disk)** | A belső cél: **4 KiB** (alapértelmezett konfiguráció) határhoz igazítás tipikus **512 B** logikai szektor mellett. |
+| 2 | **Főmenü → `3`** → **Particio igazitas** / **Partition alignment** | A belső cél: **4 KiB** (alapértelmezett konfiguráció) határhoz igazítás tipikus **512 B** logikai szektor mellett. |
 | 3 | Kövesd a **megerősítő** párbeszédeket | **Adatvesztés-mentes** újraigazítás **nem** garantálható minden geometrián — mindig olvasd el a figyelmeztetést. |
 | 4 | **Főmenü → `2`** | Eredmény ellenőrzése. |
 
