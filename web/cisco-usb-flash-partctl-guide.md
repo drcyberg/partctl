@@ -19,7 +19,9 @@
 
 **Megjegyzés:** A FAT32 partíciós tábla típusa Linux-oldalon tipikusan **MBR (msdos)** — a régi USB-pendrive-ok jellemzően ezt használják. A Cisco USB 3.0 SSD (EXT4) tipikusan **GPT** táblán él (modern lemezgeometria, **>2 TiB** ugyan nem releváns 240 GB-nál, de a GPT a Linux-világban általános választás).
 
+
 ---
+
 
 ## 1. Háttér — miért lényeges a fájlrendszer választás?
 
@@ -30,8 +32,8 @@ A Cisco IOS és IOS XE saját, **beágyazott** fájlrendszer-felismerő réteget
 1. **IOS image másolása sikertelen** — `%Error opening usbflash0:...` / `device not found` típusú üzenet.
 2. **`show file systems`** nem listázza az USB-t, vagy `unknown` típussal.
 3. **`dir usbflash0:`** üres listát ad pedig a kötet tele van — a switch nem tudja értelmezni a fájlrendszert.
-4. **Sztochasztikus „felmegy / nem megy fel”** viselkedés — gyakran **>32 GB** FAT32 pendrive-nál, vagy ha **exFAT** / **NTFS** van rajta.
-5. **Cisco USB 3.0 SSD security lock** — a hardver lezárt állapotba kerül, és csak `hw-module … unlock` után csatolódik.
+4. Bizonyos eszközök esetén a pendrive **flash drive detect** vagy **boot** folyamat véletlenszerűen sikerül vagy nem sikerül, különösen: **>32 GB** FAT32 pendrive-nál vagy ha **exFAT** / **NTFS** van rajta.
+5. **Cisco USB 3.0 SSD security lock** — a hardver lezárt állapotba kerül.
 
 A `Partctl` ezeknek a **forráshibáit** a **partíció + fájlrendszer** szinten kezeli: tiszta lemez, jó tábla, **igazított** partíció, **Cisco-kompatibilis** formázás.
 
