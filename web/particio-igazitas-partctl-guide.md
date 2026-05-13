@@ -146,7 +146,8 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 |--------|-----|
 | ![particio_letrehozasa_2](/partctl/img/particio_letrehozasa_2.jpg "Partício létrehozása #2") | ![particio_letrehozasa_3](/partctl/img/particio_letrehozasa_3.jpg "Partício létrehozása #3") |
 
-**Tanulság:** Ha a **4.** lépésben **módosítod** a kezdő szektort **szándékosan** (pl. kihagysz **2048** helyett csak **32** szektort), a Parted **`optimal`** módja megpróbálja a **biztonságos** tartományba terelni — de a **végső** geometria mindig a **megadott** és a **lemez** korlátok együttes eredménye. **Jó gyakorlat:** bízd a **javasolt kezdő** értéket a programra.
+**Tanulság:** Ha a **4.** lépésben **módosítod** a kezdő szektort **szándékosan** (pl. kihagysz **2048** helyett csak **32** szektort), a Parted **`optimal`** módja megpróbálja a **biztonságos** tartományba terelni — de a **végső** geometria mindig a **megadott** és a **lemez** korlátok együttes eredménye.
+**Jó gyakorlat:** bízd a **javasolt kezdő és vég** értéket a programra.
 
 ---
 
