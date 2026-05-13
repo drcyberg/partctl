@@ -30,7 +30,7 @@ A Cisco IOS és IOS XE saját, **beágyazott** fájlrendszer-felismerő réteget
 1. **IOS image másolása sikertelen** — `%Error opening usbflash0:...` / `device not found` típusú üzenet.
 2. **`show file systems`** nem listázza az USB-t, vagy `unknown` típussal.
 3. **`dir usbflash0:`** üres listát ad pedig a kötet tele van — a switch nem tudja értelmezni a fájlrendszert.
-4. **Sztochasztikus „felmegy / nem megy fel”** viselkedés — gyakran **>32 GB** FAT32 pendrive-nál, vagy ha **exFAT** / **NTFS** van rajta.
+4. Bizonyos eszközök esetén a pendrive **detect** vagy **boot** folyamat véletlenszerűen sikerül vagy nem sikerül, különösen: gyakran **>32 GB** FAT32 pendrive-nál vagy ha **exFAT** / **NTFS** van rajta.
 5. **Cisco USB 3.0 SSD security lock** — a hardver lezárt állapotba kerül, és csak `hw-module … unlock` után csatolódik.
 
 A `Partctl` ezeknek a **forráshibáit** a **partíció + fájlrendszer** szinten kezeli: tiszta lemez, jó tábla, **igazított** partíció, **Cisco-kompatibilis** formázás.
