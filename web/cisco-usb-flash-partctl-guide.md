@@ -78,7 +78,7 @@ A `Partctl` ezeknek a **forráshibáit** a **partíció + fájlrendszer** szinte
 
 | Tünet (Cisco CLI) | Lehetséges ok | Javítás Partctl-lel |
 |--------------------|----------------|----------------------|
-| `Error opening usbflash0:` | Rossz fájlrendszer (exFAT / NTFS / üres) | **`3` Particio kezeles → Particio formazas → vfat`** (FAT32) — pendrive-ra |
+| `Error opening usbflash0:` | Rossz fájlrendszer (exFAT / NTFS / üres) | **`3` Particio kezeles → Particio formazas → `vfat`** (FAT32) — pendrive-ra |
 | `show file systems` nem mutatja az USB-t | Hibás MBR/GPT, fájlrendszer-aláírás roncsolt | **`4 → 10` Disk cleanup (Wipe)** + új **`Particios tabla letrehozasa`** (MBR) + új `vfat` |
 | `dir usbflash0:` üres lista | Particio jó, de FAT verzió nem stimmel (FAT16 ↔ FAT32 a `mkfs` hívásnál) | Újra-formázás `vfat`-ra (`mkfs.vfat -F 32`-vel, ezt a Partctl gondozza) |
 | `unknown filesystem` IOS-ben | Jó tábla, de NTFS / exFAT van rajta | **`Particio formazas → vfat`** vagy **`ext4`** (SSD-nél) |
