@@ -5,7 +5,7 @@
 > **Cél:** Áttekinteni, **milyen fájlrendszert** és **milyen méretű** adathordozót **vár** a **Cisco** (Catalyst 9300 / 9200 / 3850 / 3650 IOS és IOS XE) az **IOS image** másolásához, **konfiguráció** mentéséhez vagy a beépített **USB 3.0 SSD** (pl. **SSD-240G**) használatához. Utána két **gyakorlati példa** a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül.
 >
 
-**Figyelem:** particiós tábla, partíciók, **wipe** és **formázás** **adatvesztést** okoz a kiválasztott adathordozón. Mindig **mentett**, **leválasztott** (unmount) USB-vel dolgozz, **ne** a futó rendszerlemezen kísérletezz, és a **céllemezt** (pl. `/dev/sdb`) a Partctl **Lemez attekintes** képernyőjén ellenőrizd a művelet előtt.
+**Figyelem:** particiós tábla, partíciók, **wipe** és **formázás** **adatvesztést** okoz a kiválasztott adathordozón. Mindig **mentett**, **leválasztott** (unmount) USB-vel dolgozz, **ne** a futó rendszerlemezen kísérletezz, és a **céllemezt** (pl. `/dev/sda`) a Partctl **Lemez attekintes** képernyőjén ellenőrizd a művelet előtt.
 
 ---
 
@@ -124,30 +124,32 @@ A **Lemez kezeles** almenü **rögzített** sorrendben:
 | **10** | **Disk cleanup (Wipe)** |
 | 11 | Back |
 
+![](/img/wipe_1.jpg)
+
 A **Particio kezeles** lista **ábécérendben** van — a konkrét sorszámot mindig a futó programban ellenőrizd, az alábbi útmutató a **menüpont címkéjét** használja.
 
 ---
 
 ## 5. Példa A — **16 GB USB flash drive** → **FAT32** (Catalyst 9200 / 9300 / 3850 / 3650)
 
-**Cél:** Cisco IOS image (pl. `cat9k_iosxe.17.09.04.SPA.bin`) másolásához és konfiguráció backuphoz használható USB flash drive (`/dev/sdb`, ~14,5 GiB szabad sáv).
+**Cél:** Cisco IOS image (pl. `cat9k_iosxe.17.09.04.SPA.bin`) másolásához és konfiguráció backuphoz használható USB flash drive (`/dev/sda`, ~14,5 GiB szabad sáv).
 
 | Lépés | Menüút (rövid) | Mit csinálsz |
 |-------|----------------|--------------|
-| 1 | **Főmenü → `1`** Select Disk / Lemez kivalasztasa | Kiválasztod a **`sdb`** USB pendrive-ot (a `Lemez attekintes`-ben ellenőrizd, hogy valóban a céllemez — **ne** a rendszerlemez!). |
-| 2 | **Főmenü → `4` → `10`** Disk cleanup (Wipe) | Cél: **whole disk (`/dev/sdb`)**; jelöld be a **partíciós tábla törlés** opciót (Space) is — „tiszta lap”. Megerősítés. |
+| 1 | **Főmenü → `1`** Select Disk / Lemez kivalasztasa | Kiválasztod a **`sda`** USB pendrive-ot (a `Lemez attekintes`-ben ellenőrizd, hogy valóban a céllemez — **ne** a rendszerlemez!). |
+| 2 | **Főmenü → `4` → `10`** Disk cleanup (Wipe) | Cél: **whole disk (`/dev/sda`)**; jelöld be a **partíciós tábla törlés** opciót (Space) is — „tiszta lap”. Megerősítés. |
 | 3 | **Főmenü → `3`** → **Create partition table** / **Particios tabla letrehozasa** | Tábla típus: **`2` — MBR (msdos)** (a klasszikus pendrive séma, Cisco IOS-barát). Megerősítés. |
 | 4 | **Főmenü → `3`** → **Create partition** / **Particio letrehozasa** | A **„Kezdet”** mezőnél **Enter** az alapértelmezett **`2048s`** értékre (1 MiB-igazítás). A **„Vég”** mezőnél: **`100%`** a teljes pendrive-ra (≤ 32 GB), vagy pl. **`+30GiB`** ha nagyobb a pendrive és csak 30 GB-ot szeretnél hagyni Cisco számára (a maradékot allokálatlanul). |
-| 5 | **Főmenü → `3`** → **Partition format** / **Particio formazas** | Cél: `sdb1`; típus: **`vfat`** a listából. A Partctl a `mkfs.vfat -F 32 /dev/sdb1` típusú parancsot futtatja (FAT32). |
-| 6 | **Főmenü → `2`** Disk Overview / Lemez attekintes | Ellenőrzés: tábla **`dos` / `msdos`**, `sdb1` méret, `FSTYPE` oszlop **`vfat`**. |
+| 5 | **Főmenü → `3`** → **Partition format** / **Particio formazas** | Cél: `sda1`; típus: **`vfat`** a listából. A Partctl a `mkfs.vfat -F 32 /dev/sda1` típusú parancsot futtatja (FAT32). |
+| 6 | **Főmenü → `2`** Disk Overview / Lemez attekintes | Ellenőrzés: tábla **`dos` / `msdos`**, `sda1` méret, `FSTYPE` oszlop **`vfat`**. |
 | 7 | *(Opcionális)* **Főmenü → `4`** Lemez kezeles → **Filesystem label** / **Fajlrendszer cimke** | Adj a kötetnek a Cisco-számára beszédes nevet, pl. **`CISCO_USB`**. |
 
-**Eredmény (`/dev/sdb` szempontból):**
+**Eredmény (`/dev/sda` szempontból):**
 
 | Eszköz | Tábla | Partíció | FS | Méret (példa) | Megjegyzés |
 |--------|-------|----------|----|---------------|-------------|
-| `sdb` | `msdos` | — | — | 14,5 GiB | Pendrive |
-| `sdb1` | — | primary | **`vfat`** | ~14,5 GiB | Cisco IOS / konfiguráció kötet |
+| `sda` | `msdos` | — | — | 14,5 GiB | Pendrive |
+| `sda1` | — | primary | **`vfat`** | ~14,5 GiB | Cisco IOS / konfiguráció kötet |
 
 ![](/img/cisco_fat32_1.jpg)
 
