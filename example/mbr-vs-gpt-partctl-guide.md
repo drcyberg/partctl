@@ -40,6 +40,8 @@ A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` +
 | **10** | **Disk cleanup (Wipe)** |
 | 11 | Back |
 
+![](/img/wipe_1.jpg)
+
 Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sdc`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
 
 ---
