@@ -99,6 +99,8 @@ Tehát: **főmenü → `4` → `10` — Disk cleanup (Wipe)**.
 
 ![](/img/lemez_tisztitas_wipe_1.jpg)
 
+![](/img/wipe_1.jpg)
+
 A varázslóban:
 
 1. **Cél kiválasztása:** a listában válaszd a **teljes lemezt** (pl. *whole disk (/dev/sdc)* / első sor, ha így jelenik meg).  
