@@ -1,8 +1,9 @@
 # Cisco kompatibilis USB flash és USB 3.0 SSD előkészítése — `partctl.sh` menüútmutató
 
-> **Cél:** Áttekinteni, **milyen fájlrendszert** és **milyen méretű** adathordozót **vár** a **Cisco** (Catalyst 9300 / 9200 / 3850 / 3650 IOS és IOS XE) az **IOS image** másolásához, **konfiguráció** mentéséhez vagy a beépített **USB 3.0 SSD** (pl. **SSD-240G**) használatához. Utána két **gyakorlati példa** a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül — ugyanabban a stílusban, mint a [`mbr-vs-gpt-partctl-guide.md`](mbr-vs-gpt-partctl-guide.md), a [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) és a [`particio-igazitas-partctl-guide.md`](particio-igazitas-partctl-guide.md).
+![](/img/Cisco_logo_blue_2016.svg.png)
+
+> **Cél:** Áttekinteni, **milyen fájlrendszert** és **milyen méretű** adathordozót **vár** a **Cisco** (Catalyst 9300 / 9200 / 3850 / 3650 IOS és IOS XE) az **IOS image** másolásához, **konfiguráció** mentéséhez vagy a beépített **USB 3.0 SSD** (pl. **SSD-240G**) használatához. Utána két **gyakorlati példa** a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül.
 >
-> **Forrás (külső):** [Network-Switch.com — How to Format USB Flash Drive for Cisco C9300 and Other Cisco Switches](https://network-switch.com/blogs/switches/how-to-format-usb-flash-drive-for-cisco)
 
 **Figyelem:** particiós tábla, partíciók, **wipe** és **formázás** **adatvesztést** okoz a kiválasztott adathordozón. Mindig **mentett**, **leválasztott** (unmount) USB-vel dolgozz, **ne** a futó rendszerlemezen kísérletezz, és a **céllemezt** (pl. `/dev/sdb`) a Partctl **Lemez attekintes** képernyőjén ellenőrizd a művelet előtt.
 
@@ -95,6 +96,8 @@ A `Partctl` ezeknek a **forráshibáit** a **partíció + fájlrendszer** szinte
 bash partctl.sh
 ```
 
+![](/img/terminal_1.jpg)
+
 A launcher a `python3 -m partctl_ncurses_app` modult indítja (`PYTHONPATH` + `--lang-dir`).
 
 ### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
@@ -108,6 +111,8 @@ A launcher a `python3 -m partctl_ncurses_app` modult indítja (`PYTHONPATH` + `-
 | **5** | Setup | Beallitasok |
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
+
+![](/img/lemez_kivalasztasa_2.jpg)
 
 **Navigáció:** `Fel` / `Le` (vagy `k` / `j`), **Enter**; vagy a sor elején látható **`N.`** szám begépelése, majd **Enter**. **Vissza:** **Backspace** / **`q`**.
 
@@ -125,7 +130,7 @@ A **Particio kezeles** lista **ábécérendben** van — a konkrét sorszámot m
 
 ## 5. Példa A — **16 GB USB flash drive** → **FAT32** (Catalyst 9200 / 9300 / 3850 / 3650)
 
-**Cél:** Cisco IOS image (pl. `cat9k_iosxe.17.09.04.SPA.bin`) másolásához és konfiguráció backuphoz használható USB flash drive (`/dev/sdb`, ~14,7 GiB szabad sáv).
+**Cél:** Cisco IOS image (pl. `cat9k_iosxe.17.09.04.SPA.bin`) másolásához és konfiguráció backuphoz használható USB flash drive (`/dev/sdb`, ~14,5 GiB szabad sáv).
 
 | Lépés | Menüút (rövid) | Mit csinálsz |
 |-------|----------------|--------------|
@@ -141,8 +146,10 @@ A **Particio kezeles** lista **ábécérendben** van — a konkrét sorszámot m
 
 | Eszköz | Tábla | Partíció | FS | Méret (példa) | Megjegyzés |
 |--------|-------|----------|----|---------------|-------------|
-| `sdb` | `msdos` | — | — | 14,7 GiB | Pendrive |
-| `sdb1` | — | primary | **`vfat`** | ~14,7 GiB | Cisco IOS / konfiguráció kötet |
+| `sdb` | `msdos` | — | — | 14,5 GiB | Pendrive |
+| `sdb1` | — | primary | **`vfat`** | ~14,5 GiB | Cisco IOS / konfiguráció kötet |
+
+![](/img/cisco_fat32_1.jpg)
 
 **Csatlakoztatás után a switch oldali ellenőrzés** (lásd §7):
 
@@ -231,19 +238,7 @@ Ha a `show file systems` **nem** mutatja az USB-t, a leggyakoribb okok és lép�
 
 ---
 
-## 9. Kapcsolódó dokumentumok és külső hivatkozások
-
-- [`particio-igazitas-partctl-guide.md`](particio-igazitas-partctl-guide.md) — Partíció igazítás, 1 MiB szabály, vég-oldali 1 MiB védőkeret (Partctl V1.0.0).
-- [`mbr-vs-gpt-partctl-guide.md`](mbr-vs-gpt-partctl-guide.md) — MBR (`msdos`) és GPT választás, Partctl menüpontok.
-- [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) — Mintapélda GPT + UEFI gyakorlati lépésekre.
-- [`README.md`](README.md) — Partctl áttekintés.
-
-**Külső forrás (Cisco fájlrendszer-választás háttér):**  
-[network-switch.com — How to Format USB Flash Drive for Cisco C9300 and Other Cisco Switches](https://network-switch.com/blogs/switches/how-to-format-usb-flash-drive-for-cisco)
-
----
-
-## 10. Verzió
+## 9. Verzió
 
 | Mező | Érték |
 |------|--------|
