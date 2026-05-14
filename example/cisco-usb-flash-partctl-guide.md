@@ -85,7 +85,7 @@ A `Partctl` ezeknek a **forráshibáit** a **partíció + fájlrendszer** szinte
 | `format usbflash1: ext4` IOS-ben sikertelen | A partícióban LVM, RAID superblock, GPT maradvány zavarja | **`4 → 10` Disk cleanup (Wipe)** **„signatures + partition table”** opcióval, majd újrahúzás Partctl-ből |
 | Random felismerési hibák, nagy pendrive | **>32 GB** méret | Tegyél rá **egy partíciót csak 32 GB méretben** (a maradék hagyd allokálatlanul); `vfat` formázás |
 
-**Tipp:** a hibákat **vasrablósan** a Cisco CLI-n is mindig duplán nézd át: `show file systems`, `show media`, és csak utána a `format … :`.
+**Tipp:** a hibákat **mindig** a Cisco CLI felületén nézd át: `show file systems`, `show media`, és csak utána a `format … :`.
 
 ---
 
