@@ -1,6 +1,6 @@
 # Windows 11 rendszer partíciók beállítása — útmutató kizárólag a Partctl (`partctl.sh`) menüin keresztül
 
-![win11_logo_1](/partctl/img/win11_logo.png "Windows 11 #1")
+![](/partctl/img/win11_logo.png)
 
 > **Cél:** Egy **UEFI + GPT** felépítéshez hasonló, Microsoftos sorrendű partíciók létrehozása **csak** a Partctl ncurses felületén, a **`bash partctl.sh`** indítással — **menüpont → menüpont** útvonallal.  
 > A példa a korábban ismertetett **`/dev/sdc`** elrendezésre támaszkodik (Partíciók: ESP + MSR + Windows + WinRE).
@@ -45,9 +45,7 @@ A lemez többi része lehet allokálatlan; ez nem akadály a Windows telepítőn
 bash partctl.sh
 ```
 
-![terminal_1](/partctl/img/terminal_1.jpg "Terminál #1")
-
-A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
+![](/partctl/img/terminal_1.jpg)
 
 - **Menü:** kurzor (`Fel` / `Le`, vagy `k` / `j`), **Enter** a kiválasztott sorra.  
 - **Gyors választás:** a sor elején látható **`N.`** sorszám begépelése, majd **Enter**.  
@@ -55,7 +53,7 @@ A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` 
 
 **Rögzített főmenü-sorszámok** (minden nyelven ugyanaz a sorrend):
 
-| # | Angol | Magyar (`hu.json`) |
+| # | Angol | Magyar felületen |
 |---|--------|---------------------|
 | **1** | Select Disk | Lemez kivalasztasa |
 | **2** | Disk Overview | Lemez attekintes |
@@ -65,13 +63,13 @@ A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` 
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
-![lemez_kivalasztasa_2](/partctl/img/lemez_kivalasztasa_2.jpg "Lemez kiválasztása #2")
+![](/partctl/img/lemez_kivalasztasa_2.jpg)
 
 Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sdc`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
 
 **Példa (`/dev/sdc`):** a lemezlista után a kiválasztott lemez **≈ 223,6 GiB**; a későbbi **Lemez attekintes** ezt a lemezt mutatja **GPT** táblával (ha már felépült a példa-elrendezés).
 
-![lemez_kivalasztasa_1](/partctl/img/lemez_kivalasztasa_1.jpg "Lemez kiválasztása #1")
+![](/partctl/img/lemez_kivalasztasa_1.jpg)
 
 ---
 
@@ -79,7 +77,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 **Útvonal:** **főmenü → `4` Lemez kezeles** → a **Lemez kezeles** almenüben a következő sorrend **rögzített** (angol feliratokkal):
 
-| # | Menüpont (angol, `en.json`) |
+| # | Menüpont (angol felületen) |
 |---|------------------------------|
 | 1 | EXT4 FS check |
 | 2 | EXT4 FS size increase |
@@ -93,13 +91,13 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | **10** | **Disk cleanup (Wipe)** |
 | 11 | Back |
 
-![menu_1](/partctl/img/partctl_menu_1.jpg "Menü #1")
+![](/partctl/img/partctl_menu_1.jpg)
 
 Tehát: **főmenü → `4` → `10` — Disk cleanup (Wipe)**.
 
-![lemez_tisztitas_wipe_1](/partctl/img/lemez_tisztitas_wipe_1.jpg "Wipe #1")
+![](/partctl/img/lemez_tisztitas_wipe_1.jpg)
 
-![wipe_2](/partctl/img/wipe_1.jpg "Wipe #2")
+![](/partctl/img/wipe_1.jpg)
 
 A varázslóban:
 
@@ -124,7 +122,7 @@ A varázslóban:
 
 **Példa eredmény (`/dev/sdc`):** sikeres **`mklabel gpt`** után az áttekintőben **Partíciós tábla: GPT**, **0** partíció (vagy üres lemez-sor), majd jöhet a §5 négy **Create partition** lépése.
 
-![particio_tabla_letrehozasa_1](/partctl/img/particio_tabla_letrehozasa_1.jpg "Partíció tábla létrehozása #1")
+![](/partctl/img/particio_tabla_letrehozasa_1.jpg)
 
 ---
 
@@ -132,7 +130,7 @@ A varázslóban:
 
 **Útvonal (mind a négy lépésnél):** **főmenü → `3`** → **Create partition** / **Particio letrehozasa**.
 
-![particio_letrehozasa_1](/partctl/img/particio_letrehozasa_1.jpg "Partíció létrehozása #1")
+![](/partctl/img/particio_letrehozasa_1.jpg)
 
 A **Particio parameterek** panel a **Start** és **End** mezőket kéri (`parted` szintaxis: pl. `2048s`, relatív méret **`+512MiB`**, vagy a szabad tartomány **vége** `100%`). A program kiírja a szabad **szektortartományt** és a javasolt kezdőértéket — **követd a képernyőn látható** szabad sávot minden új partíció után.
 
@@ -149,7 +147,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 **Példa (`/dev/sdc`):** a négy lépés után az áttekintőben **négy sor** (`sdc1`…`sdc4`), a lemez végén **allokálatlan** terület is maradhat (a példa-lemezen a partíciók összmérete kisebb, mint a teljes kapacitás).
 
-![particio_parameterek_1](/partctl/img/particio_parameterek_1.jpg "Partício_paraméterek #1")
+![](/partctl/img/particio_parameterek_1.jpg)
 
 ---
 
@@ -166,7 +164,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 *(A lista a `GPT_GUID_TYPE_CHOICES` bejegyzéseit mutatja.)*
 
-![gpt_particio_tipuskod](/partctl/img/gpt_particio_tipuskod_1.jpg "GPT_partício_tipuskód #1")
+![](/partctl/img/gpt_particio_tipuskod_1.jpg)
 
 ---
 
@@ -183,7 +181,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a varázsló **leválasztást** is kérhet.
 
-![formazas_1](/partctl/img/formazas_1.jpg "Formázás #1")
+![](/partctl/img/formazas_1.jpg)
 
 ---
 
@@ -193,7 +191,7 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 **Példa (`sdc4`):** a háttér `sgdisk` kimenetéhez hasonlóan gyakori érték: **`Attribute flags: 8000000000000001`**; a **Particio reszletek** nézetben összefoglaló hex + bit-címkék jelenhetnek meg.
 
-![gpt_attributumok](/partctl/img/gpt_attributumok.jpg "GPT attribútumok #1")
+![](/partctl/img/gpt_attributumok.jpg)
 
 ---
 
@@ -215,11 +213,12 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 ISO: `Win11_25H2_Hungarian_x64_v2`
 
 ### Helykiválasztás
-![win11_1](/partctl/img/win11_1.png "Windows 11 #1")
+![](/partctl/img/win11_1.png)
 
 ### Lemezkezelés
-![lemez_kezeles_1](/partctl/img/lemez_kezeles_1.png "Lemez kezelés #1")
-![lemez_kezeles_2](/partctl/img/lemez_kezeles_2.png "Lemez kezelés #2")
+![](/partctl/img/lemez_kezeles_1.png)
+
+![](/partctl/img/lemez_kezeles_2.png)
 
 ---
 
