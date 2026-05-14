@@ -153,7 +153,9 @@ A **Particio kezeles** lista **ábécérendben** van — a konkrét sorszámot m
 | `sda` | `msdos` | — | — | 14,5 GiB | Pendrive |
 | `sda1` | — | primary | **`vfat`** | ~14,5 GiB | Cisco IOS / konfiguráció kötet |
 
-![](/partctl/img/cisco_fat32_1.jpg)
+| Lemez áttekintés | Particio reszletei |
+| --- | --- |
+| ![cisco_fat32_1](/partctl/img/cisco_fat32_1.jpg "Cisco FAT32 #1") | ![cisco_fat32_2](/partctl/img/cisco_fat32_2.jpg "Cisco FAT32 #2") |
 
 **Csatlakoztatás után a switch oldali ellenőrzés** (lásd §7):
 
@@ -188,7 +190,9 @@ Ha a `usbflash0:` látszik és a `dir` üres tartalmat ad — **kész** a kötet
 | `sdc` | `gpt` | — | — | 223,6 GiB | Cisco SSD-240G |
 | `sdc1` | — | (#1) | **`ext4`** | ~223,6 GiB | Cisco USB 3.0 SSD kötet |
 
-![](/partctl/img/cisco_ext4_1.jpg)
+| Lemez áttekintés | Particio reszletei |
+| --- | --- |
+| ![cisco_ext4_1](/partctl/img/cisco_ext4_1.jpg "Cisco EXT4 #1") | ![cisco_ext4_2](/partctl/img/cisco_ext4_2.jpg "Cisco EXT4 #2") |
 
 **Switch oldal — a Catalyst 9300 saját CLI-jén** (ha a Cisco firmware újra-formázást is végez, ezt fogadd el):
 
