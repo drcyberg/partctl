@@ -1,5 +1,7 @@
 # Partíció-igazítás, fájlrendszer és teljesítmény — összefoglaló és `partctl.sh` menüútmutató
 
+**Kinek szól:** Linuxon **lemezt és partíciót kezelő** rendszergazdáknak, üzemeltetőknek és **haladó felhasználóknak**, akik már ismerik legalább alapszinten a partíció, a fájlrendszer és az eszköz (`/dev/…`) fogalmát, és szeretnék **egy helyen** látni: mi az a **1 MiB / 4 KiB** vonalú igazítás, **milyen teljesítmény- és megbízhatósági** következménye lehet (SSD, HDD, RAID), illetve **hogyan** érhető el mindez a **Partctl** menüiből. A szöveg helyenként **műszakilag sűrűbb** (LBA, IOPS, példa‑nagyságrendek), mint egy bevezető lemezkezelési útmutató; ha a partíciós tábla vagy a wipe még ismeretlen, érdemes előbb a projekt **MBR/GPT** vagy **általános Partctl** anyagait elolvasni.
+
 > **Cél:** Összefoglalni, **mit jelent** a partíció **optimális / nem optimális** létrehozása (pl. **1 MiB** határok, **2048s** / **4096s** kezdő LBA-k, lemez eleje–vége szabad sáv), és **milyen hatása** lehet eznek a **fájlrendszerre** és a **gyakorlati teljesítményre** — **szekvenciális MB/s**, **IOPS** és **késleltetés** szempontjából, **hozzávetőleges előtte/utána** nagyságrendekkel (lásd **§0** és a **§2.3** táblázatok). **HDD**, **SSD**, **RAID** környezetben, **ext4**, **NTFS** és hasonló rendszerek mellett.  
 > **Eszköz:** minden lépés a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül.
 
