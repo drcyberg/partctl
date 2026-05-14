@@ -16,7 +16,7 @@ Az alábbi táblázat **ugyanazt a menetet** követi, mint a fejezetek **3–9**
 | Fázis | Partctl útvonal (rövid) | Példa: mit csinálsz `/dev/sdc`-n | Eredmény (áttekintés / részletek) |
 |-------|-------------------------|-----------------------------------|-----------------------------------|
 | 1.) Lemez kiválasztás | Főmenü **`1`** → listában **`sdc`** | Kiválasztod a **`sdc`** sort | A további varázslók a **`/dev/sdc`** céllemezt használják. |
-| 2.) Wipe (opcionális nulláról) | Főmenü **`4`** → **`10`** Disk cleanup (Wipe) → **whole disk** | Teljes lemez cél, szükség szerint **partíciós tábla törlés** bejelölve | Aláírások / (opcionálisan) tábla eltűnik; **üres lemez** felé haladsz. |
+| 2.) Wipe (opcionális nulláról) | Főmenü **`4`** → **`10`** Disk cleanup (Wipe) | Teljes lemez cél, szükség szerint **partíciós tábla törlés** bejelölve | Aláírás tábla eltűnik = **üres lemez** kialakítása ezzel megtörtént. |
 | 3.) GPT tábla | Főmenü **`3`** → *Create partition table* → **`1` GPT** | Megerősíted a figyelmeztetést | **`gpt`** tábla; még nincs partíció (vagy csak a tábla új). |
 | 4.) 4× partíció | Főmenü **`3`** → *Create partition* (négy alkalommal) | Lásd §5: pl. **`+512MiB`**, **`+16MiB`**, **`+120GiB`**, **`+1024MiB`** | **`sdc1`…`sdc4`** létrejön a választott méretekkel. |
 | 5.) 4× típus-GUID | Főmenü **`3`** → *Partition type code (GUID, GPT)* | Mind a négy partícióra a §6 szerinti listaelem | **`PARTTYPE`** mezők: EFI / MSR / basic data / WinRE GUID (§1 táblázat). |
@@ -75,7 +75,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ---
 
-## 3. Kiindulás: teljes lemez „wipe” (aláírások + opcionálisan tábla)
+## 3. Kiindulás: teljes lemez „wipe”
 
 **Útvonal:** **főmenü → `4` Lemez kezeles** → a **Lemez kezeles** almenüben a következő sorrend **rögzített** (angol feliratokkal):
 
@@ -187,7 +187,7 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 ---
 
-## 8. (Opcionális) WinRE GPT attribútum bitek
+## 8. WinRE GPT attribútum bitek
 
 **Útvonal:** **főmenü → `3`** → **GPT attributes** / **GPT attributumok** → válaszd a WinRE partíciót → a bitek közül a szükségesek (pl. *Required*, *No automount* — a pontos bitneveket a felület mutatja). **Íráshoz** tipikusan **root** kell.
 
