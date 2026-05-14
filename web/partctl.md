@@ -132,7 +132,8 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 
 ## Licenc / Projekt
 
-A projekt információi a program **About / Rólunk** menüpontjában találhatók.
+- [GNU General Public License v3.0](https://github.com/drcyberg/partctl/blob/main/LICENSE)
+- A projekt információi a program **About / Rólunk** menüpontjában találhatók.
 
 ## További fejlesztési pontok
 
