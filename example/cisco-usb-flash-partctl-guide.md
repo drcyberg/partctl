@@ -3,7 +3,6 @@
 ![](/img/Cisco_logo_blue_2016.svg.png)
 
 > **Cél:** Áttekinteni, **milyen fájlrendszert** és **milyen méretű** adathordozót **vár** a **Cisco** (Catalyst 9300 / 9200 / 3850 / 3650 IOS és IOS XE) az **IOS image** másolásához, **konfiguráció** mentéséhez vagy a beépített **USB 3.0 SSD** (pl. **SSD-240G**) használatához. Utána két **gyakorlati példa** a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül.
->
 
 **Figyelem:** particiós tábla, partíciók, **wipe** és **formázás** **adatvesztést** okoz a kiválasztott adathordozón. Mindig **mentett**, **leválasztott** (unmount) USB-vel dolgozz, **ne** a futó rendszerlemezen kísérletezz, és a **céllemezt** (pl. `/dev/sda`) a Partctl **Lemez attekintes** képernyőjén ellenőrizd a művelet előtt.
 
