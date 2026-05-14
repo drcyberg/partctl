@@ -138,13 +138,13 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 ## További fejlesztési pontok
 
 - [ ] További támogatott OS: Windows (WSL), Fedora, Arch
-- [ ] S.M.A.R.T. támogatás (smartmontools)
-- [ ] UEFI boot menedzsment kiépítése (efibootmgr)
-- [ ] Tartós kötet felcsatolása és menedzselése (fstab)
-- [ ] SWAP beállítás menedzselése (swapon, swapoff)
+- [ ] S.M.A.R.T. támogatás
+- [ ] UEFI boot menedzsment kiépítése
+- [ ] Tartós kötet felcsatolása és menedzselése
+- [ ] SWAP beállítás menedzselése
 - [ ] Lemeztitkosítási módszer menedzselése (LUKS)
-- [ ] További fájlrendszer támogatás bevezetése: btrfs, xfs, zfs, jfs
-- [ ] Lemez monitorozása grafikon ábrával (iostat, ttyplot, iotop)
+- [ ] További fájlrendszer támogatás bevezetése: btrfs, xfs, zfs, jf
+- [ ] Lemez monitorozása grafikon ábrával
 - [ ] MBR partíció tábla biztonsági mentés készítés
 - [ ] Lemez-, és fájlrendszer klónozás és biztonsági mentés készítés
 - [ ] Telepítőkészlet elkészítése (.deb, .dnf, .pkg)
