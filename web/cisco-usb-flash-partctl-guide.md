@@ -69,7 +69,7 @@ A `Partctl` ezeknek a **forráshibáit** a **partíció + fájlrendszer** szinte
 | **exFAT pendrive** Cisco IOS image-hez | IOS upgrade során **nem megbízható**, gyakran „unrecognized media”. |
 | **NTFS pendrive** Cisco IOS image-hez | Hasonló helyzet — nem cél fájlrendszer az IOS-nek. |
 | **NTFS / VFAT** a beépített **Cisco USB 3.0 SSD-n** | Cisco firmware **nem** kezeli; csak EXT-családból válassz. |
-| **GPT táblás pendrive** Catalyst 9300 IOS upgrade-hez | Sok IOS verzió MBR-pendrive-ra van „belakatolva” — ha furcsa eredmény, váltsd `msdos`-ra. |
+| **GPT táblás pendrive** Catalyst 9300 IOS upgrade-hez | Sok IOS verzió MBR típusú pendrive-ra van felkészítve — ha furcsa eredmény, váltsd `msdos`-ra. |
 
 ---
 
