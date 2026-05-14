@@ -1,4 +1,4 @@
-# Partctl V1.0.0 — Felhasználói kézikönyv
+# Partctl V1 — Felhasználói kézikönyv
 
 <p align="center">
   <img src="img/partctl_logo_banner_optimized.png" alt="Partctl — Partition & disk control for Linux" width="100%" />
@@ -132,7 +132,8 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 
 ## Licenc / Projekt
 
-A projekt információi a program **About / Rólunk** menüpontjában találhatók.
+- [GNU General Public License v3.0](https://github.com/drcyberg/partctl/blob/main/LICENSE)
+- A projekt információi a program **About / Rólunk** menüpontjában találhatók.
 
 ## További fejlesztési pontok
 
