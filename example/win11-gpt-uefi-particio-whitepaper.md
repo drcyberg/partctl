@@ -205,14 +205,9 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 | 2 | **főmenü → `2` Lemez attekintes** | **GPT** tábla; sorok: **`sdc1`** 512 MiB, **`sdc2`** 16 MiB, **`sdc3`** 120 GiB, **`sdc4`** 1 GiB; típus/GUID oszlopok az §1 szerint. |
 | 3 | Áttekintőben egy partíción **Enter** — részletek | Pl. **`sdc4`**: WinRE GUID; **GPT attributum** sor (ha `sgdisk` elérhető) — lásd §8. |
 
-### Lemez áttekintés
-![](/img/lemez_attekintes_1.jpg)
-
-### Partíció részletei
-![](/img/particio_reszletei_1.jpg)
-
-### GPT tábla ellenőrzése
-![](/img/gpt_tabla_ellenorzese.jpg)
+| Lemez áttekintés | Partíció részletei | GPT tábla ellenőrzése |
+| --- | --- | --- |
+| ![lemez_attekintes_1](/img/lemez_attekintes_1.jpg "Lemez áttekintés #1") | ![particio_reszletei_1](/img/particio_reszletei_1.jpg "Partíció részletei #1") | ![gpt_tabla_ellenorzese](/img/gpt_tabla_ellenorzese.jpg "GPT tábla ellenőrzés #1") |
 
 ---
 
