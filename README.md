@@ -4,7 +4,7 @@
   <img src="img/partctl_logo_banner_optimized.png" alt="Partctl — Partition & disk control for Linux" width="100%" />
 </p>
 
-A `Partctl` program egy ncurses (pythone) alapú terminal (CLI) lemez-, és partíció kezelő eszköz Linuxra OS rendszerekhez tervezve. Az ötletet a GParted program adta. A projekt két fő belépési pontra bontható:
+A `Partctl` program egy ncurses (Python) alapú terminálos (CLI) lemez- és partíciókezelő eszköz Linux OS-ekhez. Az ötletet a GParted program adta. A projekt két fő belépési pontra bontható:
 
 - **`partctl.sh`**: A Partctl ncurses alkalmazás indítója.
 - **`setup.sh`**: Telepítő és egyben ellenőrző ncurses alkalmazás (függőségek ellenőrzése, telepítés Internet/Lokális módban)
@@ -16,6 +16,15 @@ A `Partctl` program egy ncurses (pythone) alapú terminal (CLI) lemez-, és part
 ## Fontos biztonsági megjegyzés
 
 Ez az eszköz **adatvesztést okozó** műveletekre képes (tábla törlés/újralétrehozás, formázás, wipe, partíció törlés, méretezés). Mindig legyen mentésed, és csak akkor folytasd, ha pontosan érted a kiválasztott művelet hatását.
+
+## Működési elv (nagyvonalúan)
+
+A Partctl **nem** helyettesíti a Linux lemezkezelő rétegét. Egy **menüs felület**, amely a gépen telepített, megszokott **rendszereszközöket** (partíciók, táblák, formázás, ellenőrzések stb.) indít el **lépésenként** a választásaid alapján — ezért kell jellemzően **rendszergazdai** jog: ugyanaz a felelősség, mintha ezeket a parancsokat te írnád be a terminálba.
+
+- **Amit te látsz:** menük, rövid magyarázatok, megerősítések és **napló** — követhető marad, mi történt.
+- **Amit a program a háttérben összekapcsol:** a megfelelő parancsok futtatása, figyelmeztetések és olyan ellenőrzések, amelyek csökkentik a véletlen hibák esélyét.
+
+A **`setup.sh`** ehhez illeszkedik: megnézi, megvannak-e a szükséges eszközök, és szükség esetén **telepíti** őket, hogy a Partctl valóban végre tudja hajtani a kiválasztott műveletet.
 
 ## Gyors kezdés
 
@@ -70,6 +79,8 @@ Indítás:
 ```bash
 bash partctl.sh
 ```
+
+**Technikai megjegyzés (indítás):** a `partctl.sh` a `python3 -m partctl_ncurses_app` modult indítja; a `PYTHONPATH` a projekt gyökérkönyvtárára mutat, a `--lang-dir` paraméter pedig a `lang/` mappát adja meg a felületnek.
 
 ### Fő funkciók (röviden)
 
