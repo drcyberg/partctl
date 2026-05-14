@@ -1,4 +1,4 @@
-# Partctl V1.0.0 — Felhasználói kézikönyv
+# Partctl V1 — Felhasználói kézikönyv
 
 <p align="center">
   <img src="/partctl/img/partctl_logo_banner_optimized.png" alt="Partctl — Partition & disk control for Linux" width="100%" />
