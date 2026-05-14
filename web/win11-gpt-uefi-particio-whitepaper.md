@@ -187,7 +187,7 @@ Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a v
 
 ---
 
-## 8. WinRE GPT attribútum bitek
+## 8. WinRE GPT attribútum bitek beállítása (Partctl listából)
 
 **Útvonal:** **főmenü → `3`** → **GPT attributes** / **GPT attributumok** → válaszd a WinRE partíciót → a bitek közül a szükségesek (pl. *Required*, *No automount* — a pontos bitneveket a felület mutatja). **Íráshoz** tipikusan **root** kell.
 
