@@ -98,11 +98,9 @@ bash partctl.sh
 
 ![](/img/terminal_1.jpg)
 
-A launcher a `python3 -m partctl_ncurses_app` modult indítja (`PYTHONPATH` + `--lang-dir`).
-
 ### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
 
-| # | Angol | Magyar (`hu.json`) |
+| # | Angol | Magyar felületen |
 |---|--------|---------------------|
 | **1** | Select Disk | Lemez kivalasztasa |
 | **2** | Disk Overview | Lemez attekintes |
@@ -251,11 +249,10 @@ Ha a `show file systems` **nem** mutatja az USB-t, a leggyakoribb okok és lép�
 | Mező | Érték |
 |------|--------|
 | Dokumentum | Cisco USB flash + USB 3.0 SSD előkészítés `partctl.sh`-val (FAT32 pendrive és EXT4 SSD példa) |
-| Forráskód hivatkozások | `partctl_ncurses_app/core/format_commands.py` (formázási típus-lista: `ext4` / `vfat` / `ntfs` / …), `partition_create_ops.py`, `partition_format.py` |
 | Cisco modellek | Catalyst 9300 / 9200 / 3850 / 3650, Cisco USB 3.0 SSD (SSD-240G) |
 
 ```markdown
-https://github.com/drcyberg/partctl/blob/main/docs/cisco-usb-flash-partctl-guide.md
+https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-guide.md
 ```
 
 ### Fő oldal (Partctl)
@@ -267,4 +264,4 @@ https://github.com/drcyberg/partctl/blob/main/docs/cisco-usb-flash-partctl-guide
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
 - ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 
-*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés (`partctl.sh` → `partctl_ncurses_app`) — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*

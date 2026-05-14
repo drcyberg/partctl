@@ -89,7 +89,7 @@ A Partctl a **partíció létrehozás** során:
 - **Alapértelmezett kezdő LBA:** a szabad sáv elejét **felkerekíti** a következő **1 MiB** határra a logikai szektor méret alapján (példa: 512 B-nél **2048s** lépésköz).  
 - **Alapértelmezett vég LBA:** ha a kiválasztott szabad sáv abszolút vége **`N`** szektor (parted `Ns`), a javasolt alapértelmezés **nem** `Ns`. A logika két lépésből áll: (1) **tail guard**: levonunk egy **1 MiB**-nek megfelelő szektorszámot — **`mib_step`** = `ceil(1 MiB / logikai szektor)` (512 B-nél **2048**, 4096 B-nél **256**); (2) **vég-igazítás**: a végszektort **lefelé `mib_step`-re** (azaz **1 MiB-os határra**) igazítjuk, hogy a `(end + 1)` osztható legyen `mib_step`-pel. Így a `sgdisk -v` „Partition doesn't end on a 2048-sector boundary” figyelmeztetés is elkerülhető, és a következő partíció pontosan a következő 1 MiB-on indulhat. A gyakorlatban a vég `N − 1..2 MiB` környékén esik — pl. **`34s..30842846s`** (14,7 GiB stick) szabad sávon a javaslat **`end = 30838783s`** (tail ≈ 2 MiB), **`2048s..488397167s`** (233 GiB SSD) sávon **`end = 488394751s`** (tail ≈ 1,18 MiB). A **„Vég”** mezőt **kézzel bármikor felülírhatod** (pl. tényleges `Ns` maximumra, ha tudatosan minden szektort fel akarsz használni — ekkor viszont `sgdisk -v` panaszt adhat).
 - **`parted`** hívás: **`parted -s -a optimal … mkpart …`** — az **optimal** igazítás a Parted része.  
-- A felületen a **„Kezdet”** mezőhöz tartozó szöveg jelzi: **LBA `…s` formátum**, és hogy az alapértelmezés **1 MiB-hoz igazított** a szabad tartományon belül (lásd `hu.json`: `partition_create_param_start_hint`). A **„Vég”** mező súgója (`partition_create_param_end_hint`) szintén utal a **~1 MiB-os vég-réskeretre** a javaslati értéknél.
+- A felületen a **„Kezdet”** mező súgója jelzi: **LBA `…s` formátum**, és hogy az alapértelmezés **1 MiB-hoz igazított** a szabad tartományon belül. A **„Vég”** mező súgója szintén utal a **~1 MiB-os vég-réskeretre** a javaslati értéknél.
 
 **Mit jelent a gyakorlatban?** Ha a varázsló a kezdetnél **`2048s`**-t, a végnél pl. **`488394751s`**-t kínál fel egy ~233 GiB-os szabad sávon, akkor a partíció a lemez legutolsó **~1–2 MiB-ját** szabadon hagyja, és a vég pontosan **1 MiB-os határra esik** (`(end+1) mod 2048 = 0` 512 B-nél). Ez tudatos tervezés — **ne** írd át nullára a véget abszolút `free_end`-re, hacsak nem konkrét okod van rá (pl. nem-GPT, nem-LUKS, és minden bájt számít, vállalva a `sgdisk -v` warningot).
 
@@ -105,11 +105,9 @@ bash partctl.sh
 
 ![](/img/terminal_1.jpg)
 
-(A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).)
-
 ### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
 
-| # | Angol | Magyar (`hu.json`) |
+| # | Angol | Magyar felületen |
 |---|--------|---------------------|
 | **1** | Select Disk | Lemez kivalasztasa |
 | **2** | Disk Overview | Lemez attekintes |
@@ -202,4 +200,4 @@ https://github.com/drcyberg/partctl/blob/main/example/particio-igazitas-partctl-
 
 ---
 
-*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés (`partctl.sh` → `partctl_ncurses_app`) — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*

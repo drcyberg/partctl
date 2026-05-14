@@ -47,15 +47,13 @@ bash partctl.sh
 
 ![](/img/terminal_1.jpg)
 
-A launcher a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
-
 - **Menü:** kurzor (`Fel` / `Le`, vagy `k` / `j`), **Enter** a kiválasztott sorra.  
 - **Gyors választás:** a sor elején látható **`N.`** sorszám begépelése, majd **Enter**.  
 - **Vissza / kilépés:** a súgó szerint általában **Backspace** vagy **`q`** (panelenként eltérhet).
 
 **Rögzített főmenü-sorszámok** (minden nyelven ugyanaz a sorrend):
 
-| # | Angol | Magyar (`hu.json`) |
+| # | Angol | Magyar felületen |
 |---|--------|---------------------|
 | **1** | Select Disk | Lemez kivalasztasa |
 | **2** | Disk Overview | Lemez attekintes |
@@ -79,7 +77,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 **Útvonal:** **főmenü → `4` Lemez kezeles** → a **Lemez kezeles** almenüben a következő sorrend **rögzített** (angol feliratokkal):
 
-| # | Menüpont (angol, `en.json`) |
+| # | Menüpont (angol felületen) |
 |---|------------------------------|
 | 1 | EXT4 FS check |
 | 2 | EXT4 FS size increase |

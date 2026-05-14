@@ -12,11 +12,9 @@ bash partctl.sh
 ```
 ![](/img/terminal_1.jpg)
 
-A program a **`python3 -m partctl_ncurses_app`** modult indítja (`PYTHONPATH` + `--lang-dir`).
-
 ### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
 
-| # | Angol | Magyar (`hu.json`) |
+| # | Angol | Magyar felületen |
 |---|--------|---------------------|
 | **1** | Select Disk | Lemez kivalasztasa |
 | **2** | Disk Overview | Lemez attekintes |
@@ -63,7 +61,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 1. **Ne a futó rendszer lemezén** kísérletezz — külön **teszt HDD/SSD** vagy **USB** (pl. **`sdb`**) ideális; a tényleges XP telepítéshez kell **BIOS boot** és a **Windows XP telepítő** (CD/USB) — a Partctl **csak a lemez előkészítését** végzi.
 2. **„Tiszta lap”:** **Lemez kezeles → Disk cleanup (Wipe)** (`főmenü 4` → `10`), **teljes lemez** cél, szükség szerint a **partíciós tábla törlése** opció bejelölve — utána **Particios tabla letrehozasa** MBR-rel.
 3. **Két primary elég gyakori XP-hez:** egy **„C:”** rendszer (NTFS) + egy **„D:”** adat (NTFS), mindkettő **primary** — így **nem** kell extended/logikai, amíg nem kell 4-nél több kötet.
-4. **Négy elsődleges betelt?** A Partctl **Create partition** logikája MBR-n: az első **három** új partíció tipikusan **primary**; ha már **3 nem kiterjesztett primary** van és nincs extended, a **negyedik** lépésnél a program **kiterjesztett** partíciót hozhat létre, majd **logikai**kat (részletek: `partition_create_ops.py`). Ha elakad: **Lemez attekintes** + **Particio torlese** / újratervezés.
+4. **Négy elsődleges betelt?** A Partctl **Create partition** logikája MBR-n: az első **három** új partíció tipikusan **primary**; ha már **3 nem kiterjesztett primary** van és nincs extended, a **negyedik** lépésnél a program **kiterjesztett** partíciót hozhat létre, majd **logikai**kat. Ha elakad: **Lemez attekintes** + **Particio torlese** / újratervezés.
 5. **Típus beállítása:** MBR-n a **Partition type code (hex, MBR)** / **MBR particio tipuskod** varázsló — XP „adat” partíciókhoz a listában a **Microsoft basic data (NTFS/exFAT)** jellegű **`07`** szokott illeni; GPT GUID varázsló **nem** MBR-re való (a program figyelmeztet).
 6. **Particionev:** a Partctl **Particionev megvaltoztatasa** funkciója **csak GPT** táblán támogatott — MBR-n ne ezt várd a „címke” megoldására.
 7. **Ellenőrzés:** **Lemez attekintes** — a particiós tábla sorban **`dos`** / **`msdos`** jelenik meg.
@@ -186,7 +184,6 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | Mező | Érték |
 |------|--------|
 | Dokumentum | MBR vs GPT + `partctl.sh` menüútmutató (MBR példa: **Windows XP**; GPT példa: **Windows 11 / `sda`**) |
-| Forráskód hivatkozások | `partctl_ncurses_app/ui/split_menus.py`, `partition_table_views.py` (`draw_partition_table_type_menu`), `partition_create_ops.py` |
 
 ```markdown
 https://github.com/drcyberg/partctl/blob/main/example/mbr-vs-gpt-partctl-guide.md
@@ -200,4 +197,4 @@ https://github.com/drcyberg/partctl/blob/main/example/mbr-vs-gpt-partctl-guide.m
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
 - ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 
-*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés (`partctl.sh` → `partctl_ncurses_app`) — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
