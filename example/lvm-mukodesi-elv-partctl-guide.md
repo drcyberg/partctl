@@ -5,7 +5,7 @@
 
 ---
 
-## Ábra — LVM működési elv (sötét téma)
+## Ábra — LVM működési elv
 
 <p align="center">
   <img src="/img/lvm_mukodesi_elv_1.png" alt="LVM működési elv — parancsok és rétegek" width="92%" />
