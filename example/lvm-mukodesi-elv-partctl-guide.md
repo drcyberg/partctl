@@ -1,29 +1,14 @@
 # LVM működési elv — összefoglaló és `partctl.sh` menüútmutató
 
 > **Cél:** Rövid, jól értelmezhető háttér a **Linux LVM** (Logical Volume Manager) rétegeiről, a **thick** és **thin** különbségéről, és arról, hogyan hozhatók létre / kezelhetők a kötetek a **Partctl** menüiből (`bash partctl.sh`).  
+
 > **Figyelem:** LVM és particiós műveletek **adatvesztést** okozhatnak. Csak **mentett**, **nem** futó rendszerlemezen, **leválasztott** (unmount) célokon dolgozz; éles környezetben mindig **biztonsági mentés**.
 
 ---
 
-## Ábra — LVM működési elv
-
 <p align="center">
   <img src="/img/lvm_mukodesi_elv_1.png" alt="LVM működési elv — parancsok és rétegek" width="92%" />
 </p>
-
-*Felül:* **Fizikai kötet → Kötetcsoport → Logikai kötet → Fájlrendszer**. Bal oldalon a három alapparancs (`pvcreate`, `vgcreate`, `lvcreate`), jobb oldalon a tárolási rétegek.
-
-<p align="center">
-  <img src="/img/lvm_thick_1.png" alt="LVM működési elv — henger diagram (thick)" width="92%" />
-</p>
-
-*Klasszikus (thick) LVM:* több **PV** egy **VG**-be, onnan **LV**-k, majd **fájlrendszer**.
-
-<p align="center">
-  <img src="/img/lvm_thin_1.png" alt="LVM-thin működési elv" width="92%" />
-</p>
-
-*Thin provisioning:* a **VG** felett **thin pool**, abból **thin LV** (virtuális méret), majd fájlrendszer.
 
 ---
 
@@ -140,6 +125,10 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
 
 ## 6. LVM-thick kötet létrehozása (lépésről lépésre)
 
+<p align="center">
+  <img src="/img/lvm_thick_1.png" alt="LVM működési elv — henger diagram (thick)" width="92%" />
+</p>
+
 **Cél:** egy partició (pl. `sdc3`) → PV → VG → egy thick LV → később formázás.
 
 | Lépés | Menüút | Mit csinálsz |
@@ -165,6 +154,10 @@ lvcreate -y -W y -l 100%FREE -n thick sdc3_partctl_vg
 ---
 
 ## 7. LVM-thin kötet létrehozása (thin pool + data / „virtuális partíció”)
+
+<p align="center">
+  <img src="/img/lvm_thin_1.png" alt="LVM-thin működési elv" width="92%" />
+</p>
 
 **Cél:** egy partició → PV → VG → **thin pool** → **thin LV** (data) — a Partctl **egyetlen varázslóban**, **három Proc-fázissal**.
 
@@ -231,36 +224,17 @@ Ha már van **VG** (pl. több PV-vel bővítve), de thin pool kell:
 
 A **Wipe** LVM opciói a **partíciós tábla megőrzése** mellett is futtathatók; teljes lemez törlésnél lásd a [`mbr-vs-gpt-partctl-guide.md`](mbr-vs-gpt-partctl-guide.md) Wipe szakaszát.
 
----
-
-## 11. Tippek és gyakori hibák
-
-1. **„Device busy”** — csatolt kötet vagy aktív mapper; használd az **Ideiglenes lecsatolas** menüt, vagy a Wipe **LVM deaktiválás** ajánlatát.
-2. **„Already a PV”** — a partició már LVM tag; másik particiót válassz, vagy töröld a régi VG-t / Wipe-olj.
-3. **Thin túlfoglalás** — több thin LV virtuális mérete **összesen** meghaladhatja a pool fizikai méretét; csak akkor írj, ha érted a kockázatot.
-4. **Mapper útvonal** — a rendszer `/dev/mapper/vg-lv` formát is használhat; a Partctl áttekintésben mindkettő megjelenhet.
-5. **Napló** — a **Proc** panel mellett a `log/partctl-*.log` fájlban a parancsok és kimenetek visszakereshetők.
-6. **Egy Info a végén** — a thick és thin automatikus varázslók **szándékosan** csak **egy** zöld összefoglalót mutatnak siker esetén; a részletes lépések a **Proc** panelen és a naplóban látszanak.
-
----
-
-## 12. Összefoglaló — melyik menü mire való?
-
-```text
-Új thick tároló (egy partició):     Particio kezeles → LVM muveletek → LVM-thick kotet letrehozasa
-Új thin tároló (pool + data):       Particio kezeles → LVM muveletek → LVM-thin kotet letrehozasa
-Formázás:                          Particio kezeles → Particio formazas
-Részletek / ellenőrzés:            Lemez attekintes → Enter (LVM sor)
-Méret állítás:                     LVM muveletek → LV kotet kezeles
-Teljes takarítás:                  Lemez kezeles → Lemez tisztitas (Wipe)
+```markdown
+https://github.com/drcyberg/partctl/blob/main/example/lvm-mukodesi-elv-partctl-guide.md
 ```
 
----
+### Fő oldal (Partctl)
 
-## Kapcsolódó anyagok
+- [Partctl](https://drcyberg.github.io/partctl/web/partctl)
 
-- [MBR és GPT partíciós tábla](mbr-vs-gpt-partctl-guide.md) — partició és tábla **LVM előtt**
-- [Partíció igazítás](particio-igazitas-partctl-guide.md) — particiók **LVM előtti** geometriája
-- [Partctl felhasználói kézikönyv](README.md) — telepítés, napló, általános menük
+### Köszönöm ha támogatsz
+
+- ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
+- ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 
 *Utolsó frissítés jelleg: Partctl V1.0.0 — LVM thick/thin automatikus varázslók, Proc panel (többfázisú), egységes záró Info.*
