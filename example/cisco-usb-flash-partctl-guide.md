@@ -250,6 +250,7 @@ Ha a `show file systems` **nem** mutatja az USB-t, a leggyakoribb okok és lép�
 | Dokumentum | Cisco USB flash + USB 3.0 SSD előkészítés `partctl.sh`-val (FAT32 pendrive és EXT4 SSD példa) |
 | Cisco modellek | Catalyst 9300 / 9200 / 3850 / 3650, Cisco USB 3.0 SSD (SSD-240G) |
 
+
 ```markdown
 https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-guide.md
 ```
