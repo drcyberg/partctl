@@ -16,7 +16,7 @@
 | **Cisco USB 3.0 SSD** (pl. **SSD-240G**, Catalyst 9300) | **EXT4** (alternatíva: EXT3 / EXT2) | **240 GB** (hivatalosan támogatott modell) | **`ext4`** |
 | **Nem támogatott** (Cisco USB 3.0 SSD-nél) | NTFS, exFAT, VFAT | — | Ne használd Cisco SSD-hez |
 
-**Megjegyzés:** A FAT32 partíciós tábla típusa Linux-oldalon tipikusan **MBR (msdos)** — a régi USB-pendrive-ok jellemzően ezt használják. A Cisco USB 3.0 SSD (EXT4) tipikusan **GPT** táblán él (modern lemezgeometria, **>2 TiB** ugyan nem releváns 240 GB-nál, de a GPT a Linux-világban általános választás).
+A FAT32 partíciós tábla típusa Linux-oldalon tipikusan **MBR (msdos)** — a régi USB-pendrive-ok jellemzően ezt használják. A Cisco USB 3.0 SSD (EXT4) tipikusan **GPT** táblán él (modern lemezgeometria, **>2 TiB** ugyan nem releváns 240 GB-nál, de a GPT a Linux-világban általános választás).
 
 ---
 
