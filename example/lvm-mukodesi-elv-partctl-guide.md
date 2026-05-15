@@ -156,11 +156,11 @@ Főmenü → 3 (Particio kezeles) → LVM muveletek
 
 | # | Menüpont (magyar) | Szerep |
 |---|-------------------|--------|
-| 1 | **LV kotet kezeles** | Meglévő LV: átnevezés, törlés, **méret növelés/csökkentés**, thin pool + data LV kézi létrehozása meglévő VG-n |
-| 2 | **LVM-thick kotet letrehozasa** | Automatikus thick: PV + VG + LV egy varázslóban |
-| 3 | **LVM-thin kotet letrehozasa** | Automatikus thin: PV + VG + thin pool + thin LV (data) |
-| 4 | **PV kotet kezeles** | PV lista, létrehozás, törlés |
-| 5 | **VG kotet kezeles** | VG lista, létrehozás, bővítés, aktiválás, törlés |
+| 1 | **LV kotet kezeles** | LV lista; **kézi** thick / thin LV; átnevezés, törlés, méret növelés/csökkentés |
+| 2 | **LVM-thick kotet letrehozasa** | **Automatikus** thick: PV + VG + LV egy varázslóban |
+| 3 | **LVM-thin kotet letrehozasa** | **Automatikus** thin: PV + VG + thin pool + thin LV (data) |
+| 4 | **PV kotet kezeles** | **Kézi** út 1. lépése: PV lista, `pvcreate`, `pvremove` |
+| 5 | **VG kotet kezeles** | **Kézi** út 2. lépése: VG lista, `vgcreate`, bővítés, aktiválás, törlés |
 | 6 | **Vissza** | Vissza a partició menübe |
 
 ![](/img/lvm_muvelet_1.jpg)
@@ -183,13 +183,20 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
 
 ---
 
-## 6. LVM-thick kötet automatikus létrehozása
+## 6. LVM-thick kötet létrehozása
 
 <p align="center">
   <img src="/img/lvm_thick_1.png" alt="LVM működési elv — henger diagram (thick)" width="92%" />
 </p>
 
 **Cél:** egy partició (pl. `sdc3`) → PV → VG → egy thick LV → később formázás.
+
+| Módszer | Mikor érdemes? | Menü |
+|---------|----------------|------|
+| **Automatikus** (§6.1) | Egy partició, mindent egyszerre | **LVM-thick kotet letrehozasa** (`2`) |
+| **Kézi** (§6.2) | Saját VG/LV név, lépésenkénti ellenőrzés, több PV később | **PV** (`4`) → **VG** (`5`) → **LV** (`1`) |
+
+### 6.1 Automatikus létrehozás (varázsló)
 
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
@@ -203,7 +210,7 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
 | 8 | **Főmenü → `3` → Particio formazas** | Válaszd az LV-t (pl. `/dev/sdc3_partctl_vg/thick` vagy mapper útvonal), **ext4** / **ntfs** stb. |
 | 9 | *(Opcionális)* **Főmenü → `4` → Ideiglenes csatolás** | Csak teszthez; éles szerveren állandó `fstab` külön téma. |
 
-**Háttérben (thick), tipikus parancsok:**
+**Háttérben (automatikus thick), tipikus parancsok:**
 
 ```text
 pvcreate -ff -y /dev/sdc3
@@ -211,15 +218,52 @@ vgcreate sdc3_partctl_vg /dev/sdc3
 lvcreate -y -W y -l 100%FREE -n thick sdc3_partctl_vg
 ```
 
+### 6.2 Kézi létrehozás (PV → VG → LV menük)
+
+Ugyanaz a végeredmény, de **három külön menüben** állítod össze a rétegeket. A Partctl minden lépésnél **sárga** megerősítő panelt mutat, majd kék **Folyamat** panelt (Proc) futtat.
+
+**Előfeltétel:** kiválasztott lemez (`Főmenü → 1`), **leválasztott** cél partició (pl. `sdc3`), nincs rajta fájlrendszer / nincs csatolva.
+
+| Lépés | Menüút | Mit csinálsz |
+|-------|--------|--------------|
+| 1 | **Főmenü → `1`** | Lemez: pl. `sdc`. |
+| 2 | *(Ha kell)* **Particio kezeles → Particio letrehozasa** | Egy Linux partició (pl. `sdc3`) a szabad sávra. |
+| 3 | **LVM muveletek → `4` → `2`** | **PV kotet kezeles** → **PV letrehozas (pvcreate)**. |
+| 4 | PV varázsló | Táblázatból válaszd a particiót (`/dev/sdc3`). **Enter** → **Letrehozzam most a PV-t?** → Igen. |
+| 5 | **Folyamat + Info** | `pvcreate -ff -y /dev/sdc3` — várj a zöld Info panelig. |
+| 6 | **LVM muveletek → `5` → `2`** | **VG kotet kezeles** → **VG letrehozas** (ha a menüben más a szöveg: VG létrehozása). |
+| 7 | VG varázsló | Válaszd a **szabad PV**-t (`/dev/sdc3`, nincs VG-hez rendelve). |
+| 8 | VG név | Alapértelmezett: `sdc3_partctl_vg` — átírható. **Enter** → **sárga** megerősítés (`vgcreate …`). |
+| 9 | **Folyamat + Info** | `vgcreate sdc3_partctl_vg /dev/sdc3`. |
+| 10 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas (lvcreate)**. |
+| 11 | VG választás | Válaszd a friss VG-t (`sdc3_partctl_vg`). |
+| 12 | Pool típus | **LVM thick** (ne a thin). |
+| 13 | LV név | Alapértelmezett: `sdc3_partctl_lv` — átírható (pl. `thick`). |
+| 14 | Megerősítés | **100%FREE** — a program a teljes szabad VG-területet használja. **sárga** panel → Igen. |
+| 15 | **Folyamat + Info** | `lvcreate -y -l 100%FREE -n <lv> sdc3_partctl_vg`. |
+| 16 | **Particio formazas** | Cél LV: pl. `/dev/sdc3_partctl_vg/sdc3_partctl_lv` vagy mapper útvonal. |
+
+**Háttérben (kézi thick), tipikus parancsok** — megegyeznek az automatikus első két lépésével; az LV név a 13. lépésben megadott:
+
+```text
+pvcreate -ff -y /dev/sdc3
+vgcreate sdc3_partctl_vg /dev/sdc3
+lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
+```
+
+**Megjegyzés:** a kézi thick LV létrehozás jelenleg **mindig** `100%FREE` méretet kér; részleges méretet a **LV méret növelése / csökkentése** menük adják később.
+
 ---
 
-## 7. LVM-thin kötet automatikus létrehozása (thin pool + data / „virtuális partíció”)
+## 7. LVM-thin kötet létrehozása (thin pool + data / „virtuális partíció”)
 
 <p align="center">
   <img src="/img/lvm_thin_1.png" alt="LVM-thin működési elv" width="92%" />
 </p>
 
-**Cél:** egy partició → PV → VG → **thin pool** → **thin LV** (data) — a Partctl **egyetlen varázslóban**.
+**Cél:** egy partició → PV → VG → **thin pool** → **thin LV** (data) — használható „virtuális partíció”.
+
+### 7.1 Automatikus létrehozás (varázsló)
 
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
@@ -230,7 +274,7 @@ lvcreate -y -W y -l 100%FREE -n thick sdc3_partctl_vg
 | 6 | **Particio formazas** | Cél: a **data** thin LV (pl. `.../sdc3_partctl_thinpool_data`). |
 | 7 | **Lemez attekintes** | Ellenőrizd: pool + data LV, méret, mapper útvonalak. |
 
-**Háttérben (thin), tipikus parancsok:**
+**Háttérben (automatikus thin), tipikus parancsok:**
 
 ```text
 pvcreate -ff -y /dev/sdc3
@@ -241,48 +285,43 @@ lvcreate -y -V <pool_meret>B -T /dev/sdc3_partctl_vg/sdc3_partctl_thinpool -n sd
 
 A **virtuális méret** (`-V`) a Partctl a pool aktuális méretéből számolja (100% modell).
 
----
+### 7.2 Kézi létrehozás — teljes út (PV → VG → thin pool + data)
 
-## 8. Meglévő VG-n: thin pool + data kézi létrehozása
+A **6.2** lépései **1–9** (partíció, PV, VG) **megegyeznek**; innen folytatod:
 
-Ha már van **VG** (pl. több PV-vel bővítve), de thin pool kell:
+| Lépés | Menüút | Mit csinálsz |
+|-------|--------|--------------|
+| 10 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas (lvcreate)**. |
+| 11 | VG választás | Pl. `sdc3_partctl_vg`. |
+| 12 | Pool típus | **LVM thin** (ne a thick). |
+| 13 | Thin-pool név | Alapértelmezett: `sdc3_partctl_thinpool` — átírható. |
+| 14 | Megerősítés | **100%FREE** thin pool — **sárga** panel → Igen. |
+| 15 | **Folyamat (2 fázis)** | (1) thin pool létrehozás, (2) **data** thin LV — **egy** kék Proc folyamat, **egy** záró Info. |
+| 16 | Data LV név | A program automatikusan: `sdc3_partctl_thinpool_data` (a PV partició nevéből). |
+| 17 | **Particio formazas** | A **data** LV-re formázol (ne a pool-ra). |
+| 18 | **Lemez attekintes** | Két LV: pool + data; a data a használható kötet. |
 
-| Lépés | Menüút |
-|-------|--------|
-| 1 | **LVM muveletek → `1`** **LV kotet kezeles** |
-| 2 | Válaszd a **VG**-t |
-| 3 | **LVM thin** típus → thin **pool** neve → megerősítés |
-| 4 | **Folyamat** — pool létrejön |
-| 5 | A program **automatikusan** létrehozza a **data** thin LV-t is (pool méret alapján) |
-| 6 | **Egy** Info panel a végén |
+**Háttérben (kézi thin), tipikus parancsok:**
 
----
+```text
+pvcreate -ff -y /dev/sdc3
+vgcreate sdc3_partctl_vg /dev/sdc3
+lvcreate -y --type thin-pool -l 100%FREE -n sdc3_partctl_thinpool sdc3_partctl_vg
+lvcreate -y -V <pool_meret>B -T /dev/sdc3_partctl_vg/sdc3_partctl_thinpool -n sdc3_partctl_thinpool_data
+```
 
-## 9. PV / VG / LV kezelés (rövid táblázat)
+### 7.3 Kézi létrehozás — csak meglévő VG-n (thin pool + data)
 
-| Feladat | Menü |
-|---------|------|
-| Új PV egy particióról | **PV kotet kezeles** → létrehozás |
-| VG összeállítása PV-kből | **VG kotet kezeles** → létrehozás |
-| LV törlése | **LV kotet kezeles** → törlés |
-| LV méret növelése / csökkentése | **LV kotet kezeles** → extend / reduce varázslók |
-| VG aktiválás / deaktiválás | **VG kotet kezeles** |
+Ha a **PV** és **VG** már létezik (pl. `vgextend`-del bővített kötetcsoport), elég az LV menü:
 
-**Lemez attekintes:** LVM soroknál **Enter** — részletes `pvdisplay` / `vgdisplay` / `lvdisplay` jellegű összefoglaló.
-
----
-
-## 10. Formázás, csatolás, takarítás
-
-| Feladat | Menüút |
-|---------|--------|
-| Fájlrendszer az LV-n | **Particio kezeles → Particio formazas** |
-| Fájlrendszer javítás | **Particio kezeles → Fajlrendszer javitas** |
-| Ideiglenes csatolás | **Lemez kezeles → Ideiglenes csatolas** |
-| Ideiglenes lecsatolás | **Lemez kezeles → Ideiglenes lecsatolas** |
-| LVM + aláírások törlése | **Lemez kezeles → Lemez tisztitas (Wipe)** — opcionális LVM lépések (LV/VG/PV) |
-
-A **Wipe** LVM opciói a **partíciós tábla megőrzése** mellett is futtathatók; teljes lemez törlésnél lásd a [`mbr-vs-gpt-partctl-guide.md`](mbr-vs-gpt-partctl-guide.md) Wipe szakaszát.
+| Lépés | Menüút | Mit csinálsz |
+|-------|--------|--------------|
+| 1 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas**. |
+| 2 | VG | Válaszd a meglévő VG-t (legyen **szabad PE** a poolhoz). |
+| 3 | **LVM thin** | Thin-pool név → **sárga** megerősítés (`100%FREE` a szabad VG-területre). |
+| 4 | **Folyamat** | **2 fázis:** thin pool, majd data thin LV (virtuális méret = pool mérete). |
+| 5 | **Info** | **Egy** zöld összefoglaló a teljes parancslánccal. |
+| 6 | **Particio formazas** | Cél: a **data** thin LV. |
 
 ```markdown
 https://github.com/drcyberg/partctl/blob/main/example/lvm-mukodesi-elv-partctl-guide.md
