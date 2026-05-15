@@ -32,6 +32,8 @@ Tehát az LVM a **Linux partíciók fölött** egy **logikai** réteget épít. 
 
 ### 2.1 Mikor érdemes **thick**-et használni?
 
+A **Thick kötetek** esetében az LVM a logikai kötet létrehozásakor **azonnal** lefoglalja és dedikálja a kért fizikai tárhelyet (merevlemez-kapacitást). Ez azt jelenti, hogy a lemezcímzés közvetlen, a virtuális méret megegyezik a ténylegesen elfoglalt fizikai mérettel.
+
 | Környezet / cél | Miért thick? |
 |-----------------|--------------|
 | **Szerver — rendszer- és adatkötet** (`/`, `/var`, `/home`, adatbázis-kötet) | Kiszámítható hely; a `df` és az LVM **egyezik**; kevesebb „pool tele” meglepetés. |
@@ -44,6 +46,8 @@ Tehát az LVM a **Linux partíciók fölött** egy **logikai** réteget épít. 
 
 ### 2.2 Mikor érdemes **thin**-t használni?
 
+Az **LVM Thin** (vagy LVM Thin Provisioning) egy fejlett tárolókapacitás-kezelési technológia, amely lehetővé teszi, hogy a logikai kötetek (Logical Volumes) virtuális mérete nagyobb legyen, mint a fizikai háttértároló tényleges kapacitása. A tárhely kiosztása nem előre történik, hanem **dinamikusan**, igény szerint.
+
 | Környezet / cél | Miért thin? |
 |-----------------|-------------|
 | **Virtuális gépek (KVM/QEMU, néhány hypervisor)** | Sok **független „lemez”** (VDI) egy fizikai partición; a hely **csak akkor** foglalódik, amikor a VM ír. |
@@ -53,7 +57,9 @@ Tehát az LVM a **Linux partíciók fölött** egy **logikai** réteget épít. 
 
 **Mikor *ne* thin legyen az első választás:** kritikus **egyetlen** szerverkötet (pl. gyökér vagy adatbázis), ha a csapat nem akar **pool telítettség** monitorozást; ha régi eszközök / backup szoftver nem ismeri a thin LV-t; ha **nincs** terv a pool és a metaadat terület figyelésére.
 
-### 2.3 Snapshot — szerver környezetben (összefoglaló)
+### 2.3 Snapshot — szerver környezetben
+
+Az LVM (Logical Volume Manager) thin pillanatkép (snapshot) egy adott logikai kötet pillanatnyi állapotának azonnali, **tárhely hatékony másolata**, amely a thin provisioning technológiát használja. Ideális virtuális gépek (pl. Proxmox, KVM), tárolók és rendszerek biztonsági mentéséhez, mivel nem foglal feleslegesen előre lemezterületet.
 
 | Típus | Mire való? | Hol „ül”? | Tipikus szerver használat |
 |-------|------------|-----------|---------------------------|
