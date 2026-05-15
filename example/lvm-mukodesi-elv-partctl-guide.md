@@ -12,7 +12,7 @@
 
 ---
 
-## 1. Mi az LVM? — négy réteg, egy mondatban
+## 1. Mi az LVM?
 
 Az **LVM (Logical Volume Manager)** a Linux rendszerek hatékony, rugalmas lemezkezelő eszköze, amely absztrakciós réteget képez a fizikai merevlemezek és a fájlrendszer között. Lehetővé teszi a partíciók dinamikus átméretezését, több lemez összevonását, és snapshotok készítését a rendszer leállítása nélkül.
 Tehát az LVM a **Linux partíciók fölött** egy **logikai** réteget épít. A következők szerint épül fel:
