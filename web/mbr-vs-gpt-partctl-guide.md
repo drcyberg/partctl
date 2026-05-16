@@ -88,19 +88,19 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 | Eszköz | Szerep (XP) | MBR hex (tipikus) | Megjegyzés |
 |--------|-------------|-------------------|------------|
-| `sdb1` | **„C:”** — rendszer + Program Files | **`07`** (NTFS) | Primary; XP telepítő célpontja |
-| `sdb2` | **„D:”** — adat, játékok, mentések | **`07`** (NTFS) | Primary; maradék lemezterület |
+| `sdc1` | **„C:”** — rendszer + Program Files | **`07`** (NTFS) | Primary; XP telepítő célpontja |
+| `sdc2` | **„D:”** — adat, játékok, mentések | **`07`** (NTFS) | Primary; maradék lemezterület |
 
 ---
 
-## 2. GPT (GUID Partition Table) — **Windows 11** példa (`/dev/sda`)
+## 2. GPT (GUID Partition Table) — **Windows 11** példa (`/dev/sdc`)
 
 ![](/partctl/img/win11_logo.png)
 
 ### 2.1 Rövid összefoglaló
 
 - A **GPT** a lemez **elején és végén** is tárol **fejlécet és partíciós bejegyzéseket**; sok partíció (tipikusan 128 bejegyzés), egyedi **GUID** típusok.
-- **UEFI** boot és **nagy (>2 TiB) lemezek** esetén ez a **szabványos** választás (**Windows 11** hivatalosan is **GPT + UEFI** irány — megegyezik a [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) **`/dev/sda`** példájával: ESP + MSR + rendszer + WinRE).
+- **UEFI** boot és **nagy (>2 TiB) lemezek** esetén ez a **szabványos** választás (**Windows 11** hivatalosan is **GPT + UEFI** irány — megegyezik a [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) **`/dev/sdc`** példájával: ESP + MSR + rendszer + WinRE).
 - **Partíció-ID:** **GUID** (pl. EFI System, Microsoft basic data, WinRE).
 - **Partctl:** **GPT backup / restore / verify**, **GPT attributes**, **Partition type code (GUID, GPT)** — ezek **csak GPT** táblán működnek.
 
@@ -112,22 +112,22 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 4. **WinRE / speciális bitek:** **GPT attributes** — `sgdisk` kell; íráshoz tipikusan **root**.
 5. **Ellenőrzés:** **Verify GPT partition table**; majd **Disk Overview** + partíción **Enter** részletek (GPT attributum sor, ha `sgdisk` elérhető).
 
-### 2.3 Partctl — példa menülépések (**Windows 11**, **`/dev/sda`** — a whitepaperrel megegyezően)
+### 2.3 Partctl — példa menülépések (**Windows 11**, **`/dev/sdc`** — a whitepaperrel megegyezően)
 
 | Lépés | Menüút (rövid) | Mit csinálsz |
 |-------|----------------|-------------|
-| 1 | **Főmenü → `1`** | Kiválasztod a **`sda`** céllemezt. |
+| 1 | **Főmenü → `1`** | Kiválasztod a **`sdc`** céllemezt. |
 | 2 | **Főmenü → `4` → `10`** (opcionális) | Teljes lemez wipe + opcionális tábla törlés — „nulláról” GPT-hez. |
 | 3 | **Főmenü → `3`** → **Create partition table** | Tábla típus: **`1` — GPT**. Megerősítés. |
 | 4 | **Főmenü → `3`** → **Create partition** (ismételj) | Sorban pl. **`+512MiB`** (ESP), **`+16MiB`** (MSR), **`+120GiB`** (rendszer), **`+1024MiB`** (WinRE) — a szabad sáv szerint. |
-| 5 | **Főmenü → `3`** → **Partition type code (GUID, GPT)** | `sda1` → **EFI System**; `sda2` → **Microsoft reserved**; `sda3` → **Microsoft basic data**; `sda4` → **Windows Recovery Environment (WinRE)**. |
+| 5 | **Főmenü → `3`** → **Partition type code (GUID, GPT)** | `sdc1` → **EFI System**; `sdc2` → **Microsoft reserved**; `sdc3` → **Microsoft basic data**; `sdc4` → **Windows Recovery Environment (WinRE)**. |
 | 6 | **Partition format** | ESP: **vfat**; rendszer + WinRE: **ntfs** (MSR: tipikusan nem formázod). |
 | 7 | (Opcionális) **GPT attributes** | WinRE partíción a szükséges bitek. |
 | 8 | **Verify GPT partition table** + **Disk Overview** | Végleges ellenőrzés. |
 
 *(Részletes példa-leképezés: lásd még [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md).)*
 
-### 2.4 Példa — tipikus **Windows 11** GPT sor (`/dev/sda`, illusztráció)
+### 2.4 Példa — tipikus **Windows 11** GPT sor (`/dev/sdc`, illusztráció)
 
 | Lemez áttekintés | Partíció részletei | GPT tábla ellenőrzése |
 | --- | --- | --- |
@@ -135,10 +135,10 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 | Partíció | Méret (példa) | GUID szerep |
 |----------|----------------|-------------|
-| `sda1` | 512 MiB | EFI System |
-| `sda2` | 16 MiB | Microsoft reserved |
-| `sda3` | 120 GiB | Microsoft basic data (rendszer) |
-| `sda4` | 1 GiB | WinRE |
+| `sdc1` | 512 MiB | EFI System |
+| `sdc2` | 16 MiB | Microsoft reserved |
+| `sdc3` | 120 GiB | Microsoft basic data (rendszer) |
+| `sdc4` | 1 GiB | WinRE |
 
 ---
 
@@ -163,7 +163,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 | Helyzet | Javasolt tábla |
 |---------|----------------|
-| **Új Windows 11 telepítő / UEFI gép** | **GPT** (lásd §2, `sda` példa) |
+| **Új Windows 11 telepítő / UEFI gép** | **GPT** (lásd §2, `sdc` példa) |
 | **2 TiB feletti** lemez vagy nagy egy partíció | **GPT** |
 | **Windows XP / régi gépek, csak BIOS boot**, kb. **2 TiB alatti** lemez | **MBR** (lásd §1, `sdb` példa) |
 | **Partctl tanulás / teszt** | **USB** + először **MBR (XP)** vagy **GPT (Win11)** külön próbalemez |
@@ -189,7 +189,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 | Mező | Érték |
 |------|--------|
-| Dokumentum | MBR vs GPT + `partctl.sh` menüútmutató (MBR példa: **Windows XP**; GPT példa: **Windows 11 / `sda`**) |
+| Dokumentum | MBR vs GPT + `partctl.sh` menüútmutató (MBR példa: **Windows XP**; GPT példa: **Windows 11 / `sdc`**) |
 
 ```markdown
 https://github.com/drcyberg/partctl/blob/main/example/mbr-vs-gpt-partctl-guide.md
