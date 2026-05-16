@@ -82,12 +82,14 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ### 1.4 Példa — tipikus **Windows XP (MBR)** elrendezés (illusztráció)
 
+| Lemez áttekintés | Partíció részletei |
+| --- | --- |
+| ![lemez_attekintes_xp_1](/img/lemez_attekintes_xp_1.jpg "Lemez áttekintés XP #1") | ![particio_reszletei_xp_1](/img/particio_reszletei_xp_1.jpg "Partíció részletei XP #1") |
+
 | Eszköz | Szerep (XP) | MBR hex (tipikus) | Megjegyzés |
 |--------|-------------|-------------------|------------|
-| `sdb1` | **„C:”** — rendszer + Program Files | **`07`** (NTFS) | Primary; XP telepítő célpontja |
-| `sdb2` | **„D:”** — adat, játékok, mentések | **`07`** (NTFS) | Primary; maradék lemezterület |
-
-*(A konkrét **GiB** értékek a `parted` szabad sávjától függnek — a **Particio parameterek** panel mutatja. FAT32-es XP-hez más méret / `0B` típus lehet szükséges — ritkább.)*
+| `sdc1` | **„C:”** — rendszer + Program Files | **`07`** (NTFS) | Primary; XP telepítő célpontja |
+| `sdc2` | **„D:”** — adat, játékok, mentések | **`07`** (NTFS) | Primary; maradék lemezterület |
 
 ---
 
@@ -125,14 +127,18 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 *(Részletes példa-leképezés: lásd még [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md).)*
 
-### 2.4 Példa — tipikus **Windows 11** GPT sor (`/dev/sda`, illusztráció)
+### 2.4 Példa — tipikus **Windows 11** GPT sor (`/dev/sdc`, illusztráció)
+
+| Lemez áttekintés | Partíció részletei | GPT tábla ellenőrzése |
+| --- | --- | --- |
+| ![lemez_attekintes_1](/img/lemez_attekintes_1.jpg "Lemez áttekintés #1") | ![particio_reszletei_1](/img/particio_reszletei_1.jpg "Partíció részletei #1") | ![gpt_tabla_ellenorzese](/img/gpt_tabla_ellenorzese.jpg "GPT tábla ellenőrzés #1") |
 
 | Partíció | Méret (példa) | GUID szerep |
 |----------|----------------|-------------|
-| `sda1` | 512 MiB | EFI System |
-| `sda2` | 16 MiB | Microsoft reserved |
-| `sda3` | 120 GiB | Microsoft basic data (rendszer) |
-| `sda4` | 1 GiB | WinRE |
+| `sdc1` | 512 MiB | EFI System |
+| `sdc2` | 16 MiB | Microsoft reserved |
+| `sdc3` | 120 GiB | Microsoft basic data (rendszer) |
+| `sdc4` | 1 GiB | WinRE |
 
 ---
 
