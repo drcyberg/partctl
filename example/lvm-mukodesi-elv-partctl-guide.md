@@ -276,7 +276,7 @@ lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
 | 1–2 | Ugyanaz, mint thick-nél | Lemez + **szabad partició** (`sdc3`). |
 | 3 | **LVM muveletek → `3`** | **LVM-thin kotet letrehozasa**. |
 | 4 | Varázsló | Cél partició; megerősítés: PV, VG, **thin pool**, **thin LV** (virtuális 100%). |
-| 5 | **Folyamat** | **3 fázis:** (1) PV + VG, (2) thin pool, (3) thin LV (data). **Egy** folyamat, **egy** záró Info panel. |
+| 5 | **Folyamat** panel | **3 fázis:** (1) PV + VG, (2) thin pool, (3) thin LV (data). **Egy** folyamat, **egy** záró Info panel. |
 | 6 | **Particio formazas** | Cél: a **data** thin LV (pl. `.../sdc3_partctl_thinpool_data`). |
 | 7 | **Lemez attekintes** | Ellenőrizd: pool + data LV, méret, mapper útvonalak. |
 
@@ -301,8 +301,8 @@ A **6.2** lépései **1–9** (partíció, PV, VG) **megegyeznek**; innen folyta
 | 11 | VG választás | Pl. `sdc3_partctl_vg`. |
 | 12 | Pool típus | **LVM thin** (ne a thick). |
 | 13 | Thin-pool név | Alapértelmezett: `sdc3_partctl_thinpool` — átírható. |
-| 14 | Megerősítés | **100%FREE** thin pool — **sárga** panel → Igen. |
-| 15 | **Folyamat (2 fázis)** | (1) thin pool létrehozás, (2) **data** thin LV — **egy** kék Proc folyamat, **egy** záró Info. |
+| 14 | Megerősítő panel | **100%FREE** thin pool — **sárga** panel → Igen. |
+| 15 | **Folyamat (2 fázis)** panel | (1) thin pool létrehozás, (2) **data** thin LV — **egy** kék Proc folyamat, **egy** záró Info. |
 | 16 | Data LV név | A program automatikusan: `sdc3_partctl_thinpool_data` (a PV partició nevéből). |
 | 17 | **Particio formazas** | A **data** LV-re formázol (ne a pool-ra). |
 | 18 | **Lemez attekintes** | Két LV: pool + data; a data a használható kötet. |
@@ -325,8 +325,8 @@ Ha a **PV** és **VG** már létezik (pl. `vgextend`-del bővített kötetcsopor
 | 1 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas**. |
 | 2 | VG | Válaszd a meglévő VG-t (legyen **szabad PE** a poolhoz). |
 | 3 | **LVM thin** | Thin-pool név → **sárga** megerősítés (`100%FREE` a szabad VG-területre). |
-| 4 | **Folyamat** | **2 fázis:** thin pool, majd data thin LV (virtuális méret = pool mérete). |
-| 5 | **Info** | **Egy** zöld összefoglaló a teljes parancslánccal. |
+| 4 | **Folyamat** panel | **2 fázis:** thin pool, majd data thin LV (virtuális méret = pool mérete). |
+| 5 | **Info** | zöld színű összefoglaló panel a teljes parancslánccal. |
 | 6 | **Particio formazas** | Cél: a **data** thin LV. |
 
 ```markdown
