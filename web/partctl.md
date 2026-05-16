@@ -157,6 +157,7 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 - [MBR és GPT partíciós tábla ismertetése](https://drcyberg.github.io/partctl/web/mbr-vs-gpt-partctl-guide)
 - [Partíció igazítás](https://drcyberg.github.io/partctl/web/particio-igazitas-partctl-guide)
 - [Cisco kompatibilis USB flash és USB 3.0 SSD előkészítése](https://drcyberg.github.io/partctl/web/cisco-usb-flash-partctl-guide)
+- [LVM működési elv](https://drcyberg.github.io/partctl/web/lvm-mukodesi-elv-partctl-guide)
 
 ### Köszönöm ha támogatsz
 
