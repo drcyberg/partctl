@@ -251,3 +251,4 @@ https://github.com/drcyberg/partctl/blob/main/example/win11-gpt-uefi-particio-wh
 
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
 - ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
+- ***Paypal (URL)***: [LINK](https://paypal.me/Kunee82)
