@@ -59,7 +59,7 @@ Az **LVM Thin** (vagy LVM Thin Provisioning) egy fejlett tárolókapacitás-keze
 
 ### 2.3 Snapshot — szerver környezetben
 
-Az LVM (Logical Volume Manager) thin pillanatkép (snapshot) egy adott logikai kötet pillanatnyi állapotának azonnali, **tárhely hatékony másolata**, amely a thin provisioning technológiát használja. Ideális virtuális gépek (pl. Proxmox, KVM), tárolók és rendszerek biztonsági mentéséhez, mivel nem foglal feleslegesen előre lemezterületet.
+Az LVM thin pillanatkép (snapshot) egy adott logikai kötet pillanatnyi állapotának azonnali, **tárhely hatékony másolata**, amely a thin provisioning technológiát használja. Ideális virtuális gépek (pl. Proxmox, KVM), tárolók és rendszerek biztonsági mentéséhez, mivel nem foglal feleslegesen előre lemezterületet.
 
 | Típus | Mire való? | Hol „ül”? | Tipikus szerver használat |
 |-------|------------|-----------|---------------------------|
