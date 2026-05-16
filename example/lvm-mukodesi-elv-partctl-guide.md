@@ -209,10 +209,10 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
 | 1 | **Főmenü → `1`** | Lemez kiválasztása (pl. `sdc`). |
 | 2 | *(Ha nincs partició)* | **Particio kezeles → Particio letrehozasa** — egy teljes partició a szabad sávra (Linux típus). |
 | 3 | **Főmenü → `3` → LVM muveletek → `2`** | **LVM-thick kotet letrehozasa**. |
-| 4 | Varázsló | Válaszd ki a **cél particiót** (pl. `sdc3`). |
-| 5 | Megerősítés | Ellenőrizd: PV, VG név, LV név (`thick`) — **sárga** megerősítő panel. |
-| 6 | **Folyamat** | Kék panel, **2 fázis:** (1) PV + VG, (2) LV létrehozás. Várj a végéig. |
-| 7 | **Info** | **Egy** zöld összefoglaló: siker + teljes parancslánc. |
+| 4 | Varázsló panel | Válaszd ki a **cél particiót** (pl. `sdc3`). |
+| 5 | Megerősítés panel | Ellenőrizd: PV, VG név, LV név (`thick`) — **sárga** megerősítő panel. |
+| 6 | **Folyamat** | Kék színű panel, **2 fázis:** (1) PV + VG, (2) LV létrehozás. Várj a végéig. |
+| 7 | **Info** | zöld színű összefoglaló panel: siker + teljes parancslánc. |
 | 8 | **Főmenü → `3` → Particio formazas** | Válaszd az LV-t (pl. `/dev/sdc3_partctl_vg/thick` vagy mapper útvonal), **ext4** / **ntfs** stb. |
 | 9 | *(Opcionális)* **Főmenü → `4` → Ideiglenes csatolás** | Csak teszthez; éles szerveren állandó `fstab` külön téma. |
 
