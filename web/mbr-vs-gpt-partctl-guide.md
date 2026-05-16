@@ -78,13 +78,14 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | 6 | *(Opcionális további partíciók)* | Ha **3.** vagy **4.** primary / extended / logikai kell: kövesd a Partctl **felugró** kérdéseit (extended bővítés stb.). Egyszerű **C+D** két primary esetén ez a lépés kimarad. |
 | 7 | **Főmenü → `3`** → **Partition type code (hex, MBR)** | **`sdc1`** és **`sdc2`:** válaszd a **`07`** (Microsoft basic data / NTFS) típust a listából — illik az XP **NTFS** kötetekhez. |
 | 8 | **Főmenü → `3`** → **Partition format** / **Particio formazas** | Mindkét partíción **ntfs** (ha a Partctl listájában elérhető) — ez **Linuxról** előkészíti a köteteket; a **Windows XP telepítő** ettől függetlenül saját formázást is kínálhat. |
-| 9 | **Főmenü → `2`** Disk Overview | Ellenőrzés: tábla **msdos**, **`sdc1`** / **`sdc2`** méretek, sorrend. |
+| 9 | **Főmenü → `3`** → **Verify MBR partition table** | MBR partíciós tábla ellenőrzés. |
+| 10 | **Főmenü → `2`** Disk Overview | Ellenőrzés: tábla **msdos**, **`sdc1`** / **`sdc2`** méretek, sorrend. |
 
 ### 1.4 Példa — tipikus **Windows XP (MBR)** elrendezés (illusztráció)
 
-| Lemez áttekintés | Partíció részletei |
-| --- | --- |
-| ![lemez_attekintes_xp_1](/partctl/img/lemez_attekintes_xp_1.jpg "Lemez áttekintés XP #1") | ![particio_reszletei_xp_1](/partctl/img/particio_reszletei_xp_1.jpg "Partíció részletei XP #1") |
+| Lemez áttekintés | Partíció részletei | MBR tábla ellenőrzése |
+| --- | --- | --- |
+| ![lemez_attekintes_xp_1](/partctl/img/lemez_attekintes_xp_1.jpg "Lemez áttekintés XP #1") | ![particio_reszletei_xp_1](/partctl/img/particio_reszletei_xp_1.jpg "Partíció részletei XP #1") | ![mbr_tabla_ellenorzes](/partctl/img/mbr_tabla_ellenorzes_1.jpg "MBR tábla ellenőrzés #1") |
 
 | Eszköz | Szerep (XP) | MBR hex (tipikus) | Megjegyzés |
 |--------|-------------|-------------------|------------|
