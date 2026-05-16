@@ -175,17 +175,17 @@ Főmenü → 3 (Particio kezeles) → LVM muveletek
 
 ## 5. Automatikus elnevezések (Partctl)
 
-A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkrét partició neve alapján, pl. `sdc3`):
+A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkrét partició neve alapján, pl. `sdc1`):
 
 | Elem | Példa név | Megjegyzés |
 |------|-----------|------------|
-| **VG** | `sdc3_partctl_vg` | Egy partició → egy VG (automatikus varázslók) |
-| **Thick LV** | `thick` | VG-n belül: `/dev/sdc3_partctl_vg/thick` |
-| **Thin pool** | `sdc3_partctl_thinpool` | Thin pool LV |
-| **Thin data LV** | `sdc3_partctl_thinpool_data` | Használható kötet (virtuális partíció) |
+| **VG** | `sdc1_partctl_vg` | Egy partició → egy VG (automatikus varázslók) |
+| **Thick LV** | `thick` | VG-n belül: `/dev/sdc1_partctl_vg/thick` |
+| **Thin pool** | `sdc1_partctl_thinpool` | Thin pool LV |
+| **Thin data LV** | `sdc1_partctl_thinpool_data` | Használható kötet (virtuális partíció) |
 
 - A **thin** út a fenti `*_partctl_vg` / `*_partctl_thinpool` konvenciót követi.
-- A **thick** varázsló más mintát is használhat (`partctl_sdc3_thick_vg` + `thick`)
+- A **thick** varázsló más mintát is használhat (`partctl_sdc1_thick_vg` + `thick`)
 
 ---
 
@@ -195,7 +195,7 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
   <img src="/img/lvm_thick_1.png" alt="LVM működési elv — henger diagram (thick)" width="92%" />
 </p>
 
-> **Cél:** egy partició (pl. `sdc3`) → PV → VG → egy thick LV → később formázás.
+> **Cél:** egy partició (pl. `sdc1`) → PV → VG → egy thick LV → később formázás.
 
 | Módszer | Mikor érdemes? | Menü |
 |---------|----------------|------|
@@ -239,30 +239,26 @@ Ugyanaz a végeredmény, de **három külön menüben** állítod össze a réte
 | 1 | **Főmenü → `1`** | Lemez: pl. `sdc`. |
 | 2 | *(Ha kell)* **Particio kezeles → Particio letrehozasa** | Egy Linux partició (pl. `sdc1`) a szabad sávra. |
 | 3 | **LVM muveletek → `4` → `2`** | **PV kotet kezeles** → **PV letrehozas (pvcreate)**. |
-| 4 | PV varázsló | Táblázatból válaszd a particiót (`/dev/sdc3`). **Enter** → **Letrehozzam most a PV-t?** → Igen. |
-| 5 | **Folyamat + Info** | `pvcreate -ff -y /dev/sdc3` — várj a zöld színű Info panelig. |
+| 4 | PV varázsló | Táblázatból válaszd a particiót (`/dev/sdc1`). **Enter** → **Letrehozzam most a PV-t?** → Igen. |
+| 5 | **Folyamat + Info** | `pvcreate -ff -y /dev/sdc1` — várj a zöld színű Info panelig. |
 | 6 | **LVM muveletek → `5` → `2`** | **VG kotet kezeles** → **VG letrehozas** (ha a menüben más a szöveg: VG létrehozása). |
-| 7 | VG varázsló | Válaszd a **szabad PV**-t (`/dev/sdc3`, nincs VG-hez rendelve). |
-| 8 | VG név | Alapértelmezett: `sdc3_partctl_vg` — átírható. **Enter** → **sárga** megerősítés (`vgcreate …`). |
-| 9 | **Folyamat + Info** panel | `vgcreate sdc3_partctl_vg /dev/sdc3`. |
+| 7 | VG varázsló | Válaszd a **szabad PV**-t (`/dev/sdc1`, nincs VG-hez rendelve). |
+| 8 | VG név | Alapértelmezett: `sdc1_partctl_vg` — átírható. **Enter** → **sárga** megerősítés (`vgcreate …`). |
+| 9 | **Folyamat + Info** panel | `vgcreate sdc1_partctl_vg /dev/sdc1`. |
 | 10 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas (lvcreate)**. |
-| 11 | VG választás | Válaszd a friss VG-t (`sdc3_partctl_vg`). |
+| 11 | VG választás | Válaszd a friss VG-t (`sdc1_partctl_vg`). |
 | 12 | Pool típus | **LVM thick** (ne a thin). |
-| 13 | LV név | Alapértelmezett: `sdc3_partctl_lv` — átírható (pl. `thick`). |
+| 13 | LV név | Alapértelmezett: `sdc1_partctl_lv` — átírható (pl. `thick`). |
 | 14 | Megerősítő panel | **100%FREE** — a program a teljes szabad VG-területet használja. **sárga** panel → Igen. |
-| 15 | **Folyamat + Info** panel | `lvcreate -y -l 100%FREE -n <lv> sdc3_partctl_vg`. |
-| 16 | **Particio formazas** | Cél LV: pl. `/dev/sdc3_partctl_vg/sdc3_partctl_lv` vagy mapper útvonal. |
-
-| Lemez áttekintés | Partíció részletei |
-| --- | --- |
-| ![lvm-thin_2](/img/lvm-thin_2.jpg "LVM-thin #2") | ![lvm-thin_3](/img/lvm-thin_3.jpg "LVM-thin #3") |
+| 15 | **Folyamat + Info** panel | `lvcreate -y -l 100%FREE -n <lv> sdc1_partctl_vg`. |
+| 16 | **Particio formazas** | Cél LV: pl. `/dev/sdc1_partctl_vg/sdc1_partctl_lv` vagy mapper útvonal. |
 
 **Háttérben (kézi thick), tipikus parancsok** — megegyeznek az automatikus első két lépésével; az LV név a 13. lépésben megadott:
 
 ```text
-pvcreate -ff -y /dev/sdc3
-vgcreate sdc3_partctl_vg /dev/sdc3
-lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
+pvcreate -ff -y /dev/sdc1
+vgcreate sdc1_partctl_vg /dev/sdc1
+lvcreate -y -l 100%FREE -n sdc1_partctl_lv sdc1_partctl_vg
 ```
 
 > **Megjegyzés:** a kézi thick LV létrehozás jelenleg **mindig** `100%FREE` méretet kér; részleges méretet a **LV méret növelése / csökkentése** menük adják később.
@@ -281,20 +277,24 @@ lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
 
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
-| 1–2 | Ugyanaz, mint thick-nél | Lemez + **szabad partició** (`sdc3`). |
+| 1–2 | Ugyanaz, mint thick-nél | Lemez + **szabad partició** (`sdc1`). |
 | 3 | **LVM muveletek → `3`** | **LVM-thin kotet letrehozasa**. |
 | 4 | Varázsló | Cél partició; megerősítés: PV, VG, **thin pool**, **thin LV** (virtuális 100%). |
 | 5 | **Folyamat** | **3 fázis:** (1) PV + VG, (2) thin pool, (3) thin LV (data). **Egy** kék színű folyamat panelon megjelenítve, majd **egy** záró zöld színű Info panelon az eredmény megjelenítve. |
-| 6 | **Particio formazas** | Cél: a **data** thin LV (pl. `.../sdc3_partctl_thinpool_data`). |
+| 6 | **Particio formazas** | Cél: a **data** thin LV (pl. `.../sdc1_partctl_thinpool_data`). |
 | 7 | **Lemez attekintes** | Ellenőrizd: pool + data LV, méret, mapper útvonalak. |
+
+| Lemez áttekintés | Partíció részletei |
+| --- | --- |
+| ![lvm-thin_2](/img/lvm-thin_2.jpg "LVM-thin #2") | ![lvm-thin_3](/img/lvm-thin_3.jpg "LVM-thin #3") |
 
 **Háttérben (automatikus thin), tipikus parancsok:**
 
 ```text
-pvcreate -ff -y /dev/sdc3
-vgcreate sdc3_partctl_vg /dev/sdc3
-lvcreate -y --type thin-pool -l 100%FREE -n sdc3_partctl_thinpool sdc3_partctl_vg
-lvcreate -y -V <pool_meret>B -T /dev/sdc3_partctl_vg/sdc3_partctl_thinpool -n sdc3_partctl_thinpool_data
+pvcreate -ff -y /dev/sdc1
+vgcreate sdc1_partctl_vg /dev/sdc1
+lvcreate -y --type thin-pool -l 100%FREE -n sdc1_partctl_thinpool sdc1_partctl_vg
+lvcreate -y -V <pool_meret>B -T /dev/sdc1_partctl_vg/sdc1_partctl_thinpool -n sdc1_partctl_thinpool_data
 ```
 
 > A **virtuális méret** (`-V`) a Partctl a pool aktuális méretéből számolja (100% modell).
@@ -306,22 +306,22 @@ A **6.2** lépései **1–9** (partíció, PV, VG) **megegyeznek**; innen folyta
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
 | 10 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas (lvcreate)**. |
-| 11 | VG választás | Pl. `sdc3_partctl_vg`. |
+| 11 | VG választás | Pl. `sdc1_partctl_vg`. |
 | 12 | Pool típus | **LVM thin** (ne a thick). |
-| 13 | Thin-pool név | Alapértelmezett: `sdc3_partctl_thinpool` — átírható. |
+| 13 | Thin-pool név | Alapértelmezett: `sdc1_partctl_thinpool` — átírható. |
 | 14 | Megerősítő panel | **100%FREE** thin pool — **sárga** panel → Igen. |
 | 15 | **Folyamat (2 fázis)** | (1) thin pool létrehozás, (2) **data** thin LV — **egy** kék színű folyamat panelon megjelenítve, majd **egy** záró zöld színű Info panelon az eredmény megjelenítve. |
-| 16 | Data LV név | A program automatikusan: `sdc3_partctl_thinpool_data` (a PV partició nevéből). |
+| 16 | Data LV név | A program automatikusan: `sdc1_partctl_thinpool_data` (a PV partició nevéből). |
 | 17 | **Particio formazas** | A **data** LV-re formázol (ne a pool-ra). |
 | 18 | **Lemez attekintes** | Két LV: pool + data; a data a használható kötet. |
 
 **Háttérben (kézi thin), tipikus parancsok:**
 
 ```text
-pvcreate -ff -y /dev/sdc3
-vgcreate sdc3_partctl_vg /dev/sdc3
-lvcreate -y --type thin-pool -l 100%FREE -n sdc3_partctl_thinpool sdc3_partctl_vg
-lvcreate -y -V <pool_meret>B -T /dev/sdc3_partctl_vg/sdc3_partctl_thinpool -n sdc3_partctl_thinpool_data
+pvcreate -ff -y /dev/sdc1
+vgcreate sdc1_partctl_vg /dev/sdc1
+lvcreate -y --type thin-pool -l 100%FREE -n sdc1_partctl_thinpool sdc1_partctl_vg
+lvcreate -y -V <pool_meret>B -T /dev/sdc1_partctl_vg/sdc1_partctl_thinpool -n sdc1_partctl_thinpool_data
 ```
 
 ### 7.3 Kézi létrehozás — csak meglévő VG-n (thin pool + data)
