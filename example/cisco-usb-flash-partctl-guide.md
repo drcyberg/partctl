@@ -262,6 +262,7 @@ https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-gu
 ### Köszönöm ha támogatsz
 
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
-- ***Paypal***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
+- ***Paypal (QR Code)***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
+- ***Paypal (URL)***: [LINK](https://paypal.me/Kunee82)
 
 *Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
