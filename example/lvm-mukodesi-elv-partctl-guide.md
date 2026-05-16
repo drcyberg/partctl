@@ -236,17 +236,17 @@ Ugyanaz a végeredmény, de **három külön menüben** állítod össze a réte
 | 2 | *(Ha kell)* **Particio kezeles → Particio letrehozasa** | Egy Linux partició (pl. `sdc3`) a szabad sávra. |
 | 3 | **LVM muveletek → `4` → `2`** | **PV kotet kezeles** → **PV letrehozas (pvcreate)**. |
 | 4 | PV varázsló | Táblázatból válaszd a particiót (`/dev/sdc3`). **Enter** → **Letrehozzam most a PV-t?** → Igen. |
-| 5 | **Folyamat + Info** | `pvcreate -ff -y /dev/sdc3` — várj a zöld Info panelig. |
+| 5 | **Folyamat + Info** | `pvcreate -ff -y /dev/sdc3` — várj a zöld színű Info panelig. |
 | 6 | **LVM muveletek → `5` → `2`** | **VG kotet kezeles** → **VG letrehozas** (ha a menüben más a szöveg: VG létrehozása). |
 | 7 | VG varázsló | Válaszd a **szabad PV**-t (`/dev/sdc3`, nincs VG-hez rendelve). |
 | 8 | VG név | Alapértelmezett: `sdc3_partctl_vg` — átírható. **Enter** → **sárga** megerősítés (`vgcreate …`). |
-| 9 | **Folyamat + Info** | `vgcreate sdc3_partctl_vg /dev/sdc3`. |
+| 9 | **Folyamat + Info** panel | `vgcreate sdc3_partctl_vg /dev/sdc3`. |
 | 10 | **LVM muveletek → `1` → `2`** | **LV kotet kezeles** → **LV letrehozas (lvcreate)**. |
 | 11 | VG választás | Válaszd a friss VG-t (`sdc3_partctl_vg`). |
 | 12 | Pool típus | **LVM thick** (ne a thin). |
 | 13 | LV név | Alapértelmezett: `sdc3_partctl_lv` — átírható (pl. `thick`). |
-| 14 | Megerősítés | **100%FREE** — a program a teljes szabad VG-területet használja. **sárga** panel → Igen. |
-| 15 | **Folyamat + Info** | `lvcreate -y -l 100%FREE -n <lv> sdc3_partctl_vg`. |
+| 14 | Megerősítő panel | **100%FREE** — a program a teljes szabad VG-területet használja. **sárga** panel → Igen. |
+| 15 | **Folyamat + Info** panel | `lvcreate -y -l 100%FREE -n <lv> sdc3_partctl_vg`. |
 | 16 | **Particio formazas** | Cél LV: pl. `/dev/sdc3_partctl_vg/sdc3_partctl_lv` vagy mapper útvonal. |
 
 **Háttérben (kézi thick), tipikus parancsok** — megegyeznek az automatikus első két lépésével; az LV név a 13. lépésben megadott:
