@@ -207,33 +207,37 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
 | 1 | **Főmenü → `1`** | Lemez kiválasztása (pl. `sdc`). |
-| 2 | *(Ha nincs partició)* | **Particio kezeles → Particio letrehozasa** — egy teljes partició a szabad sávra (Linux típus). |
+| 2 | *(Ha nincs partició)* | **Particio kezeles → Particio letrehozasa** — egy teljes vagy tetszőleges partició a szabad sávra (Linux típus). |
 | 3 | **Főmenü → `3` → LVM muveletek → `2`** | **LVM-thick kotet letrehozasa**. |
-| 4 | Varázsló panel | Válaszd ki a **cél particiót** (pl. `sdc3`). |
+| 4 | Varázsló panel | Válaszd ki a **cél particiót** (pl. `sdc1`). |
 | 5 | Megerősítés panel | Ellenőrizd: PV, VG név, LV név (`thick`) — **sárga** megerősítő panel. |
 | 6 | **Folyamat** | Kék színű panel, **2 fázis:** (1) PV + VG, (2) LV létrehozás. Várj a végéig. |
 | 7 | **Info** | zöld színű összefoglaló panel: siker + teljes parancslánc. |
-| 8 | **Főmenü → `3` → Particio formazas** | Válaszd az LV-t (pl. `/dev/sdc3_partctl_vg/thick` vagy mapper útvonal), **ext4** / **ntfs** stb. |
+| 8 | **Főmenü → `3` → Particio formazas** | Válaszd az LV-t (pl. `/dev/sdc1_partctl_vg/thick` vagy mapper útvonal), **ext4** / **ntfs** stb. |
 | 9 | *(Opcionális)* **Főmenü → `4` → Ideiglenes csatolás** | Csak teszthez; éles szerveren állandó `fstab` külön téma. |
+
+| Lemez áttekintés | Partíció részletei |
+| --- | --- |
+| ![lvm-thick_2](/img/lvm-thick_2.jpg "LVM-thick #2") | ![lvm-thick_3](/img/lvm-thick_3.jpg "LVM-thick #3") |
 
 **Háttérben (automatikus thick), tipikus parancsok:**
 
 ```text
-pvcreate -ff -y /dev/sdc3
-vgcreate sdc3_partctl_vg /dev/sdc3
-lvcreate -y -W y -l 100%FREE -n thick sdc3_partctl_vg
+pvcreate -ff -y /dev/sdc1
+vgcreate sdc1_partctl_vg /dev/sdc1
+lvcreate -y -W y -l 100%FREE -n thick sdc1_partctl_vg
 ```
 
 ### 6.2 Kézi létrehozás (PV → VG → LV menük)
 
-Ugyanaz a végeredmény, de **három külön menüben** állítod össze a rétegeket. A Partctl minden lépésnél **sárga** megerősítő panelt mutat, majd kék **Folyamat** panelt (Proc) futtat.
+Ugyanaz a végeredmény, de **három külön menüben** állítod össze a rétegeket. A Partctl minden lépésnél **sárga** megerősítő panelt mutat, majd kék **Folyamat** panelt futtat.
 
-**Előfeltétel:** kiválasztott lemez (`Főmenü → 1`), **leválasztott** cél partició (pl. `sdc3`), nincs rajta fájlrendszer / nincs csatolva.
+**Előfeltétel:** kiválasztott lemez (`Főmenü → 1`), **leválasztott** cél partició (pl. `sdc1`), nincs rajta fájlrendszer / nincs csatolva.
 
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
 | 1 | **Főmenü → `1`** | Lemez: pl. `sdc`. |
-| 2 | *(Ha kell)* **Particio kezeles → Particio letrehozasa** | Egy Linux partició (pl. `sdc3`) a szabad sávra. |
+| 2 | *(Ha kell)* **Particio kezeles → Particio letrehozasa** | Egy Linux partició (pl. `sdc1`) a szabad sávra. |
 | 3 | **LVM muveletek → `4` → `2`** | **PV kotet kezeles** → **PV letrehozas (pvcreate)**. |
 | 4 | PV varázsló | Táblázatból válaszd a particiót (`/dev/sdc3`). **Enter** → **Letrehozzam most a PV-t?** → Igen. |
 | 5 | **Folyamat + Info** | `pvcreate -ff -y /dev/sdc3` — várj a zöld színű Info panelig. |
@@ -248,6 +252,10 @@ Ugyanaz a végeredmény, de **három külön menüben** állítod össze a réte
 | 14 | Megerősítő panel | **100%FREE** — a program a teljes szabad VG-területet használja. **sárga** panel → Igen. |
 | 15 | **Folyamat + Info** panel | `lvcreate -y -l 100%FREE -n <lv> sdc3_partctl_vg`. |
 | 16 | **Particio formazas** | Cél LV: pl. `/dev/sdc3_partctl_vg/sdc3_partctl_lv` vagy mapper útvonal. |
+
+| Lemez áttekintés | Partíció részletei |
+| --- | --- |
+| ![lvm-thin_2](/img/lvm-thin_2.jpg "LVM-thin #2") | ![lvm-thin_3](/img/lvm-thin_3.jpg "LVM-thin #3") |
 
 **Háttérben (kézi thick), tipikus parancsok** — megegyeznek az automatikus első két lépésével; az LV név a 13. lépésben megadott:
 
@@ -276,7 +284,7 @@ lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
 | 1–2 | Ugyanaz, mint thick-nél | Lemez + **szabad partició** (`sdc3`). |
 | 3 | **LVM muveletek → `3`** | **LVM-thin kotet letrehozasa**. |
 | 4 | Varázsló | Cél partició; megerősítés: PV, VG, **thin pool**, **thin LV** (virtuális 100%). |
-| 5 | **Folyamat** panel | **3 fázis:** (1) PV + VG, (2) thin pool, (3) thin LV (data). **Egy** folyamat, **egy** záró Info panel. |
+| 5 | **Folyamat** | **3 fázis:** (1) PV + VG, (2) thin pool, (3) thin LV (data). **Egy** kék színű folyamat panelon megjelenítve, majd **egy** záró zöld színű Info panelon az eredmény megjelenítve. |
 | 6 | **Particio formazas** | Cél: a **data** thin LV (pl. `.../sdc3_partctl_thinpool_data`). |
 | 7 | **Lemez attekintes** | Ellenőrizd: pool + data LV, méret, mapper útvonalak. |
 
@@ -302,7 +310,7 @@ A **6.2** lépései **1–9** (partíció, PV, VG) **megegyeznek**; innen folyta
 | 12 | Pool típus | **LVM thin** (ne a thick). |
 | 13 | Thin-pool név | Alapértelmezett: `sdc3_partctl_thinpool` — átírható. |
 | 14 | Megerősítő panel | **100%FREE** thin pool — **sárga** panel → Igen. |
-| 15 | **Folyamat (2 fázis)** panel | (1) thin pool létrehozás, (2) **data** thin LV — **egy** kék Proc folyamat, **egy** záró Info. |
+| 15 | **Folyamat (2 fázis)** | (1) thin pool létrehozás, (2) **data** thin LV — **egy** kék színű folyamat panelon megjelenítve, majd **egy** záró zöld színű Info panelon az eredmény megjelenítve. |
 | 16 | Data LV név | A program automatikusan: `sdc3_partctl_thinpool_data` (a PV partició nevéből). |
 | 17 | **Particio formazas** | A **data** LV-re formázol (ne a pool-ra). |
 | 18 | **Lemez attekintes** | Két LV: pool + data; a data a használható kötet. |
