@@ -195,7 +195,7 @@ A program **egységes, felismerhető** LVM-neveket javasol / használ (a konkré
   <img src="/img/lvm_thick_1.png" alt="LVM működési elv — henger diagram (thick)" width="92%" />
 </p>
 
-**Cél:** egy partició (pl. `sdc3`) → PV → VG → egy thick LV → később formázás.
+> **Cél:** egy partició (pl. `sdc3`) → PV → VG → egy thick LV → később formázás.
 
 | Módszer | Mikor érdemes? | Menü |
 |---------|----------------|------|
