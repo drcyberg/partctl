@@ -125,7 +125,7 @@ bash partctl.sh
 
 **Particio kezeles** almenü: a tételek **ábécérendbe** vannak rendezve — a pontos **sorszámot** mindig a **képernyőn** ellenőrizd. Az alábbi útmutatóban a **menüpont címkéjét** (angol + magyar) használjuk.
 
-Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sdb`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
+Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sda`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
 
 ---
 
@@ -135,7 +135,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 | Lépés | Menüút (rövid) | Mit csinálsz |
 |-------|----------------|--------------|
-| 1 | **Főmenü → `1`** Select Disk / Lemez kivalasztasa | Kiválasztod a **cél** lemezt (pl. teszt **`sdb`** — **ne** az élő rendszerlemez). |
+| 1 | **Főmenü → `1`** Select Disk / Lemez kivalasztasa | Kiválasztod a **cél** lemezt (pl. teszt **`sda`** — **ne** az élő rendszerlemez). |
 | 2 | *(Opcionális)* **Főmenü → `4` → `10`** Disk cleanup (Wipe) | „Tiszta lap”: teljes lemez + szükség szerint **partíciós tábla törlés** — részletek: [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) §3. |
 | 3 | **Főmenü → `3`** → **Create partition table** / **Particios tabla letrehozasa** | **GPT** vagy **MBR** igény szerint; megerősítés, figyelmeztetések elolvasása. |
 | 4 | **Főmenü → `3`** → **Create partition** / **Particio letrehozasa** | A **„Kezdet”** mezőnél **Enter** az **alapértelmezett** (1 MiB-hoz igazított) értékre; **„Vég”**-nél pl. **`+100GiB`**, **`100%`**, vagy abszolút **`…s`** — a súgó szerint. |
