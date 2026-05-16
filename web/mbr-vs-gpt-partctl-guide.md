@@ -44,7 +44,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ---
 
-## 1. MBR (Master Boot Record / `msdos`) — **Windows XP** példa (`/dev/sdb`)
+## 1. MBR (Master Boot Record / `msdos`) — **Windows XP** példa
 
 ![](/partctl/img/xp_logo.png)
 
@@ -58,7 +58,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ### 1.2 Tippek, trükkök, tanácsok (MBR + Windows XP + Partctl)
 
-1. **Ne a futó rendszer lemezén** kísérletezz — külön **teszt HDD/SSD** vagy **USB** (pl. **`sdb`**) ideális; a tényleges XP telepítéshez kell **BIOS boot** és a **Windows XP telepítő** (CD/USB) — a Partctl **csak a lemez előkészítését** végzi.
+1. **Ne a futó rendszer lemezén** kísérletezz — külön **teszt HDD/SSD** vagy **USB** (pl. **`sdc`**) ideális; a tényleges XP telepítéshez kell **BIOS boot** és a **Windows XP telepítő** (CD/USB) — a Partctl **csak a lemez előkészítését** végzi.
 2. **„Tiszta lap”:** **Lemez kezeles → Disk cleanup (Wipe)** (`főmenü 4` → `10`), **teljes lemez** cél, szükség szerint a **partíciós tábla törlése** opció bejelölve — utána **Particios tabla letrehozasa** MBR-rel.
 3. **Két primary elég gyakori XP-hez:** egy **„C:”** rendszer (NTFS) + egy **„D:”** adat (NTFS), mindkettő **primary** — így **nem** kell extended/logikai, amíg nem kell 4-nél több kötet.
 4. **Négy elsődleges betelt?** A Partctl **Create partition** logikája MBR-n: az első **három** új partíció tipikusan **primary**; ha már **3 nem kiterjesztett primary** van és nincs extended, a **negyedik** lépésnél a program **kiterjesztett** partíciót hozhat létre, majd **logikai**kat. Ha elakad: **Lemez attekintes** + **Particio torlese** / újratervezés.
@@ -66,19 +66,19 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 6. **Particionev:** a Partctl **Particionev megvaltoztatasa** funkciója **csak GPT** táblán támogatott — MBR-n ne ezt várd a „címke” megoldására.
 7. **Ellenőrzés:** **Lemez attekintes** — a particiós tábla sorban **`dos`** / **`msdos`** jelenik meg.
 
-### 1.3 Partctl — példa menülépések (MBR — **Windows XP**, pl. `/dev/sdb` tesztlemez)
+### 1.3 Partctl — példa menülépések (MBR — **Windows XP**, pl. `/dev/sdc` tesztlemez)
 
 | Lépés | Menüút (rövid) | Mit csinálsz |
 |-------|----------------|-------------|
-| 1 | **Főmenü → `1`** Select Disk | Kiválasztod **`sdb`** (példa: másodlagos lemez / USB, **nem** az aktív rendszerlemez). |
+| 1 | **Főmenü → `1`** Select Disk | Kiválasztod **`sdc`** (példa: másodlagos lemez / USB, **nem** az aktív rendszerlemez). |
 | 2 | **Főmenü → `4` → `10`** Disk cleanup (Wipe) | Cél: **whole disk**; opcionálisan **partition table wipe**; megerősítés. *(Kihagyható, ha már üres a lemez.)* |
 | 3 | **Főmenü → `3`** → **Create partition table** / **Particios tabla letrehozasa** | Tábla típusánál: **`2` — MBR (msdos)** (a listában: **1** = GPT, **2** = MBR). Megerősítés, szükség esetén leválasztás. |
 | 4 | **Főmenü → `3`** → **Create partition** / **Particio letrehozasa** | **Első** partíció (későbbi **„C:”** / rendszer): kezdő a javasolt érték, vég pl. **`+40GiB`** — klasszikus XP rendszerkönyvtár-méret (igény szerint nagyobb). |
 | 5 | Ugyanitt **Create partition** (ismét) | **Második** partíció (későbbi **„D:”** / adat): kezdő a javasolt érték, vég pl. **`100%`** vagy **`+80GiB`** — a maradék szabad hely kitöltése. |
 | 6 | *(Opcionális további partíciók)* | Ha **3.** vagy **4.** primary / extended / logikai kell: kövesd a Partctl **felugró** kérdéseit (extended bővítés stb.). Egyszerű **C+D** két primary esetén ez a lépés kimarad. |
-| 7 | **Főmenü → `3`** → **Partition type code (hex, MBR)** | **`sdb1`** és **`sdb2`:** válaszd a **`07`** (Microsoft basic data / NTFS) típust a listából — illik az XP **NTFS** kötetekhez. |
+| 7 | **Főmenü → `3`** → **Partition type code (hex, MBR)** | **`sdc1`** és **`sdc2`:** válaszd a **`07`** (Microsoft basic data / NTFS) típust a listából — illik az XP **NTFS** kötetekhez. |
 | 8 | **Főmenü → `3`** → **Partition format** / **Particio formazas** | Mindkét partíción **ntfs** (ha a Partctl listájában elérhető) — ez **Linuxról** előkészíti a köteteket; a **Windows XP telepítő** ettől függetlenül saját formázást is kínálhat. |
-| 9 | **Főmenü → `2`** Disk Overview | Ellenőrzés: tábla **msdos**, **`sdb1`** / **`sdb2`** méretek, sorrend. |
+| 9 | **Főmenü → `2`** Disk Overview | Ellenőrzés: tábla **msdos**, **`sdc1`** / **`sdc2`** méretek, sorrend. |
 
 ### 1.4 Példa — tipikus **Windows XP (MBR)** elrendezés (illusztráció)
 
@@ -165,7 +165,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 |---------|----------------|
 | **Új Windows 11 telepítő / UEFI gép** | **GPT** (lásd §2, `sdc` példa) |
 | **2 TiB feletti** lemez vagy nagy egy partíció | **GPT** |
-| **Windows XP / régi gépek, csak BIOS boot**, kb. **2 TiB alatti** lemez | **MBR** (lásd §1, `sdb` példa) |
+| **Windows XP / régi gépek, csak BIOS boot**, kb. **2 TiB alatti** lemez | **MBR** (lásd §1, `sdc` példa) |
 | **Partctl tanulás / teszt** | **USB** + először **MBR (XP)** vagy **GPT (Win11)** külön próbalemez |
 
 ---
