@@ -93,7 +93,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ---
 
-## 2. GPT (GUID Partition Table) — **Windows 11** példa (`/dev/sdc`)
+## 2. GPT (GUID Partition Table) — **Windows 11** példa
 
 ![](/partctl/img/win11_logo.png)
 
