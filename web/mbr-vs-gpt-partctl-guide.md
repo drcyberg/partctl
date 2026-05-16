@@ -83,7 +83,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ### 1.4 Példa — tipikus **Windows XP (MBR)** elrendezés (illusztráció)
 
-| Lemez áttekintés | Partíció részletei | MBR tábla ellenőrzése |
+| Lemez áttekintés | Partíció részletei | MBR tábla ellenőrzés |
 | --- | --- | --- |
 | ![lemez_attekintes_xp_1](/partctl/img/lemez_attekintes_xp_1.jpg "Lemez áttekintés XP #1") | ![particio_reszletei_xp_1](/partctl/img/particio_reszletei_xp_1.jpg "Partíció részletei XP #1") | ![mbr_tabla_ellenorzes](/partctl/img/mbr_tabla_ellenorzes_1.jpg "MBR tábla ellenőrzés #1") |
 
@@ -130,7 +130,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 
 ### 2.4 Példa — tipikus **Windows 11** GPT sor (`/dev/sdc`, illusztráció)
 
-| Lemez áttekintés | Partíció részletei | GPT tábla ellenőrzése |
+| Lemez áttekintés | Partíció részletei | GPT tábla ellenőrzés |
 | --- | --- | --- |
 | ![lemez_attekintes_1](/partctl/img/lemez_attekintes_1.jpg "Lemez áttekintés #1") | ![particio_reszletei_1](/partctl/img/particio_reszletei_1.jpg "Partíció részletei #1") | ![gpt_tabla_ellenorzese](/partctl/img/gpt_tabla_ellenorzese.jpg "GPT tábla ellenőrzés #1") |
 
