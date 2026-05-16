@@ -22,7 +22,7 @@ Tehát az LVM a **Linux partíciók fölött** egy **logikai** réteget épít. 
 | **Fizikai kötet** | **PV (Physical Volume)** | Egy partició (vagy lemez), amit az LVM „befogad” | `pvcreate` |
 | **Kötetcsoport** | **VG (Volume Group)** | A PV-k összevonva: egy nagy „tárolómedence” | `vgcreate` |
 | **Logikai kötet** | **LV (Logical Volume)** | A VG-ből kivágott, használható blokk-eszköz (`/dev/vg/lv`) | `lvcreate` |
-| **Fájlrendszer** | — | ext4, NTFS, xfs stb. az LV **fölött** | `mkfs.*`, Partctl **Particio formazas** |
+| **Fájlrendszer** | **FS (File System)** | ext4, NTFS, xfs stb. az LV **fölött** | `mkfs.*`, Partctl **Particio formazas** |
 
 **Fontos:** Az LVM **nem** helyettesíti a particiós táblát (GPT/MBR). Kell egy **Linux partíció** (vagy egész lemez PV-ként), **utána** jön az LVM.
 
@@ -257,7 +257,7 @@ vgcreate sdc3_partctl_vg /dev/sdc3
 lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
 ```
 
-**Megjegyzés:** a kézi thick LV létrehozás jelenleg **mindig** `100%FREE` méretet kér; részleges méretet a **LV méret növelése / csökkentése** menük adják később.
+> **Megjegyzés:** a kézi thick LV létrehozás jelenleg **mindig** `100%FREE` méretet kér; részleges méretet a **LV méret növelése / csökkentése** menük adják később.
 
 ---
 
@@ -267,7 +267,7 @@ lvcreate -y -l 100%FREE -n sdc3_partctl_lv sdc3_partctl_vg
   <img src="/img/lvm_thin_1.png" alt="LVM-thin működési elv" width="92%" />
 </p>
 
-**Cél:** egy partició → PV → VG → **thin pool** → **thin LV** (data) — használható „virtuális partíció”.
+> **Cél:** egy partició → PV → VG → **thin pool** → **thin LV** (data) — használható „virtuális partíció”.
 
 ### 7.1 Automatikus létrehozás (varázsló)
 
@@ -289,7 +289,7 @@ lvcreate -y --type thin-pool -l 100%FREE -n sdc3_partctl_thinpool sdc3_partctl_v
 lvcreate -y -V <pool_meret>B -T /dev/sdc3_partctl_vg/sdc3_partctl_thinpool -n sdc3_partctl_thinpool_data
 ```
 
-A **virtuális méret** (`-V`) a Partctl a pool aktuális méretéből számolja (100% modell).
+> A **virtuális méret** (`-V`) a Partctl a pool aktuális méretéből számolja (100% modell).
 
 ### 7.2 Kézi létrehozás — teljes út (PV → VG → thin pool + data)
 
