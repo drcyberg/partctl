@@ -127,6 +127,10 @@ A **Particio kezeles** lista **ábécérendben** van — a konkrét sorszámot m
 | `sdc` | `msdos` | — | — | Pendrive |
 | `sdc1` | — | primary | `vfat` | Egy kötet, max. **~4 GiB/fájl** (FAT32 limit) |
 
+| Lemez áttekintés | Partíció részletei |
+| --- | --- |
+| ![usb_partition_1](/img/usb_partition_1.jpg "Lemez áttekintés #1") | ![usb_partition_2](/img/usb_partition_2.jpg "Partíció részletei #1") |
+
 ---
 
 ## 5. Példa B — **két vagy több FAT32** partíció beállítása
