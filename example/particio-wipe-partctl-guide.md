@@ -207,7 +207,7 @@ Példa: **`/dev/sdc`**, ~32 GiB.
 | 2 | **Főmenü → `3`** → **Particio torlese** | Válaszd **`sdc2`**-t. Megerősítés. |
 | 3 | **Lemez attekintes** | `sdc2` sor **eltűnik**; szabad sáv jelenik meg. |
 
-**Megjegyzés:** a törlés **nem** nullázza biztonságosan az adatot — a régi bitek a lemezen maradhatnak, amíg felül nem írod őket. Adatmegsemmisítéshez: **Wipe** + nullázás a partíción **törlés előtt**, vagy törlés után új partíció + nullázás.
+> **Megjegyzés:** a törlés **nem** nullázza biztonságosan az adatot — a régi bitek a lemezen maradhatnak, amíg felül nem írod őket. Adatmegsemmisítéshez: **Wipe** + nullázás a partíción **törlés előtt**, vagy törlés után új partíció + nullázás.
 
 Ha a program **kernel figyelmeztetést** ad: húzd ki/csatlakoztasd újra az eszközt, vagy futtass `partprobe`-ot — a Partctl ezt jelzi a sikeres törlés után is.
 
