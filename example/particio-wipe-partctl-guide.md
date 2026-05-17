@@ -129,12 +129,12 @@ A **Particio kezeles** lista **ábécérendben** van — a konkrét sorszámot m
 
 ---
 
-## 5. Példa B — **két vagy több FAT32** partíció (N x 4 GiB/fájl limit megkerülése)
+## 5. Példa B — **két vagy több FAT32** partíció beállítása
 
-**Cél:** Ugyanazon a pendrive-on **két vagy több külön kötet** létrehozni, hogy **nagy fájl** terjedelmek is elférjen (max. ~4 GiB/partíció), anélkül hogy exFAT/NTFS kellene. Az ilyen típusú USB pendrivokat Cisco és más eszközök esetében érdemes használni.
+**Cél:** Ugyanazon a pendrive-on **7 db külön kötet** létrehozni, hogy **nagy fájl** terjedelmek is elférjen (max. 7 x 4 GiB partíciók), anélkül hogy exFAT/NTFS kellene. Az ilyen típusú USB pendrivokat Cisco és más eszközök esetében érdemes használni, például: különböző **firmware feltöltésekhez**.
 Példa: **`/dev/sdc`**, ~32 GiB.
 
-> **Tévhit:** a FAT32 **4 GiB korlátja fájlméretre** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is csak ~4 GiB-nál kisebb egyetlen fájl mehet.
+> Mehjegyzés: Tévhit, hogy a FAT32 **4 GiB korlátja fájlméretre** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is csak ~4 GiB-nál kisebb egyetlen fájl mehet.
 
 | Lépés | Menüút | Mit csinálsz |
 |-------|--------|--------------|
@@ -177,7 +177,7 @@ Példa: **`/dev/sdc`**, ~32 GiB.
 
 ---
 
-## 6. Példa C — **egy partíció wipe**, a többi megmarad
+## 6. Példa C — **Lemez tisztítás (wipe)** egy kijelölt partíción
 
 **Kiindulás:** `/dev/sdc` már két partícióval (Példa B). Csak **`sdc2`** adatait szeretnéd eltávolítani, **`sdc1`** érintetlen.
 
@@ -189,11 +189,11 @@ Példa: **`/dev/sdc`**, ~32 GiB.
 | 4 | Enter + megerősítés | A tábla és **`sdc1`** megmarad. |
 | 5 | *(Opcionális)* **Particio formazas** | `sdc2` → **`vfat`** újra — üres, használható kötet. |
 
-**Miért jobb, mint a teljes lemez nullázása?** A `dd` csak a **`sdc2`** méretű sávot írja (~15 GiB), nem az egész 32 GiB-ot — **kevesebb flash kopás**.
+**Miért jobb, mint a teljes lemez nullázása?** A `dd` csak a **`sdc2`** méretű sávot írja (4 GiB), nem az egész 32 GiB-ot — **kevesebb flash kopás**.
 
 ---
 
-## 7. Példa D — **egy partíció törlése** (struktúra változik)
+## 7. Példa D — **egy partíció törlése**
 
 **Cél:** `sdc2` **eltávolítása** a táblából; `sdc1` marad; a felszabadult hely később újra partícionálható.
 
@@ -209,7 +209,7 @@ Ha a program **kernel figyelmeztetést** ad: húzd ki/csatlakoztasd újra az esz
 
 ---
 
-## 8. Példa E — **sok partíció**, tábla megmarad, minden aláírás megy
+## 8. Példa E — **minden partíció** megmarad, csak az aláírást távolítjuk el
 
 **Cél:** GPT/MBR szerkezet **megmarad** (pl. előre definiált `sdc1`…`sdc4` Windows-elrendezés), de minden köteten eltűnjenek a régi FS/LVM jelzések — **teljes lemez `dd` nélkül**.
 
@@ -221,48 +221,6 @@ Ha a program **kernel figyelmeztetést** ad: húzd ki/csatlakoztasd újra az esz
 
 Ha nincs egyetlen partíció sem a lemezen, a program **nem** futtat teljes-lemez `wipefs`-t (védelem a véletlen táblatörlés ellen), és figyelmeztet: *„A GPT/MBR megőrzés aktív, de nem található törölhető partíció cél…”* — ilyenkor előbb hozz létre partíciókat, vagy kapcsold be a **tábla törlést**.
 
----
-
-## 9. Szakszerű sorrend — új lemez felépítése (összefoglaló)
-
-| Fázis | Partctl útvonal | Eredmény |
-|-------|-----------------|----------|
-| 1 | **Főmenü → `1`** | Céllemez kiválasztva |
-| 2 | **Főmenü → `4` → `10`** Wipe (opc.) | Tiszta aláírások; szükség szerint tábla törlés |
-| 3 | **Főmenü → `3`** → **Particios tabla letrehozasa** | GPT vagy MBR (lásd [MBR vs GPT](mbr-vs-gpt-partctl-guide.md)) |
-| 4 | **Főmenü → `3`** → **Particio letrehozasa** (ismételhető) | `2048s` kezdő, méret (`+NGiB`, `100%`) |
-| 5 | **Főmenü → `3`** → **Particio formazas** | `vfat` / `ext4` / `ntfs` stb. |
-| 6 | **Főmenü → `3`** → **GPT/MBR ellenorzes** | Integritás OK |
-| 7 | **Főmenü → `2`** Lemez attekintes | Végleges ellenőrzés |
-
-> Megjegyzés: A **Partíciós tábla létrehozása** varázsló a `mklabel` előtt szintén tisztít (`sgdisk --zap-all`, `wipefs`), ha elérhető — a **Wipe** elsősorban akkor kell külön, ha **csak** aláírásokat akarsz törölni **tábla nélkül**, vagy **egy** partíciót.
-
----
-
-## 10. FAT32, több partíció, biztonság — rövid FAQ
-
-| Kérdés | Válasz |
-|--------|--------|
-| A FAT32 partíció max. 4 GB? | **Nem.** A partíció lehet sok GB; **egy fájl** max. ~4 GiB. |
-| Több FAT32 partíció segít nagy fájloknál? | **Igen**, ha a fájlokat **külön kötetekre** osztod (egyenként &lt;4 GiB). |
-| Biztonságosabb több partíció? | **Elválasztásra** igen; **adattörlésre** nem — a másik partíció érintetlen marad. |
-| MBR vagy GPT pendrive-ra? | **MBR** a legszélesebb kompatibilitás (régi BIOS, sok embedded); **GPT** modern, több partíció (lásd [MBR vs GPT](mbr-vs-gpt-partctl-guide.md)). |
-| Mikor kell teljes lemez `dd`? | Ritkán: biztonságos megsemmisítés vagy teljesen ismeretlen állapot — **nagy kopás**. |
-
----
-
-## 11. Hibaelhárítás
-
-| Tünet | Lehetséges ok | Partctl / teendő |
-|-------|---------------|------------------|
-| `lsblk` mutat FS-t, de nincs partíció | Régi aláírás | Wipe a lemezen vagy partíción; **Lemez áttekintés** frissítés (**R**) |
-| Partíció törlés „sikeres”, de még látszik | Kernel cache | Újradugás, `partprobe`; figyelmezd a program **kernel** üzenetét |
-| Wipe „foglalt eszköz” | Csatolt kötet / LVM | Leválasztás; Wipe ajánlhat **LVM deaktiválást** |
-| Teljes lemez wipe, tábla megőrzés — hibaüzenet | Nincs partíció | Hozz létre partíciókat, vagy kapcsold be a **tábla törlést** |
-| `Particio torlese` nem megy | Nincs tábla | Előbb **Partíciós tábla létrehozása** |
-
 **Napló:** minden művelet visszakereshető a `log/partctl-*.log` fájlban és a program **Napló** paneljén.
-
----
 
 *Partctl V1.0.0 — partíció és wipe menüútmutató. A menüsorszámok a futó program képernyőjén mindig ellenőrizendők (különösen a **Partíció kezelés** ábécésrendű listájában).*
