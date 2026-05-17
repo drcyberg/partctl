@@ -217,7 +217,7 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 **Eredmény**
 
-| Eszköz | Tábla | FS | Címke (példa) | Megjegyzés |
+| Eszköz | Tábla | Címke | Fájlrendszer | Megjegyzés |
 |--------|-------|-----|---------------|------------|
 | `sdc` | `msdos` | — | — | Pendrive |
 | `sdc1` | `vfat` | `CISCO_USB` | Max. **~4 GiB / fájl** (FAT32 korlát) |
