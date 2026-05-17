@@ -2,7 +2,7 @@
 
 > **Cél:** Rövid, jól értelmezhető háttér a **Linux LVM** (Logical Volume Manager) rétegeiről, a **thick** és **thin** különbségéről, és arról, hogyan hozhatók létre / kezelhetők a kötetek a **Partctl** menüiből (`bash partctl.sh`).  
 
-> **Figyelem:** LVM és particiós műveletek **adatvesztést** okozhatnak. Csak **mentett**, **nem** futó rendszerlemezen, **leválasztott** (unmount) célokon dolgozz; éles környezetben mindig **biztonsági mentés**.
+**Figyelem:** LVM és particiós műveletek **adatvesztést** okozhatnak. Csak **mentett**, **nem** futó rendszerlemezen, **leválasztott** (unmount) célokon dolgozz; éles környezetben mindig **biztonsági mentés**.
 
 ---
 
