@@ -1,15 +1,14 @@
 # Partíció létrehozás, törlés és célzott wipe — `partctl.sh` menüútmutató
 
-> **Cél:** Szakszerűen bemutatni, hogyan hozol létre és távolítasz el partíciókat a **Partctl** (`bash partctl.sh`) felületén úgy, hogy **csökkenjen** a „látszólagos” vagy hibás partíciós állapot esélye (régi aláírások, eltérő kernel-tábla, félig törött szerkezet), és hogyan **kíméled** a flash/SSD kopását: **nem mindig** kell a teljes lemezt nullázni — sok esetben elég **egy partíció** wipe-ja vagy törlése.  
-> **Példák:** egyetlen FAT32 pendrive; **két FAT32** zóna a **4 GiB/fájl** limit miatt; **egy partíció** törlése vagy tisztítása a többi érintése nélkül.
+> **Cél:** Szakszerűen bemutatni, hogyan hozol létre és távolítasz el partíciókat a **Partctl** (`bash partctl.sh`) felületén úgy, hogy **csökkenjen** a „látszólagos” vagy hibás partíciós állapot esélye (régi aláírások, eltérő kernel-tábla, félig törött szerkezet), és hogyan **kíméled** a flash/SSD kopását: **nem mindig** kell a teljes lemezt nullázni — sok esetben elég **egy partíció** wipe-ja vagy törlése.
 
 **Figyelem:** partíciós tábla, partíciók, **wipe** és **formázás** **adatvesztést** okoz. Mindig **mentett**, **leválasztott** (unmount) adathordozóval dolgozz, **ne** a futó rendszerlemezen, és a **céllemezt** (pl. `/dev/sdc`) a **Lemez áttekintés** képernyőn ellenőrizd minden lépés előtt.
-
-**Kapcsolódó anyagok:** [MBR vs GPT](mbr-vs-gpt-partctl-guide.md) · [Partíció igazítás](particio-igazitas-partctl-guide.md) · [Cisco USB flash](cisco-usb-flash-partctl-guide.md)
 
 ---
 
 ## 0. Gyors áttekintés — mit csinál a Partctl ebben a témában?
+
+![](/img/particio-wipe-resized.png)
 
 | Probléma / igény | Partctl megoldás (menü) | Mi történik a háttérben (röviden) |
 |------------------|-------------------------|-----------------------------------|
@@ -22,29 +21,27 @@
 
 ---
 
-## 1. Háttér — mi az a „látszólagos” partíciós tábla?
+## 1. Háttér — mi az a „látszólagos” partíciós tábla (Ghost FS)?
 
 Gyakran **nem** arról van szó, hogy a GPT/MBR „kitalál” partíciókat, hanem az alábbiak keverednek:
 
 1. **Régi fájlrendszer- vagy LVM-aláírások** — a `lsblk` / csatoló réteg még „lát” `ext4`, `ntfs`, `LVM2_member` jelzést, holott a partíciós bejegyzés már törölve vagy más.
 2. **GPT másodlagos fejléc / maradék GUID** — korábbi táblából maradt metaadat.
-3. **Kernel cache** — a tábla már módosult, de a régi `/dev/sdc2` node még látszik, amíg nincs `partprobe` / újradugás.
+3. **Kernel cache** — a tábla már módosult, de a régi `/dev/sdc2` node még látszik, amíg nincs `partprobe`, azaz az eszköz újra becsatlakoztatva.
 4. **Részleges művelet** — pl. csak `dd` nullázás **tábla törlés nélkül**, vagy fordítva: tábla törölve, de az aláírások megmaradtak.
 
 A Partctl ezt több ponton kezeli:
 
-- **Wipe** előtt leválasztás (`ensure_target_detached`).
-- **Partíció törlés** előtt: `refresh_disk_block_layer` (friss kernel-tábla).
-- **Új particiós tábla** előtt: `sgdisk --zap-all` + `wipefs -a` a lemezen (ha elérhető).
-- **Teljes lemez wipe**, ha **nincs** bejelölve a „partíciós tábla törlése”: a program **nem** a `/dev/sdc` csomóponton futtatja a `wipefs`-t (az törölné a táblát), hanem **minden meglévő partíció eszközén** külön (`wipefs -a /dev/sdc1`, `sdc2`, …).
+- 1.) **Wipe** előtt leválasztás (`ensure_target_detached`).
+- 2.) **Partíció törlés** előtt: `refresh_disk_block_layer` (friss kernel-tábla).
+- 3.) **Új particiós tábla** előtt: `sgdisk --zap-all` + `wipefs -a` a lemezen (ha elérhető).
+- 4.) **Teljes lemez wipe**, ha **nincs** bejelölve a „partíciós tábla törlése”: a program **nem** a `/dev/sdc` csomóponton futtatja a `wipefs`-t (az törölné a táblát), hanem **minden meglévő partíció eszközén** külön (`wipefs -a /dev/sdc1`, `sdc2`, …).
 
 ---
 
 ## 2. Wipe típusok — mit válassz?
 
 **Útvonal minden wipe-hoz:** **főmenü → `4` Lemez kezelés → `10` Disk cleanup (Wipe)**.
-
-![](/img/wipe_1.jpg)
 
 ### 2.1 Cél kiválasztása
 
@@ -54,6 +51,8 @@ A varázsló első lépésében választhatsz:
 |-----|--------|
 | **teljes lemez** (`/dev/sdc`) | Nulláról, vagy minden partíció egyszerre |
 | **egy partíció** (`/dev/sdc2`) | Csak egy zóna tisztítése — **kevesebb írás**, a többi érintetlen |
+
+![](/img/wipe_2.jpg)
 
 ### 2.2 Jelölőnégyzetek (Space) — összefoglaló
 
@@ -66,6 +65,8 @@ A varázsló első lépésében választhatsz:
 | **Partíció nullázás (`dd`)** | — | ✓ | **Csak** a kiválasztott partíció sávját írja tele nullával |
 | **Teljes lemez nullázás (`dd`)** | ✓ (opc.) | — | **Nagyon lassú**, maximális írási terhelés |
 | **LVM (LV/VG/PV)** | ✓ | ✓ | Kapcsolódó LVM bejegyzések törlése wipe előtt |
+
+![](/img/wipe_3.jpg)
 
 **Kopás / élettartam (flash, SSD):**
 
@@ -168,9 +169,11 @@ Példa: **`/dev/sdc`**, ~32 GiB.
 | `/dev/sdc5` | 4.0 GiB | `vfat` | pl. `cisco-fw-4.bin` (≤4 GiB) |
 | `/dev/sdc6` | 4.0 GiB | `vfat` | pl. `cisco-fw-5.bin` (≤4 GiB) |
 | `/dev/sdc7` | 4.0 GiB | `vfat` | pl. `cisco-fw-6.bin` (≤4 GiB) |
-| `/dev/sdc8` | 4.0 GiB | `vfat` | pl. `cisco-fw-7.bin` (≤4 GiB) |
+| `/dev/sdc8` | 4.0 GiB | `vfat` | pl. `cisco-fw-7.bin` (≤4 GiB) 
 
-**Biztonság:** a partíciók **nem** jelentenek automatikusan azt, hogy az egyik törlése a másikat is törli — **külön** wipe vagy törlés szükséges. Adatelválasztásra jó; **titkos védelemre** nem helyettesíti a titkosítást.
+| Lemez áttekintés | Fájlrendszer címke |
+| --- | --- |
+| ![usb_multiple_partition_1](/img/usb_multiple_partition_1.jpg "Lemez áttekintés #1") | ![cisco_fat32_2](/img/usb_multiple_partition_2.jpg "Fájlrendszer címke #1") |
 
 ---
 
