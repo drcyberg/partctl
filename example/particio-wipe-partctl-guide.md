@@ -72,7 +72,7 @@ Ritkán arról van szó, hogy a GPT vagy az MBR „kitalálna” partíciókat. 
 
 | Művelet | Írási terhelés | Jellemző használat |
 |---------|----------------|---------------------|
-| `wipefs` egy partíción | Alacsony | Formázás előtti tisztítás, „szellem” jel eltüntetése |
+| `wipefs` egy partíción | Alacsony | Formázás előtti tisztítás. Csak azokat a „magic string” / aláírás bájtokat törli, amelyeket a libblkid felismer |
 | Partíció törlése | Minimális | A táblában eltűnik a bejegyzés; az adat a sávban **maradhat** |
 | Partíció `dd` nullázás | Közepes | Adat megsemmisítése **egy zónában** |
 | Teljes lemez `dd` nullázás | Maximális | Biztonságos megsemmisítés vagy teljes újrakezdés |
