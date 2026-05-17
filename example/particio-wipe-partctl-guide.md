@@ -116,28 +116,30 @@ A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan*
 | **MBR** | **`0C`** — *W95 FAT32 (LBA)* | **`0E`** — *W95 FAT16 (LBA)* |
 | **GPT** | **Microsoft basic data** (`EBD0A0A2-…`) + `msftdata` jelölő | ugyanígy: **Microsoft basic data** + `msftdata` |
 
-> **NTFS** ugyanezen a logikán megy: MBR-en **`07`**, GPT-n **Microsoft basic data** — mint a FAT32 GPT ág.
+> Megjegyzés: **NTFS** ugyanezen a logikán megy: MBR-en **`07`**, GPT-n **Microsoft basic data** — mint a FAT32 GPT ág.
 
 **Kézi beállítás** (ha ellenőrzésnél rossz érték látszik):
 
 - **MBR:** **főmenü → `3`** → **MBR particio tipuskod**
 - **GPT:** **főmenü → `3`** → **GPT particio tipuskod**
 
-A típuskód **nem** helyettesíti a fájlrendszert: a formázás hozza létre a FAT-ot; a kód azt jelzi, **milyen szerepet** vár el tőle a Windows, a firmware vagy a Linux.
+- Megjegyzés: A típuskód **nem** helyettesíti a fájlrendszert: a formázás hozza létre a FAT-ot; a kód azt jelzi, **milyen szerepet** vár el tőle a Windows, Linux OS.
 
 ### 4.1 Gyors választási tábla (MBR)
 
 | Partíció szerepe | Formázás | MBR kód a listában | Megjegyzés |
 |------------------|----------|--------------------|------------|
-| Adat / pendrive / Cisco flash | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB-n és HDD-n |
+| Adat / pendrive / Cisco flash | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
 | Adat (régi környezet) | **`vfat`** | **`0B`** — *W95 FAT32* | LBA nélkül; ma ritkán |
 | NTFS / exFAT adat | **`ntfs`** / exFAT | **`07`** — *Microsoft basic data* | NTFS után a Partctl **automatikusan** `07`-re állít |
 | Extended konténer | *ne formázd* | **`0F`** — *Extended (LBA)* | Pl. **`sdc4`** a §6 példában |
-| Logikai FAT32 | **`vfat`** | **`0C`** | **`sdc5`…`sdc8`** — ugyanaz, mint primary |
-| Linux adat | **`ext4`** stb. | **`83`** | |
-| EFI (MBR-en ritka) | **`vfat`** | **`EF`** | |
+| Logikai FAT32 | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
+| Linux adat | **`ext4`** stb. | **`83`** | - |
+| EFI (MBR-en ritka) | **`vfat`** | **`EF`** | - |
 
-> **Ne keverd össze:** a **`07`** az NTFS/exFAT adatpartícióhoz való. Sima **FAT32 pendrive**-ra **`0C`** kell, ne `07`. A Windows és a Cisco gyakran így is felismeri a `07`-et, de **`0C` a helyes FAT32–MBR páros**.
+> **Ne keverd össze:** a **`07`** típuskód az NTFS/exFAT adatpartícióhoz való. Sima **FAT32 pendrive**-ra **`0C`** típuskód kell, nem pedig a `07`. A Windows és a Cisco gyakran így is felismeri a `07` típuskóddal.
+
+![](/img/mbr_particio_tipuskod_1.jpg)
 
 ### 4.2 Mi fut a háttérben? (*Particio formazas* után)
 
@@ -146,10 +148,10 @@ A formázás varázsló egy második lépésben állítja a típuskódot (`forma
 | Fájlrendszer | MBR | GPT |
 |--------------|-----|-----|
 | **`vfat`** | `sfdisk` / `fdisk` → **`0C`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
-| **`fat16`** | → **`0E`** | ugyanaz, mint FAT32 GPT-n |
-| **`ntfs`** | → **`07`** | ugyanaz, mint FAT32 GPT-n |
+| **`fat16`** | → **`0E`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
+| **`ntfs`** | → **`07`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
 
-**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter**. MBR-n a **PARTTYPE** sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended). GPT-n **Microsoft basic data** / **`0700`** jellegű kód. Ha **`83`** (Linux) maradt, futtasd újra a megfelelő típuskód-varázslót (§4 első táblázata).
+**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter**. MBR-n a **PARTTYPE** sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended). GPT-n **Microsoft basic data** / **`0700`** jellegű kód. Ha **`83`** (Linux) maradt, futtasd újra a megfelelő típuskód varázslót (§4 első táblázata).
 
 ### 4.3 GPT — mikor kell még kézzel beállítani?
 
@@ -165,6 +167,8 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 | Általános adat (FAT32, FAT16, NTFS, exFAT) | **Microsoft basic data** — `EBD0A0A2-B9E5-4433-87C0-68B6B72699C7` |
 | EFI rendszer (boot, kis ESP) | **EFI System** — `C12A7328-F81F-11D2-BA4B-00A0C93EC93B` — ezt **nem** állítja a sima `vfat` adat-formázás |
 
+![](/img/gpt_particio_tipuskod_1.jpg)
+
 ### 4.4 §6 példa — partíciónkénti kód
 
 | Partíció | Típuskód | Formázás |
@@ -173,7 +177,7 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 | `sdc4` | **`0F`** (Extended) | **Ne** formázd — konténer |
 | `sdc5` … `sdc8` | **`0C`** | **`vfat`** |
 
-MBR-n: ha formázás után **`83`** vagy **`07`** látszik FAT32 helyett, állíts **`0C`**-t minden FAT32 kötetre, **`0F`**-et az **`sdc4`** extended konténerre. (A formázás általában már **`0C`**-t állít — lásd §4 első táblázat.)
+> Megjegyzés: MBR partíciós tábla esetében ha formázás után **`83`** vagy **`07`** típuskód látszik akkor, állítsd át **`0C`** típuskódra minden FAT32 fájlrendszer esetében ezeken a partíciókon. A **`0F`** típuskódot a **`sdc4`** extended partícion kell beállítani (A formázás általában már **`0C`**-t állít — lásd §4 első táblázat.).
 
 ### 4.5 Fájlrendszer címke *(opcionális)*
 
@@ -188,9 +192,11 @@ MBR-n: ha formázás után **`83`** vagy **`07`** látszik FAT32 helyett, állí
 
 **Lépések:** válaszd a partíciót → írd be a címkét (pl. **`CISCO_USB`**) → ha kéri, erősítsd a **leválasztást**, vagy előbb **Kotet lecsatolasa** (`4` → `7`) → ellenőrzés: **Lemez attekintes** → **Enter** → **Fajlrendszer címke** sor.
 
-A §6 példában partíciónként külön címke segít (pl. **`CISCO_FW1`** … **`CISCO_FW7`**). Az **`sdc4`** extended konténerre **nincs** fájlrendszer — oda címkét ne állíts.
+**Fontos:** Az **`sdc4`** extended konténerre **nincs** fájlrendszer — oda címkét ne állíts.
 
 > A címke **nem** helyettesíti a **`0C`** típuskódot. Windows és Linux a címkét kötetnévként mutatja; a Cisco továbbra is a **`usbflash0:`** számot használja.
+
+![](/img/fajlrendszer_cimke_1.jpg)
 
 ---
 
@@ -222,7 +228,7 @@ A §6 példában partíciónként külön címke segít (pl. **`CISCO_FW1`** …
 
 ---
 
-## 6. Példa B — több FAT32 partíció (firmware-helyek)
+## 6. Példa B — több FAT32 partíció
 
 **Cél:** Egy pendrive-on **hét külön FAT32 kötet**, hogy nagyobb fájlok is elférjenek (**egy fájl max. ~4 GiB**, de **hét kötet = hét ilyen fájl**). Hasznos pl. Cisco vagy más eszközök **külön firmware** tárolására. Példa lemez: **`/dev/sdc`**, ~32 GiB.
 
@@ -258,7 +264,7 @@ Az MBR **legfeljebb négy primary** partíciót enged — több zónához **exte
 
 ---
 
-## 7. Példa C — wipe egyetlen partíción
+## 7. Példa C — Lemez tisztítás (wipe) egyetlen partíción
 
 **Kiindulás:** a §6 szerinti elrendezés. Csak **`sdc2`** adata törlődik, **`sdc1`** érintetlen marad.
 
@@ -286,11 +292,11 @@ Az MBR **legfeljebb négy primary** partíciót enged — több zónához **exte
 
 > A törlés **nem** biztonságos adatmegsemmisítés — a régi adat a lemezen maradhat. Erre: **Wipe** + nullázás **törlés előtt**, vagy új partíció + nullázás utána.
 
-Ha **kernel figyelmeztetés** jön: dugd ki és csatlakoztasd újra az eszközt, vagy futtass **`partprobe`**-ot.
+Ha **kernel figyelmeztetés** jön: húzd ki és csatlakoztasd újra az eszközt, vagy futtass **`partprobe`**-ot.
 
 ---
 
-## 9. Példa E — tábla megmarad, aláírások mennek
+## 9. Példa E — tábla és a partíciók megmaradnak, de az aláírások törlődnek
 
 **Cél:** a partíciós **szerkezet megmarad** (pl. `sdc1`…`sdc4`), de minden köteten eltűnnek a régi fájlrendszer- és LVM-jelzések — **teljes lemez `dd` nélkül**.
 
@@ -304,6 +310,20 @@ Ha **nincs egyetlen partíció sem**, a program véletlen táblatörlés ellen *
 
 ---
 
-**Napló:** `log/partctl-*.log` és a program **Napló** panelje.
+**Napló:** `log/partctl-*.log` mappában megtalálható és a program **Napló** panelján is megtekinthető.
 
-*Partctl V1.0.0 — A menüsorszámokat mindig a futó program képernyőjén ellenőrizd (különösen a **Particio kezeles** ábécésrendű listájában).*
+```markdown
+https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-guide.md
+```
+
+### Fő oldal (Partctl)
+
+- [Partctl](https://drcyberg.github.io/partctl/web/partctl)
+
+### Köszönöm ha támogatsz
+
+- ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
+- ***Paypal (QR Code)***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
+- ***Paypal (URL)***: [LINK](https://paypal.me/Kunee82)
+
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
