@@ -123,7 +123,7 @@ A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan*
 - **MBR:** **főmenü → `3`** → **MBR particio tipuskod**
 - **GPT:** **főmenü → `3`** → **GPT particio tipuskod**
 
-- Megjegyzés: A típuskód **nem** helyettesíti a fájlrendszert: a formázás hozza létre a FAT-ot; a kód azt jelzi, **milyen szerepet** vár el tőle a Windows, Linux OS.
+> Megjegyzés: A típuskód **nem** helyettesíti a fájlrendszert: a formázás hozza létre a FAT-ot; a kód azt jelzi, **milyen szerepet** vár el tőle a Windows, Linux OS.
 
 ### 4.1 Gyors választási tábla (MBR)
 
