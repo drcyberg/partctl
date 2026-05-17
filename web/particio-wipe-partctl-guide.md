@@ -54,7 +54,7 @@ Ritkán arról van szó, hogy a GPT vagy az MBR „kitalálna” partíciókat. 
 
 ![](/partctl/img/wipe_2.jpg)
 
-### 2.2 Jelölőnégyzetek (Space)
+### 2.2 Lemez tisztítás (wipe)
 
 | Opció | Teljes lemez | Egy partíció | Mit csinál? |
 |-------|:------------:|:------------:|-------------|
@@ -66,9 +66,9 @@ Ritkán arról van szó, hogy a GPT vagy az MBR „kitalálna” partíciókat. 
 | **Teljes lemez nullázás** | ✓ (opc.) | — | Nagyon lassú, maximális kopás |
 | **LVM (LV / VG / PV)** | ✓ | ✓ | Kapcsolódó LVM-bejegyzések törlése wipe előtt |
 
-![](/partctl/img/wipe_3.jpg)
+> Megjegyzés: **Kopás flash / SSD esetén** megnőhet
 
-**Kopás flash / SSD esetén**
+![](/partctl/img/wipe_3.jpg)
 
 | Művelet | Írási terhelés | Jellemző használat |
 |---------|----------------|---------------------|
