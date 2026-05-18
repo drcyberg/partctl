@@ -232,7 +232,7 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 **Cél:** Egy pendrive-on **hét külön FAT32 kötet**, hogy nagyobb fájlok is elférjenek (**egy fájl max. ~4 GiB**, de **hét kötet = hét ilyen fájl**). Hasznos pl. Cisco vagy más eszközök **külön firmware** tárolására. Példa lemez: **`/dev/sdc`**, ~32 GiB.
 
-> A FAT32 **4 GiB-os határa egyetlen fájlra** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is legfeljebb ~4 GiB lehet egy fájl.
+> Megjegyzés: a FAT32 **4 GiB-os határa egyetlen fájlra** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is legfeljebb ~4 GiB lehet egy fájl.
 
 Az MBR **legfeljebb négy primary** partíciót enged — több zónához **extended** konténer kell (**`sdc4`**), benne **logikai** partíciókkal (`sdc5`…`sdc8`).
 
