@@ -29,7 +29,7 @@ backup/{lemez}-gpt-backup-{YYYYMMDD}-{NNN}.bin
 
 Példa: `backup/sdc-gpt-backup-20260515-001.bin` — ugyanazon napon a következő mentés `002`, `003`, …
 
-**Csak GPT:** MBR (`msdos`) lemezen ezek a menük **nem** érhetők el (hibaüzenet: csak GPT tábla). MBR ellenőrzéshez a Partctl külön menüpontot ad: **Verify MBR partition table** / **MBR tabla ellenorzes**.
+> Megjegyzés: **MBR** (`msdos`) lemezen ezek a menük **nem** érhetők el (hibaüzenet: csak GPT tábla). MBR ellenőrzéshez a Partctl külön menüpontot ad: **Verify MBR partition table** / **MBR tabla ellenorzes**.
 
 ---
 
@@ -94,6 +94,8 @@ sudo bash partctl.sh
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
+![](/img/lemez_kivalasztasa_2.jpg)
+
 **Lépések minden esettanulmányhoz:**
 
 1. **Főmenü → `1`** — válaszd ki a **céllemezt** (pl. `sdc` — USB pendrive).
@@ -125,6 +127,10 @@ Az almenü tételei **betűrendben** jelennek meg (nyelvfüggő sorrend). A **sz
 | 4 | Megerősítő panel | **Igen** — a panel mutatja a lemezt és a cél `.bin` útvonalat |
 | 5 | Folyamat panel | `sgdisk --backup=…` fut (GPT művelet folyamatban) |
 | 6 | Info panel | Siker: elmentett fájl teljes útvonala |
+
+| Megerősítés | Információ |
+| --- | --- |
+| ![gpt_tabla_mentes_1](/img/gpt_tabla_mentes_1.jpg "GPT partíciós tábla mentés #1") | ![gpt_tabla_mentes_2](/img/gpt_tabla_mentes_2.jpg "GPT partíciós tábla mentés #2") |
 
 ### 4.2 Mit látsz a megerősítésnél?
 
@@ -173,6 +179,10 @@ sudo sgdisk --backup=backup/sdc-gpt-backup-20260515-001.bin /dev/sdc
 | 7 | Folyamat | `sgdisk --load-backup=…` + `partprobe` / `udevadm settle` |
 | 8 | Info | Siker üzenet |
 
+| Kiválasztás | Megerősítés | Információ |
+| --- | --- | --- |
+| ![gpt_tabla_helyreallitas_1](/img/gpt_tabla_helyreallitas_1.jpg "GPT partíciós tábla helyreállítása #1") | ![gpt_tabla_helyreallitas_2](/img/gpt_tabla_helyreallitas_2.jpg "GPT partíciós tábla helyreállítása #2") | ![gpt_tabla_helyreallitas_3](/img/gpt_tabla_helyreallitas_3.jpg "GPT partíciós tábla helyreállítása #3") |
+
 **Ha a lista üres:** `(no .bin files found in this directory)` — előbb készíts mentést (§4), vagy másold a `.bin` fájlt a Partctl indítási könyvtár **`backup/`** alá.
 
 ### 5.3 Figyelmeztetés szövege (jelentése)
@@ -214,6 +224,10 @@ Használd **mentés előtt és után**, valamint **helyreállítás után**.
 | 3 | Almenü | **GPT tabla ellenorzes** / **Verify GPT partition table** |
 | 4 | Megerősítés | **Igen** |
 | 5 | Eredmény | Info panel: „ellenőrzés kész” + `sgdisk` kimenet |
+
+| Megerősítés | Információ |
+| --- | --- |
+| ![gpt_tabla_ellenorzes_4](/img/gpt_tabla_ellenorzes_4.jpg "GPT partíciós tábla ellenőrzés #1") | ![gpt_tabla_ellenorzes_5](/img/gpt_tabla_ellenorzes_5.jpg "GPT partíciós tábla ellenőrzés #2") |
 
 ### 6.3 Tipikus kimenetek
 
