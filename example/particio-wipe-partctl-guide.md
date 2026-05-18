@@ -194,7 +194,7 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 **Fontos:** Az **`sdc4`** extended konténerre **nincs** fájlrendszer — oda címkét ne állíts.
 
-> A címke **nem** helyettesíti a **`0C`** típuskódot. Windows és Linux a címkét kötetnévként mutatja; a Cisco továbbra is a **`usbflash0:`** számot használja.
+> Megjegyzés: a címke **nem** helyettesíti a **`0C`** típuskódot. Windows és Linux a címkét kötetnévként mutatja; a Cisco továbbra is a **`usbflash0:`** számot használja.
 
 ![](/img/fajlrendszer_cimke_1.jpg)
 
