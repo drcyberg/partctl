@@ -5,7 +5,7 @@
 > **Cél:** Lépésről lépésre bemutatni a **Create GPT backup**, **Restore GPT backup** és **Verify GPT partition table** funkciókat; rövid **esettanulmányokkal** illusztrálni, mikor érdemes használni őket.  
 > **Eszköz:** minden művelet a Partctl **Partíció kezelés** almenüjéből indul; a háttérben az **`sgdisk`** fut.
 
-**Figyelem:** A GPT mentés **nem** fájlrendszer- vagy fájladat-mentés. A partíciók **tartalma** (NTFS, ext4, stb.) ettől **nem** kerül elmentésre. Kockázatos műveletek (tábla újraírás, wipe, helyreállítás) **adatvesztést** okozhatnak, ha a layout és a tényleges adatok nincsenek összhangban. Mindig legyen **teljes adatmentés**, ha az adatok számítanak.
+**Figyelem:** A GPT mentés **nem** fájlrendszer-, vagy fájladat mentés. A partíciók **tartalma** (NTFS, ext4, stb.) **nem** kerül lementésre. Kockázatos műveletek (tábla újraírás, wipe, helyreállítás) **adatvesztést** okozhatnak, ha a layout és a tényleges adatok nincsenek összhangban. Mindig legyen **teljes adatmentés**, ha az adatokra szükség van.
 
 ---
 
