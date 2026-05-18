@@ -11,6 +11,10 @@
 
 ## 0. Gyors áttekintés — mit csinál a Partctl?
 
+<p align="center">
+  <img src="/img/gpt_tabla_mentes_helyreallitas_resized.png" alt="GPT partíciós tábla — mentés, helyreállítás, ellenőrzés (Partctl / sgdisk)" width="100%" />
+</p>
+
 | Művelet (angol menü) | Magyar menü | Háttérparancs (tipikus) | Mit ment / állít vissza |
 |----------------------|-------------|-------------------------|-------------------------|
 | **Create GPT backup** | **GPT tabla mentes** | `sgdisk --backup=… /dev/sdX` | A **GPT fejléc + partíciós bejegyzések** bináris másolata (`.bin`) |
@@ -73,9 +77,10 @@ Az `sgdisk --backup` ezt a **layout-információt** menti: partíciók kezdete/v
 ## 3. Közös előkészület — indítás és navigáció
 
 ```bash
-cd /path/to/Partctl-V1-0-0
 sudo bash partctl.sh
 ```
+
+![](/img/terminal_1.jpg)
 
 ### Főmenü (rögzített sorszámok)
 
