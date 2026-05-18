@@ -288,7 +288,7 @@ sudo sgdisk -v /dev/sda
 | **Minden teszt előtt** | Wipe / tábla törlés (ha kell) → új GPT → **Restore** `golden.bin` → **Verify** |
 | **Ellenőrzés** | **Lemez áttekintés** + opcionális **GPT particio tipuskod** / formázás |
 
-**Megjegyzés:** Ha a lemez **fizikai méret** változik (nagyobb USB), a régi mentés **nem** biztos, hogy közvetlenül betölthető — ellenőrizd `sgdisk -v` kimenetét.
+> **Megjegyzés:** Ha a lemez **fizikai méret** változik (nagyobb USB), a régi mentés **nem** biztos, hogy közvetlenül betölthető — ellenőrizd `sgdisk -v` kimenetét.
 
 ---
 
