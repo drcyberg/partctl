@@ -41,7 +41,7 @@ Ritkán arról van szó, hogy a GPT vagy az MBR „kitalálna” partíciókat. 
 
 ---
 
-## 2. Wipe — mit válassz?
+## 2. Lemez tisztítás (Wipe) — mit válassz a partíció listából?
 
 **Menüút:** **főmenü → `4` Lemez kezeles → `10` Disk cleanup (Wipe)**.
 
@@ -54,7 +54,7 @@ Ritkán arról van szó, hogy a GPT vagy az MBR „kitalálna” partíciókat. 
 
 ![](/partctl/img/wipe_2.jpg)
 
-### 2.2 Lemez tisztítás (wipe)
+### 2.2 Lemez tisztítás (wipe) - mit válassz a végrehajtási listából?
 
 | Opció | Teljes lemez | Egy partíció | Mit csinál? |
 |-------|:------------:|:------------:|-------------|
