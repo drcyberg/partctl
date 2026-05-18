@@ -115,7 +115,7 @@ Az almenü tételei **betűrendben** jelennek meg (nyelvfüggő sorrend). A **sz
 
 ---
 
-## 4. Lépésről lépésre — GPT tábla mentés (Create GPT backup)
+## 4. Lépésről lépésre — GPT partíciós tábla mentés (Create GPT backup)
 
 ### 4.1 Menüút
 
@@ -158,7 +158,7 @@ sudo sgdisk --backup=backup/sda-gpt-backup-20260518-001.bin /dev/sda
 
 ---
 
-## 5. Lépésről lépésre — GPT tábla helyreállítás (Restore GPT backup)
+## 5. Lépésről lépésre — GPT partíciós tábla helyreállítás (Restore GPT backup)
 
 ### 5.1 Mikor használd?
 
@@ -203,7 +203,7 @@ sudo partprobe /dev/sda
 
 ---
 
-## 6. Lépésről lépésre — GPT tábla ellenőrzés (Verify GPT partition table)
+## 6. Lépésről lépésre — GPT partíciós tábla ellenőrzés (Verify GPT partition table)
 
 ### 6.1 Mit csinál?
 
