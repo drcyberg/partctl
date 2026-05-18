@@ -123,7 +123,7 @@ Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listába
 | 4 | **Főmenü → `3`** → **Create partition** (ismételj) | Sorban pl. **`+512MiB`** (ESP), **`+16MiB`** (MSR), **`+120GiB`** (rendszer), **`+1024MiB`** (WinRE) — a szabad sáv szerint. |
 | 5 | **Főmenü → `3`** → **Partition type code (GUID, GPT)** | `sdc1` → **EFI System**; `sdc2` → **Microsoft reserved**; `sdc3` → **Microsoft basic data**; `sdc4` → **Windows Recovery Environment (WinRE)**. |
 | 6 | **Partition format** | ESP: **vfat**; rendszer + WinRE: **ntfs** (MSR: tipikusan nem formázod). |
-| 7 | (Opcionális) **GPT attributes** | WinRE partíción a szükséges bitek. |
+| 7 | **GPT attributes** | WinRE partíción a szükséges bitek. |
 | 8 | **Verify GPT partition table** + **Disk Overview** | Végleges ellenőrzés. |
 
 *(Részletes példa-leképezés: lásd még [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md).)*
