@@ -159,6 +159,7 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 - [Cisco kompatibilis USB flash és USB 3.0 SSD előkészítése](https://drcyberg.github.io/partctl/web/cisco-usb-flash-partctl-guide)
 - [LVM működési elv](https://drcyberg.github.io/partctl/web/lvm-mukodesi-elv-partctl-guide)
 - [Lemez tisztítás és partícionálás ismertetése](https://drcyberg.github.io/partctl/web/particio-wipe-partctl-guide)
+- [GPT partíciós tábla mentés, helyreállítás és ellenőrzés ismertetése](https://drcyberg.github.io/partctl/web/gpt-tabla-mentes-helyreallitas-partctl-guide)
 
 ### Köszönöm ha támogatsz
 
