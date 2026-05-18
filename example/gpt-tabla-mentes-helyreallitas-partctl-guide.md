@@ -21,7 +21,7 @@
 | **Restore GPT backup** | **GPT tabla helyreallitas** | `sgdisk --load-backup=… /dev/sdX` | Felülírja a lemez **jelenlegi GPT metaadatait** a mentésből |
 | **Verify GPT partition table** | **GPT tabla ellenorzes** | `sgdisk -v /dev/sdX` | **Ellenőrzi** a táblát (elsődleges/másodlagos fejléc, határok, figyelmeztetések) |
 
-**Mentés fájl helye:** a Partctl indítási könyvtárában (`cwd`) automatikusan létrejön a **`backup/`** mappa. A fájlnév mintája:
+**Mentés fájl helye:** Partctl a saját könyvtárában automatikusan létrejön a **`backup/`** mappa. A fájlnév mintája:
 
 ```text
 backup/{lemez}-gpt-backup-{YYYYMMDD}-{NNN}.bin
@@ -40,7 +40,7 @@ A **GUID Partition Table (GPT)** két példányban tárolja a metaadatokat a lem
 - **Elsődleges GPT fejléc** — a lemez **elején**
 - **Másodlagos (backup) GPT fejléc** — a lemez **végén**
 
-Az `sgdisk --backup` ezt a **layout-információt** menti: partíciók kezdete/vége, típus-GUID, nevek, attribútumok — **nem** a partíciók belsejében lévő fájlokat.
+Az `sgdisk --backup` ezt a **layout információt** menti: partíciók kezdete/vége, típus-GUID, nevek, attribútumok — **nem** a partíciók belsejében lévő fájlokat.
 
 | Mentés tartalma | Nincs benne |
 |-----------------|-------------|
@@ -245,7 +245,7 @@ sudo sgdisk -v /dev/sdc
 
 ---
 
-## 7. Esettanulmány A — Mentés kockázatos szerkesztés előtt (USB GPT, több partíció)
+## 7. Esettanulmány A — GPT partíciós tábla mentés elkészítése egy kockázatos művelet előtt (USB GPT, több partíció)
 
 **Helyzet:** `/dev/sdc` — 32 GB USB, GPT, négy partíció (ESP + adat + WinRE + szabad). Átméretezni vagy törölni fogsz egy partíciót.
 
