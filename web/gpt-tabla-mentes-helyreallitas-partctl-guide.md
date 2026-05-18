@@ -233,9 +233,9 @@ Használd **mentés előtt és után**, valamint **helyreállítás után**.
 
 | Eredmény | Jelentés |
 |----------|----------|
-| **rc=0**, „completed successfully” | A tábla **konzisztens** (a figyelmeztetések lehetnek tájékoztatók) |
+| **Completed successfully** | A tábla **konzisztens** (a figyelmeztetések lehetnek tájékoztatók) |
 | **Problem with GPT data structures** | Sérült vagy hiányzó másodlagos fejléc — mentés / helyreállítás vagy `sgdisk` javítás szükséges |
-| **doesn't end on a 2048-sector boundary** | Igazítási figyelmeztetés — lásd [partíció-igazítás útmutató](particio-igazitas-partctl-guide.md) |
+| **Doesn't end on a 2048-sector boundary** | Igazítási figyelmeztetés — lásd [partíció-igazítás útmutató](particio-igazitas-partctl-guide.md) |
 
 ### 6.4 Egyenértékű parancssor
 
