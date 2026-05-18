@@ -146,7 +146,7 @@ Növeld a terminál ablak méretét (vagy használj nagyobb betűméretet), majd
 - [ ] További fájlrendszer támogatás bevezetése: btrfs, xfs, zfs, jf
 - [ ] Lemez monitorozása grafikon ábrával
 - [ ] MBR partíció tábla biztonsági mentés készítés
-- [ ] Lemez-, és fájlrendszer klónozás és biztonsági mentés készítés
+- [ ] Lemez-, és fájlrendszer klónozás és biztonsági mentés készítés (snapshot, filesystem, block)
 - [ ] Telepítőkészlet elkészítése (.deb, .dnf, .pkg)
 - [ ] Web UI bevezetés
 - [ ] Oktatóanyaggal és esettanulmánnyal kapcsolatos oldalak létrehozása
