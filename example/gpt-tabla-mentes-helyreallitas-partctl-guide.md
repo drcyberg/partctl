@@ -27,7 +27,7 @@
 backup/{lemez}-gpt-backup-{YYYYMMDD}-{NNN}.bin
 ```
 
-Példa: `backup/sdc-gpt-backup-20260515-001.bin` — ugyanazon napon a következő mentés `002`, `003`, …
+Példa: `backup/sda-gpt-backup-20260518-001.bin` — ugyanazon napon a következő mentés `002`, `003`, …
 
 > Megjegyzés: **MBR** (`msdos`) lemezen ezek a menük **nem** érhetők el (hibaüzenet: csak GPT tábla). MBR ellenőrzéshez a Partctl külön menüpontot ad: **Verify MBR partition table** / **MBR tabla ellenorzes**.
 
@@ -98,7 +98,7 @@ sudo bash partctl.sh
 
 **Lépések minden esettanulmányhoz:**
 
-1. **Főmenü → `1`** — válaszd ki a **céllemezt** (pl. `sdc` — USB pendrive).
+1. **Főmenü → `1`** — válaszd ki a **céllemezt** (pl. `sda` — USB pendrive).
 2. **Főmenü → `3`** — **Partíció kezelés** / **Partition management**.
 
 ### Partíció kezelés almenü — fontos
@@ -121,7 +121,7 @@ Az almenü tételei **betűrendben** jelennek meg (nyelvfüggő sorrend). A **sz
 
 | Lépés | Hol | Tevékenység |
 |-------|-----|-------------|
-| 1 | Főmenü → **`1`** | Lemez kiválasztása (pl. `sdc`) |
+| 1 | Főmenü → **`1`** | Lemez kiválasztása (pl. `sda`) |
 | 2 | Főmenü → **`3`** | Partíció kezelés |
 | 3 | Almenü | **GPT tabla mentes** / **Create GPT backup** |
 | 4 | Megerősítő panel | **Igen** — a panel mutatja a lemezt és a cél `.bin` útvonalat |
@@ -138,8 +138,8 @@ A program **automatikusan** generálja az útvonalat — nem kell kézzel beírn
 
 ```text
 Elkeszitsem most a GPT biztonsagi mentest?
-Lemez: /dev/sdc
-Fajl: …/backup/sdc-gpt-backup-20260515-001.bin
+Lemez: /dev/sda
+Fajl: …/backup/sda-gpt-backup-20260518-001.bin
 ```
 
 ### 4.3 Ellenőrzés mentés után (ajánlott)
@@ -153,7 +153,7 @@ Fajl: …/backup/sdc-gpt-backup-20260515-001.bin
 ### 4.4 Egyenértékű parancssor (referencia)
 
 ```bash
-sudo sgdisk --backup=backup/sdc-gpt-backup-20260515-001.bin /dev/sdc
+sudo sgdisk --backup=backup/sda-gpt-backup-20260518-001.bin /dev/sda
 ```
 
 ---
@@ -170,7 +170,7 @@ sudo sgdisk --backup=backup/sdc-gpt-backup-20260515-001.bin /dev/sdc
 
 | Lépés | Hol | Tevékenység |
 |-------|-----|-------------|
-| 1 | Főmenü → **`1`** | Ugyanaz a lemez (`sdc`) |
+| 1 | Főmenü → **`1`** | Ugyanaz a lemez (`sda`) |
 | 2 | Főmenü → **`3`** | Partíció kezelés |
 | 3 | Almenü | **GPT tabla helyreallitas** / **Restore GPT backup** |
 | 4 | Lista | A `backup/` mappában lévő **`.bin`** fájlok — válassz egyet (szám + Enter) |
@@ -196,9 +196,9 @@ Ez **nem** formázza újra a partíciókat, de ha a **mentett layout** eltér a 
 ### 5.4 Egyenértékű parancssor
 
 ```bash
-sudo umount /dev/sdc* 2>/dev/null || true
-sudo sgdisk --load-backup=backup/sdc-gpt-backup-20260515-001.bin /dev/sdc
-sudo partprobe /dev/sdc
+sudo umount /dev/sda* 2>/dev/null || true
+sudo sgdisk --load-backup=backup/sda-gpt-backup-20260518-001.bin /dev/sda
+sudo partprobe /dev/sda
 ```
 
 ---
@@ -240,19 +240,19 @@ Használd **mentés előtt és után**, valamint **helyreállítás után**.
 ### 6.4 Egyenértékű parancssor
 
 ```bash
-sudo sgdisk -v /dev/sdc
+sudo sgdisk -v /dev/sda
 ```
 
 ---
 
 ## 7. Esettanulmány A — GPT partíciós tábla mentés elkészítése egy kockázatos művelet előtt (USB GPT, több partíció)
 
-**Helyzet:** `/dev/sdc` — 32 GB USB, GPT, négy partíció (ESP + adat + WinRE + szabad). Átméretezni vagy törölni fogsz egy partíciót.
+**Helyzet:** `/dev/sda` — 32 GB USB, GPT, négy partíció (ESP + adat + WinRE + szabad). Átméretezni vagy törölni fogsz egy partíciót.
 
 | # | Művelet | Cél |
 |---|---------|-----|
 | 1 | **Lemez áttekintés** | Aktuális layout feljegyzése (képernyőfotó / jegyzet) |
-| 2 | **GPT tabla mentes** | `backup/sdc-gpt-backup-…-001.bin` |
+| 2 | **GPT tabla mentes** | `backup/sda-gpt-backup-20260518-001.bin` |
 | 3 | **GPT tabla ellenorzes** | Baseline: sikeres `-v` |
 | 4 | *(felhasználói szerkesztés)* | Pl. partíció törlés / átméretezés |
 | 5 | **GPT tabla ellenorzes** | Új állapot ellenőrzése |
@@ -264,11 +264,11 @@ sudo sgdisk -v /dev/sdc
 
 ## 8. Esettanulmány B — „Invalid GPT” / másodlagos fejléc hiba helyreállítása
 
-**Helyzet:** A lemez **elején** sérült a GPT (pl. véletlen `dd`, rossz klónozás), de a partíciók **adat** még olvasható volt korábban. Van egy **friss** `backup/sdc-gpt-backup-….bin`.
+**Helyzet:** A lemez **elején** sérült a GPT (pl. véletlen `dd`, rossz klónozás), de a partíciók **adat** még olvasható volt korábban. Van egy **friss** `backup/sda-gpt-backup-20260518-001.bin`.
 
 | # | Művelet |
 |---|---------|
-| 1 | **Unmount** minden `sdc` partíció (`umount`) |
+| 1 | **Unmount** minden `sda` partíció (`umount`) |
 | 2 | Partctl: **GPT tabla helyreallitas** → válaszd a legutóbbi jó `.bin`-t |
 | 3 | **GPT tabla ellenorzes** — várható: sikeres ellenőrzés |
 | 4 | **Lemez áttekintés** — partíciók látszanak-e |
@@ -299,7 +299,7 @@ sudo sgdisk -v /dev/sdc
 | „Csak GPT particios tablan tamogatott” | MBR lemez | **Create partition table** → GPT, vagy maradj MBR-nél (nincs GPT backup menü) |
 | „Hianyzik: sgdisk” | Nincs `gdisk` csomag | `sudo bash setup.sh` → Telepítés |
 | Üres `.bin` lista helyreállításkor | Nincs fájl a `backup/` mappában | Mentés (§4) vagy `.bin` másolása a projekt `backup/` alá |
-| Restore után rossz / üres partíció | Rossz `.bin` vagy másik lemez | Ellenőrizd a lemez nevét (`lsblk`) és a mentés fájlnevét (`sdc-…`) |
+| Restore után rossz / üres partíció | Rossz `.bin` vagy másik lemez | Ellenőrizd a lemez nevét (`lsblk`) és a mentés fájlnevét (`sda-…`) |
 | Verify figyelmeztetés 2048 boundary | Igazítás | [Partíció igazítás](particio-igazitas-partctl-guide.md) |
 | „Device busy” / detach hiba | Csatolt partíció | **Lemez kezelés** → ideiglenes lecsatolás, vagy `umount` |
 
