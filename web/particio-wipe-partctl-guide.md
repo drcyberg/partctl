@@ -25,7 +25,7 @@
 
 ## 1. Mi az a „látszólagos” partíciós tábla? (Ghost FS)
 
-Ritkán arról van szó, hogy a GPT vagy az MBR „kitalálna” partíciókat. Gyakoribb, hogy az alábbiak **egymásra tapadnak** a rendszerben:
+Akkor alakul ki, miután az MBR-, vagy a GPT tábla letörlése után nem történt teljes-, vagy célzott lemez tisztítás (wipe). Ettől függetlenül még az aláírások meg megmaradnak. Így ha pont ugyan attól a kezdő szektortól partícionálunk „látszólagos”, azaz fals fájlrendszert kapunk (VESZÉLYES). Illetve még pár helyzetben is előfordulhat:
 
 1. **Régi fájlrendszer- vagy LVM-aláírások** — a `lsblk` még `ext4`, `ntfs` vagy `LVM2_member` jelzést mutat, holott a partíciós bejegyzés már törölve lett vagy más.
 2. **GPT másodlagos fejléc, maradék GUID** — korábbi táblából maradt metaadat.
