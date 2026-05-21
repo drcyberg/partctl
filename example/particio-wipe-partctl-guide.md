@@ -20,6 +20,7 @@
 | Partíció eltávolítása, a többi marad | **Particio torlese** | `parted rm`, majd `partprobe` |
 | Tábla megmarad, minden aláírás megy | Teljes lemez wipe, **tábla törlés nélkül** | `wipefs` **partíciónként** (nem a lemez csomóponton) |
 | Kötet felismerhető neve (címke) | **Lemez kezeles → Fajlrendszer cimke** (`4` → `5`) | pl. `fatlabel` — **opcionális**, lásd §4.5 |
+| **Cisco IOS pendrive** (9200 / 9300 / …) | Wipe → **MBR** → **1×** partíció → **`vfat`** | **Egy** `sda1` → switch-en `usbflash0:` — lásd §4.6, §5, [Cisco útmutató](cisco-usb-flash-partctl-guide.md) |
 
 ---
 
@@ -129,7 +130,8 @@ A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan*
 
 | Partíció szerepe | Formázás | MBR kód a listában | Megjegyzés |
 |------------------|----------|--------------------|------------|
-| Adat / pendrive / Cisco flash | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
+| Adat / pendrive (általános, PC) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
+| **Cisco IOS USB flash** (9200 / 9300 / …) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Egy** partíció, **MBR** — lásd §4.6 |
 | Adat (régi környezet) | **`vfat`** | **`0B`** — *W95 FAT32* | LBA nélkül; ma ritkán |
 | NTFS / exFAT adat | **`ntfs`** / exFAT | **`07`** — *Microsoft basic data* | NTFS után a Partctl **automatikusan** `07`-re állít |
 | Extended konténer | *ne formázd* | **`0F`** — *Extended (LBA)* | Pl. **`sdc4`** a §6 példában |
@@ -137,7 +139,7 @@ A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan*
 | Linux adat | **`ext4`** stb. | **`83`** | - |
 | EFI (MBR-en ritka) | **`vfat`** | **`EF`** | - |
 
-> **Ne keverd össze:** a **`07`** típuskód az NTFS/exFAT adatpartícióhoz való. Sima **FAT32 pendrive**-ra **`0C`** típuskód kell, nem pedig a `07`. A Windows és a Cisco gyakran így is felismeri a `07` típuskóddal.
+> **Ne keverd össze:** a **`07`** típuskód az NTFS/exFAT adatpartícióhoz való. Sima **FAT32 pendrive**-ra **`0C`** típuskód kell, nem pedig a `07`. A Cisco IOS / IOS XE **FAT32** pendrive-ot **`0C`** + **egyetlen** partícióval várja — a `07` kód **nem** helyettesíti a helyes FAT32 előkészítést (részletek: [Cisco útmutató](cisco-usb-flash-partctl-guide.md)).
 
 ![](/img/mbr_particio_tipuskod_1.jpg)
 
@@ -198,18 +200,42 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 ![](/img/fajlrendszer_cimke_1.jpg)
 
+### 4.6 Cisco Catalyst USB flash — **egyetlen partíció** (IOS / IOS XE)
+
+A **Catalyst 9200**, **9300**, **3850**, **3650** és hasonló switch-ek **külső USB flash** meghajtója IOS image és konfiguráció szempontjából **nem** PC-s többpartíciós pendrive:
+
+| Szabály | Érték |
+|---------|--------|
+| **Partíciók száma** | **1 db** (pl. `sdc1`) — **ne** hozz létre `sdc2`, `sdc3` … |
+| **Partíciós tábla** | **MBR (msdos)** — GPT-s pendrive sok IOS verzión problémás |
+| **Fájlrendszer** | **FAT32** (`vfat`) — típuskód **`0C`** |
+| **Méret** | **16–32 GB** ajánlott; nagyobb sticken **egy** ~30 GiB partíció, maradék **unallocated** |
+| **Switch CLI** | Egy mount: **`usbflash0:`** — a 2. FAT32 partíció **nem** jelenik meg megbízhatóan |
+
+**Wipe → újraépítés Cisco-célra (Partctl):**
+
+1. **Lemez kezeles → Disk cleanup (Wipe)** — teljes lemez + **[✓] Partíciós tábla törlése**.
+2. **Particios tabla letrehozasa** — **`2` MBR (msdos)**.
+3. **Particio letrehozasa** — **egyszer** (eredmény: `sdc1`); **Vég:** `100%` (≤32 GB) vagy `+30GiB` nagyobb lemezen.
+4. **Particio formazas** — `sdc1` → **`vfat`** (automatikus **`0C`**).
+5. *(Opc.)* **Fajlrendszer cimke** — pl. **`CISCO_USB`**.
+
+A §6 **több FAT32 partíció** példa **Linux/Windows** környezetre szól (pl. 4 GiB-os fájlhatár megkerülése **PC-n**, külön mount pontokkal) — **nem** helyettesíti a Cisco **egy kötetes** előkészítést. Teljes Cisco menüút és hibaelhárítás: **[Cisco kompatibilis USB flash útmutató](cisco-usb-flash-partctl-guide.md)**.
+
 ---
 
-## 5. Példa A — egy FAT32 pendrive (~32 GB)
+## 5. Példa A — egy FAT32 pendrive (~32 GB) — **Cisco IOS és általános adathordozó**
 
-**Cél:** Egyetlen, jól felismerhető FAT32 kötet általános adathordozónak. Példa lemez: **`/dev/sdc`**, ~29 GiB.
+**Cél:** Egyetlen, jól felismerhető FAT32 kötet — **Catalyst 9200 / 9300 / 3850 / 3650** IOS image és konfigurációhoz (**§4.6**), valamint általános PC-s adathordozónak. Példa lemez: **`/dev/sdc`**, ~29 GiB.
+
+> **Cisco:** csak **`sdc1`** legyen; a **Create partition** menüpontot **ne** futtasd második kötetre. Nagyobb fizikai pendrive-nál a **Vég:** mezőben **`+30GiB`** is elég — a maradék terület maradjon **allokálatlan**.
 
 | Lépés | Menüút | Teendő |
 |-------|--------|--------|
 | 1 | **Főmenü → `1`** | Lemez: **`sdc`** — ellenőrizd, hogy **nem** a rendszerlemez. |
 | 2 | **Főmenü → `4` → `10`** | Wipe: **teljes lemez**, **[✓] Partíciós tábla törlése**. |
 | 3 | **Főmenü → `3`** → **Particios tabla letrehozasa** | **`2` — MBR (msdos)**. |
-| 4 | **Főmenü → `3`** → **Particio letrehozasa** | Kezdő: **Enter** → **`2048s`**. Vég: **`100%`**. |
+| 4 | **Főmenü → `3`** → **Particio letrehozasa** | **Egyszer** — eredmény **`sdc1`**. Kezdő: **Enter** → **`2048s`**. Vég: **`100%`** (vagy **`+30GiB`** nagyobb lemezen; maradék unallocated). |
 | 5 | **Főmenü → `3`** → **Particio formazas** | `sdc1` → **`vfat`**. Utána automatikus típuskód: MBR → **`0C`**, GPT → *Microsoft basic data* (§4). |
 | 6 | *(Ellenőrzés)* típuskód | MBR: **MBR particio tipuskod** → **`0C`**, ha még nem az. GPT: részletekben *Microsoft basic data*. |
 | 7 | **Főmenü → `2`** | Ellenőrzés: `msdos`, `vfat`, típus **`0C`**. |
@@ -220,7 +246,8 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 | Eszköz | Tábla | Címke | Fájlrendszer | Megjegyzés |
 |--------|-------|-----|---------------|------------|
 | `sdc` | `msdos` | — | — | Pendrive |
-| `sdc1` | `vfat` | `CISCO_USB` | Max. **~4 GiB / fájl** (FAT32 korlát) | Partíció |
+| `sdc1` | `vfat` | `CISCO_USB` | Max. **~4 GiB / fájl** (FAT32 korlát) | **Egyetlen** kötet — Cisco: `usbflash0:` |
+| *(nincs `sdc2`)* | — | — | — | Második partíció **szándékosan nincs** (IOS nem támogatja) |
 
 | Lemez áttekintés | Partíció részletei |
 | --- | --- |
@@ -228,9 +255,11 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 ---
 
-## 6. Példa B — több FAT32 partíció
+## 6. Példa B — több FAT32 partíció (**Linux / Windows — nem Cisco IOS pendrive**)
 
-**Cél:** Egy pendrive-on **hét külön FAT32 kötet**, hogy nagyobb fájlok is elférjenek (**egy fájl max. ~4 GiB**, de **hét kötet = hét ilyen fájl**). Hasznos pl. Cisco vagy más eszközök **külön firmware** tárolására. Példa lemez: **`/dev/sdc`**, ~32 GiB.
+**Cél:** Egy pendrive-on **több külön FAT32 kötet** — **PC-n** külön mount pontokkal, hogy a **4 GiB-os egyfájl-limit** több kötetre legyen „szétosztható” (**egy fájl max. ~4 GiB** partíciónként, de **több partíció = több ilyen fájl**). Példa lemez: **`/dev/sdc`**, ~32 GiB.
+
+> **Fontos — Cisco switch:** A Catalyst 9200 / 9300 / … **nem** kezeli megbízhatóan a több FAT32 partíciót — IOS alatt tipikusan **csak** `usbflash0:` (egy kötet) érhető el. Firmware / IOS image **switch-re** töltéshez használd a **§5** / **§4.6** **egy partíciós** elrendezést és a [Cisco útmutatót](cisco-usb-flash-partctl-guide.md). A §6 példa **Partctl MBR/extended/logical** gyakorlatnak és **Linuxos** archiválásnak szól.
 
 > Megjegyzés: a FAT32 **4 GiB-os határa egyetlen fájlra** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is legfeljebb ~4 GiB lehet egy fájl.
 
@@ -244,19 +273,19 @@ Az MBR **legfeljebb négy primary** partíciót enged — több zónához **exte
 | 4a–g | **Particio letrehozasa** | Hét partíció: kezdő **`2048s`**, vég **`+4GiB`** (a program javasolt kezdőértékeit használd a 2.–8. sávnál). |
 | 5a–h | **Particio formazas** | `sdc1`–`sdc3`, `sdc5`–`sdc8` → **`vfat`**. **`sdc4`** extended: **ne** formázd. |
 | 6 | *(Ellenőrzés)* típuskód | Formázás után automatikus: FAT32 → **`0C`** (MBR). **`sdc4`**: **`0F`**. Lásd §4. |
-| 7 | *(Opc.)* **Főmenü → `4` → `5`** | Címkék: **`CISCO_FW1`** … **`CISCO_FW7`**. |
+| 7 | *(Opc.)* **Főmenü → `4` → `5`** | Címkék: **`DATA1`** … **`DATA2`**. |
 | 8 | **Főmenü → `2`** | Ellenőrzés: nyolc sor, típusok, címkék. |
 
 **Eredmény**
 
 | Partíció | Méret | FS | Címke | Példa tartalom |
 |----------|-------|-----|-------|----------------|
-| `sdc1` | 4 GiB | `vfat` | `CISCO_FW1` | `firmware-1.bin` (≤4 GiB) |
-| `sdc2` | 4 GiB | `vfat` | `CISCO_FW2` | `firmware-2.bin` |
-| `sdc3` | 4 GiB | `vfat` | `CISCO_FW3` | `firmware-3.bin` |
+| `sdc1` | 4 GiB | `vfat` | `DATA1` | `file1.bin` (≤4 GiB) — **PC mount** |
+| `sdc2` | 4 GiB | `vfat` | `DATA2` | `file2.bin` |
+| `sdc3` | 4 GiB | `vfat` | `DATA3` | `file3.bin` |
 | `sdc4` | ~1 KiB | — | — | Extended (LBA), konténer |
-| `sdc5` | 4 GiB | `vfat` | `CISCO_FW4` | … |
-| `sdc6`–`sdc8` | 4 GiB | `vfat` | `CISCO_FW5`–`7` | … |
+| `sdc5` | 4 GiB | `vfat` | `DATA4` | … |
+| `sdc6`–`sdc8` | 4 GiB | `vfat` | `DATA5`–`7` | … |
 
 | Lemez áttekintés | Fájlrendszer címke |
 | --- | --- |
@@ -320,10 +349,15 @@ https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-gu
 
 - [Partctl](https://drcyberg.github.io/partctl/web/partctl)
 
+### Kapcsolódó útmutatók
+
+- [Cisco kompatibilis USB flash és USB 3.0 SSD előkészítése](cisco-usb-flash-partctl-guide.md) — **1 db partíció**, FAT32, MBR, Catalyst 9200 / 9300 / …
+- [Cisco útmutató (web)](https://drcyberg.github.io/partctl/web/cisco-usb-flash-partctl-guide)
+
 ### Köszönöm ha támogatsz
 
 - ***Buy me a coffee***: [LINK](https://buymeacoffee.com/drcyberg)
 - ***Paypal (QR Code)***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 - ***Paypal (URL)***: [LINK](https://paypal.me/Kunee82)
 
-*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — **Cisco IOS USB flash: 1 db FAT32 partíció (MBR)**; §6 többpartíciós példa **PC-re**, nem switch-re. A **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
