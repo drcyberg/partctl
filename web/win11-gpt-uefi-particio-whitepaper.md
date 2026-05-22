@@ -175,8 +175,8 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 | Partíció | Javasolt formázás a Partctl listájából | Példa: eredmény (`/dev/sdc`) |
 |----------|----------------------------------------|-------------------------------|
 | ESP (`sdc1`) | **vfat** / FAT32 (ha szerepel a listán) | **`vfat`** az áttekintőben |
-| MSR (`sdc2`) | **Hagyd üresen** (Windows tipikusan nem formázza az MSR-t). Ha mégis formázod kísérletként, az nem „Windows hivatalos” viselkedés. | FS nélkül / eszközfüggő jelzés |
-| Windows (`sdc3`) | **ntfs** | **`ntfs`**; ha csatolod: pl. **`/media/usbflash0/partctl-v1-0-0`** |
+| MSR (`sdc2`) | **Hagyd üresen** Windows tipikusan nem formázza az MSR-t. Ha mégis formázva van, a Windows 11 OS telepítés hiba üzenettel megáll . | FS nélkül / eszközfüggő jelzés |
+| Windows (`sdc3`) | **ntfs** | **`ntfs`**; ha csatolod: pl. **`/media/Win11`** |
 | WinRE (`sdc4`) | **ntfs** (a valódi WinRE fájlokat később a Windows telepítő / `reagentc` kezeli) | **`ntfs`** vagy üres típus a WinRE GUID mellett, amíg nincs tartalom |
 
 Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a varázsló **leválasztást** is kérhet.
