@@ -163,9 +163,9 @@ A **GUID Partition Table (GPT)** lemezen **nem** léteznek MBR-stílusú *Primar
 
 | Kérdés | MBR (`msdos`) | GPT |
 |--------|---------------|-----|
-| Hány „felső” slot? | **4** (1–4) | Sok (pl. **128** bejegyzés) |
-| Több mint 4 kötet? | **Extended** + **Logical** (5+) | Több **GPT bejegyzés** (`sdc1`…`sdcN`) |
-| Van extended konténer? | **Igen** (egy tipikus) | **Nem** |
+| Partíciók száma | **4** | **128** bejegyzés |
+| Több mint 4 kötet esetében | **Extended** + **Logical** (5+) | Több **GPT bejegyzés** (`sdc1`…`sdcN`) |
+| Kiterjesztett partíció | **Igen** (egy tipikus) | **Nem** |
 | `sdc5` jelentése | MBR-n: **logikai** partíció | GPT lemezen: **ötödik bejegyzés**, nem „logical” |
 | Partctl részletek | **MBR particio szerep** | **GPT particio modell** |
 | FAT32 típuskód / GUID | MBR **`0C`** | *Microsoft basic data* — §4.2 |
