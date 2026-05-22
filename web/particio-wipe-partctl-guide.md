@@ -133,7 +133,7 @@ Az MBR (Master Boot Record) partíciós táblában a Partctl **Particio letrehoz
 2. Ha **több mint négy** külön kötet kell **egy lemezen**, egy primary helyett (vagy mellett) **Extended** konténert hozol létre, és abban **logikai** partíciókat — lásd §6 (`sdc4` extended + `sdc5`…`sdc8` logikai).
 3. Az **Extended** partíció **nem** adathordozó: csak „doboz” a logikai partícióknak. **Ne** formázd, **ne** állíts rá fájlrendszer címkét (§4.6).
 4. A Partctl **Particio letrehozasa** során MBR-n automatikusan választ: első kötetek → **primary**; ha kell több zóna → **extended** + **logical** (a program a szabad helyet és a meglévő extended konténert figyelembe veszi).
-5. **Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** → **Particio reszletei** → sor: **MBR particio szerep:** *Elsodleges* / *Kiterjesztett* / *Logikai*.
+5. **Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** → **Particio reszletei** → sor: **MBR particio tipus:** *Elsodleges* / *Kiterjesztett* / *Logikai*.
 
 ```
 MBR példa (§6):  sdc1–sdc3 = Primary (FAT32)
@@ -151,13 +151,13 @@ A **GUID Partition Table (GPT)** lemezen **nem** léteznek MBR-stílusú *Primar
 | Partíció „szerepe” | **GPT bejegyzés** — egy sáv a lemezen, saját GUID típussal |
 | Több kötet | Több **független** bejegyzés (`sdc1`, `sdc2`, …), extended konténer **nélkül** |
 | Partctl **Particio letrehozasa** | Közvetlenül új bejegyzést hoz létre (nincs extended/logical választó) |
-| **Particio reszletei** | Sor: **GPT particio modell:** *GPT bejegyzes (nincs Primary/Extended/Logical)* |
+| **Particio reszletei** | Sor: **GPT particio tipus:** *GPT bejegyzes (nincs Primary/Extended/Logical)* |
 
 **Szabályok (GPT):**
 
 1. A kötet **szerepét** a **GPT típus GUID** jelzi (pl. *Microsoft basic data*, *EFI System*) — §4.4, nem „logical” címke.
 2. UEFI / modern PC és sok USB SSD **GPT**-t használ; **Cisco IOS USB flash** továbbra is **MBR + 1 partíció** (§4.7) — GPT pendrive sok IOS verzión problémás.
-3. A részletek képernyőn a **Tipus** sor (*Fizikai particio* / LVM) a Partctl **belső** kategóriája; a **GPT particio modell** sor külön jelzi, hogy **nincs** MBR-hierarchia.
+3. A részletek képernyőn a **Tipus** sor (*Fizikai particio* / LVM) a Partctl **belső** kategóriája; a **GPT particio tipus** sor külön jelzi, hogy **nincs** MBR-hierarchia.
 
 #### Összehasonlító tábla
 
@@ -167,10 +167,10 @@ A **GUID Partition Table (GPT)** lemezen **nem** léteznek MBR-stílusú *Primar
 | Több mint 4 kötet esetében | **Extended** + **Logical** (5+) | Több **GPT bejegyzés** (`sdc1`…`sdcN`) |
 | Kiterjesztett partíció | **Igen** (egy tipikus) | **Nem** |
 | `sdc5` jelentése | MBR-n: **logikai** partíció | GPT lemezen: **ötödik bejegyzés**, nem „logical” |
-| Partctl részletek | **MBR particio szerep** | **GPT particio modell** |
+| Partctl részletek | **MBR particio tipus** | **GPT particio tipus** |
 | FAT32 típuskód / GUID | MBR **`0C`** | *Microsoft basic data* — §4.2 |
 
-> **Ne keverd:** a Linux **`lsblk`** „part” típusa és a Partctl **Tipus: Fizikai particio** sor **nem** az MBR Primary/Logical szerepet jelenti. MBR szerephez a **MBR particio szerep** sort nézd; GPT-n a **GPT particio modell** sort.
+> **Ne keverd:** a Linux **`lsblk`** „part” típusa és a Partctl **Tipus: Fizikai particio** sor **nem** az MBR Primary/Logical szerepet jelenti. MBR szerephez a **MBR particio tipus** sort nézd; GPT-n a **GPT particio tipus** sort.
 
 ---
 
@@ -219,7 +219,7 @@ A formázás varázsló egy második lépésben állítja a típuskódot (`forma
 | **`fat16`** | → **`0E`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
 | **`ntfs`** | → **`07`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
 
-**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** (*Particio reszletei*). **Szerep:** MBR-n **MBR particio szerep** (Primary / Extended / Logical), GPT-n **GPT particio modell** — §4.0. **Típuskód:** MBR-n a **Kod** / PARTTYPE sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended); GPT-n *Microsoft basic data* / **`0700`** jellegű érték. Ha **`83`** (Linux) maradt FAT32-nél, futtasd újra a típuskód varázslót (§4.2 táblázat).
+**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** (*Particio reszletei*). **Szerep:** MBR-n **MBR particio tipus** (Primary / Extended / Logical), GPT-n **GPT particio tipus** — §4.0. **Típuskód:** MBR-n a **Kod** / PARTTYPE sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended); GPT-n *Microsoft basic data* / **`0700`** jellegű érték. Ha **`83`** (Linux) maradt FAT32-nél, futtasd újra a típuskód varázslót (§4.2 táblázat).
 
 ### 4.4 GPT — mikor kell még kézzel beállítani?
 
@@ -304,7 +304,7 @@ A §6 **több FAT32 partíció** példa **Linux/Windows** környezetre szól (pl
 | 4 | **Főmenü → `3`** → **Particio letrehozasa** | **Egyszer** — eredmény **`sdc1`**. Kezdő: **Enter** → **`2048s`**. Vég: **`100%`** (vagy **`+30GiB`** nagyobb lemezen; maradék unallocated). |
 | 5 | **Főmenü → `3`** → **Particio formazas** | `sdc1` → **`vfat`**. Utána automatikus típuskód: MBR → **`0C`**, GPT → *Microsoft basic data* (§4). |
 | 6 | *(Ellenőrzés)* típuskód | MBR: **MBR particio tipuskod** → **`0C`**, ha még nem az. GPT: részletekben *Microsoft basic data*. |
-| 7 | **Főmenü → `2`** | Ellenőrzés: `msdos`, `vfat`, típus **`0C`**; részletekben **MBR particio szerep: Elsodleges (Primary)** (§4.0). |
+| 7 | **Főmenü → `2`** | Ellenőrzés: `msdos`, `vfat`, típus **`0C`**; részletekben **MBR particio tipus: Elsodleges (Primary)** (§4.0). |
 | 8 | *(Opc.)* **Főmenü → `4` → `5`** | Címke: pl. **`CISCO_USB`** (max. 11 kar.). |
 
 **Eredmény**
