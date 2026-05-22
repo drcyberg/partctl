@@ -350,8 +350,8 @@ Az MBR **legfeljebb négy primary** partíciót enged — több zónához **exte
 | `sdc2` | 4 GiB | `vfat` | `Storage2` | `data2.bin` |
 | `sdc3` | 4 GiB | `vfat` | `Storage3` | `data3.bin` |
 | `sdc4` | ~1 KiB | — | — | Extended (LBA), konténer |
-| `sdc5` | 4 GiB | `vfat` | `Storage4` | … |
-| `sdc6`–`sdc8` | 4 GiB | `vfat` | `Storage5`–`7` | … |
+| `sdc5` | 4 GiB | `vfat` | `Storage4` | `data4.bin` |
+| `sdc6`–`sdc8` | 4 GiB | `vfat` | `Storage5`–`7` | `data5.bin`–`7` |
 
 | Lemez áttekintés | Fájlrendszer címke |
 | --- | --- |
