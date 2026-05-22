@@ -19,8 +19,9 @@
 | Csak egy zóna adatainak törlése | Wipe **egy partícióra** (nem a teljes lemezre) | `wipefs` pl. csak `/dev/sdc2`-n; opcionális `dd` nullázás |
 | Partíció eltávolítása, a többi marad | **Particio torlese** | `parted rm`, majd `partprobe` |
 | Tábla megmarad, minden aláírás megy | Teljes lemez wipe, **tábla törlés nélkül** | `wipefs` **partíciónként** (nem a lemez csomóponton) |
-| Kötet felismerhető neve (címke) | **Lemez kezeles → Fajlrendszer cimke** (`4` → `5`) | pl. `fatlabel` — **opcionális**, lásd §4.5 |
-| **Cisco IOS pendrive** (9200 / 9300 / …) | Wipe → **MBR** → **1×** partíció → **`vfat`** | **Egy** `sda1` → switch-en `usbflash0:` — lásd §4.6, §5, [Cisco útmutató](cisco-usb-flash-partctl-guide.md) |
+| Kötet felismerhető neve (címke) | **Lemez kezeles → Fajlrendszer cimke** (`4` → `5`) | pl. `fatlabel` — **opcionális**, lásd §4.6 |
+| Partíció **szerepe** a táblában (MBR / GPT) | **Lemez attekintes** → partíció → **Enter** (*Particio reszletei*) | MBR: Primary / Extended / Logical — GPT: bejegyzés (nincs MBR-hierarchia) — lásd **§4.0** |
+| **Cisco IOS pendrive** (9200 / 9300 / …) | Wipe → **MBR** → **1×** partíció → **`vfat`** | **Egy** `sda1` → switch-en `usbflash0:` — lásd §4.7, §5, [Cisco útmutató](cisco-usb-flash-partctl-guide.md) |
 
 ---
 
@@ -108,7 +109,72 @@ A **Particio kezeles** menü **ábécérendben** van — a konkrét sorszámot m
 
 ---
 
-## 4. Partíció típuskód — MBR és GPT (FAT32 / FAT16)
+## 4. Partíció szerepe és típuskód — MBR és GPT
+
+Ez a fejezet két dolgot foglal össze: **(A)** hogyan osztja fel a lemezt a tábla (Primary / Extended / Logical **vagy** GPT bejegyzés), **(B)** milyen **típuskód** / GUID tartozik a formázott kötethez (pl. FAT32 → **`0C`** vagy *Microsoft basic data*).
+
+### 4.0 Partíció szerepe a táblában — MBR (Primary / Extended / Logical) és GPT
+
+A **partíciós tábla típusa** (MBR vagy GPT) meghatározza, hogy a partíciók **milyen szerepet** töltenek be. Ez **nem** ugyanaz, mint a **fájlrendszer** (`vfat`, `ext4` …) és **nem** ugyanaz, mint a **típuskód** (pl. MBR **`0C`**, GPT *Microsoft basic data*) — azokat a §4.2–§4.4 és a formázás kezeli.
+
+#### MBR (`msdos`) — három szerep
+
+Az MBR (Master Boot Record) partíciós táblában a Partctl **Particio letrehozasa** menüben és a **Particio reszletei** képernyőn az alábbi szerepeket különíti el:
+
+| Szerep (angol) | Magyar megnevezés a Partctlben | Hol jelenik meg? | Formázható? | Tipikus típuskód |
+|----------------|--------------------------------|---------------|-------------|------------------|
+| **Primary** | Elsodleges (Primary) | Partíciószám **1–4** (`sdc1` … `sdc4`) | Igen (adat / boot) | pl. **`0C`** (FAT32), **`07`** (NTFS), **`83`** (Linux) |
+| **Extended** | Kiterjesztett (Extended) | Egy **konténer** a 1–4 között (pl. **`sdc4`**) | **Nem** — nincs saját fájlrendszer | **`0F`** — *Extended (LBA)* |
+| **Logical** | Logikai (Logical) | **5-től** felfelé (`sdc5`, `sdc6`, …) az extended **belsejében** | Igen | Ugyanúgy pl. **`0C`** FAT32-nél |
+
+**Szabályok (MBR):**
+
+1. **Legfeljebb négy** bejegyzés látszik közvetlenül a táblában (1–4). Ezek közül lehet **Primary** és **egy** **Extended** konténer.
+2. Ha **több mint négy** külön kötet kell **egy lemezen**, egy primary helyett (vagy mellett) **Extended** konténert hozol létre, és abban **logikai** partíciókat — lásd §6 (`sdc4` extended + `sdc5`…`sdc8` logikai).
+3. Az **Extended** partíció **nem** adathordozó: csak „doboz” a logikai partícióknak. **Ne** formázd, **ne** állíts rá fájlrendszer címkét (§4.6).
+4. A Partctl **Particio letrehozasa** során MBR-n automatikusan választ: első kötetek → **primary**; ha kell több zóna → **extended** + **logical** (a program a szabad helyet és a meglévő extended konténert figyelembe veszi).
+5. **Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** → **Particio reszletei** → sor: **MBR particio szerep:** *Elsodleges* / *Kiterjesztett* / *Logikai*.
+
+```
+MBR példa (§6):  sdc1–sdc3 = Primary (FAT32)
+                 sdc4     = Extended (konténer, 0F)
+                 sdc5–sdc8 = Logical (FAT32 az extended-ben)
+```
+
+#### GPT — nincs Primary / Extended / Logical hierarchia
+
+A **GUID Partition Table (GPT)** lemezen **nem** léteznek MBR-stílusú *Primary*, *Extended* és *Logical* szerepek. Minden partíció egy **GPT bejegyzés** (partition entry) — tipikusan **1–128** slot, a kernel eszköznevei pl. `sdc1`, `sdc2` (ezek **nem** „logikai partíciók” MBR értelemben).
+
+| Fogalom | GPT-n |
+|---------|--------|
+| Primary / Extended / Logical | **Nincs** — ne keverd össze az MBR logikájával |
+| Partíció „szerepe” | **GPT bejegyzés** — egy sáv a lemezen, saját GUID típussal |
+| Több kötet | Több **független** bejegyzés (`sdc1`, `sdc2`, …), extended konténer **nélkül** |
+| Partctl **Particio letrehozasa** | Közvetlenül új bejegyzést hoz létre (nincs extended/logical választó) |
+| **Particio reszletei** | Sor: **GPT particio modell:** *GPT bejegyzes (nincs Primary/Extended/Logical)* |
+
+**Szabályok (GPT):**
+
+1. A kötet **szerepét** a **GPT típus GUID** jelzi (pl. *Microsoft basic data*, *EFI System*) — §4.4, nem „logical” címke.
+2. UEFI / modern PC és sok USB SSD **GPT**-t használ; **Cisco IOS USB flash** továbbra is **MBR + 1 partíció** (§4.7) — GPT pendrive sok IOS verzión problémás.
+3. A részletek képernyőn a **Tipus** sor (*Fizikai particio* / LVM) a Partctl **belső** kategóriája; a **GPT particio modell** sor külön jelzi, hogy **nincs** MBR-hierarchia.
+
+#### Összehasonlító tábla
+
+| Kérdés | MBR (`msdos`) | GPT |
+|--------|---------------|-----|
+| Hány „felső” slot? | **4** (1–4) | Sok (pl. **128** bejegyzés) |
+| Több mint 4 kötet? | **Extended** + **Logical** (5+) | Több **GPT bejegyzés** (`sdc1`…`sdcN`) |
+| Van extended konténer? | **Igen** (egy tipikus) | **Nem** |
+| `sdc5` jelentése | MBR-n: **logikai** partíció | GPT lemezen: **ötödik bejegyzés**, nem „logical” |
+| Partctl részletek | **MBR particio szerep** | **GPT particio modell** |
+| FAT32 típuskód / GUID | MBR **`0C`** | *Microsoft basic data* — §4.2 |
+
+> **Ne keverd:** a Linux **`lsblk`** „part” típusa és a Partctl **Tipus: Fizikai particio** sor **nem** az MBR Primary/Logical szerepet jelenti. MBR szerephez a **MBR particio szerep** sort nézd; GPT-n a **GPT particio modell** sort.
+
+---
+
+### 4.1 Partíció típuskód (FAT32 / FAT16) — összefoglaló
 
 A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan** beállítja a partíció típuskódját — a lemez táblájától függően:
 
@@ -126,12 +192,12 @@ A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan*
 
 > Megjegyzés: A típuskód **nem** helyettesíti a fájlrendszert: a formázás hozza létre a FAT-ot; a kód azt jelzi, **milyen szerepet** vár el tőle a Windows, Linux OS.
 
-### 4.1 Gyors választási tábla (MBR)
+### 4.2 Gyors választási tábla (MBR) — típuskód
 
 | Partíció szerepe | Formázás | MBR kód a listában | Megjegyzés |
 |------------------|----------|--------------------|------------|
 | Adat / pendrive (általános, PC) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
-| **Cisco IOS USB flash** (9200 / 9300 / …) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Egy** partíció, **MBR** — lásd §4.6 |
+| **Cisco IOS USB flash** (9200 / 9300 / …) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Egy** partíció, **MBR** — lásd §4.7 |
 | Adat (régi környezet) | **`vfat`** | **`0B`** — *W95 FAT32* | LBA nélkül; ma ritkán |
 | NTFS / exFAT adat | **`ntfs`** / exFAT | **`07`** — *Microsoft basic data* | NTFS után a Partctl **automatikusan** `07`-re állít |
 | Extended konténer | *ne formázd* | **`0F`** — *Extended (LBA)* | Pl. **`sdc4`** a §6 példában |
@@ -143,7 +209,7 @@ A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan*
 
 ![](/partctl/img/mbr_particio_tipuskod_1.jpg)
 
-### 4.2 Mi fut a háttérben? (*Particio formazas* után)
+### 4.3 Mi fut a háttérben? (*Particio formazas* után)
 
 A formázás varázsló egy második lépésben állítja a típuskódot (`format_operation_step_typecode`):
 
@@ -153,9 +219,9 @@ A formázás varázsló egy második lépésben állítja a típuskódot (`forma
 | **`fat16`** | → **`0E`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
 | **`ntfs`** | → **`07`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
 
-**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter**. MBR-n a **PARTTYPE** sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended). GPT-n **Microsoft basic data** / **`0700`** jellegű kód. Ha **`83`** (Linux) maradt, futtasd újra a megfelelő típuskód varázslót (§4 első táblázata).
+**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** (*Particio reszletei*). **Szerep:** MBR-n **MBR particio szerep** (Primary / Extended / Logical), GPT-n **GPT particio modell** — §4.0. **Típuskód:** MBR-n a **Kod** / PARTTYPE sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended); GPT-n *Microsoft basic data* / **`0700`** jellegű érték. Ha **`83`** (Linux) maradt FAT32-nél, futtasd újra a típuskód varázslót (§4.2 táblázat).
 
-### 4.3 GPT — mikor kell még kézzel beállítani?
+### 4.4 GPT — mikor kell még kézzel beállítani?
 
 A **FAT32 / FAT16 formázás GPT-n is automatikusan** *Microsoft basic data* GUID-ot kap — **nem** kell utána külön kiválasztani a listából, ha a formázás sikeres volt.
 
@@ -171,7 +237,7 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 ![](/partctl/img/gpt_particio_tipuskod_1.jpg)
 
-### 4.4 §6 példa — partíciónkénti kód
+### 4.5 §6 példa — partíciónkénti kód
 
 | Partíció | Típuskód | Formázás |
 |----------|----------|----------|
@@ -179,9 +245,9 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 | `sdc4` | **`0F`** (Extended) | **Ne** formázd — konténer |
 | `sdc5` … `sdc8` | **`0C`** | **`vfat`** |
 
-> Megjegyzés: MBR partíciós tábla esetében ha formázás után **`83`** vagy **`07`** típuskód látszik akkor, állítsd át **`0C`** típuskódra minden FAT32 fájlrendszer esetében ezeken a partíciókon. A **`0F`** típuskódot a **`sdc4`** extended partícion kell beállítani (A formázás általában már **`0C`**-t állít — lásd §4 első táblázat.).
+> Megjegyzés: MBR partíciós tábla esetében ha formázás után **`83`** vagy **`07`** típuskód látszik akkor, állítsd át **`0C`** típuskódra minden FAT32 fájlrendszer esetében ezeken a partíciókon. A **`0F`** típuskódot a **`sdc4`** extended partícion kell beállítani (A formázás általában már **`0C`**-t állít — lásd §4.2 táblázat.). Az extended **szerepét** a részletekben *Kiterjesztett (Extended)* mutatja — §4.0.
 
-### 4.5 Fájlrendszer címke *(opcionális)*
+### 4.6 Fájlrendszer címke *(opcionális)*
 
 **Menü:** **főmenü → `4` → `5` Fajlrendszer cimke** (a Lemez kezeles almenü **ötödik** sora).
 
@@ -200,7 +266,7 @@ Kézi **GPT particio tipuskod** akkor kell, ha:
 
 ![](/partctl/img/fajlrendszer_cimke_1.jpg)
 
-### 4.6 Cisco Catalyst USB flash — **egyetlen partíció** (IOS / IOS XE)
+### 4.7 Cisco Catalyst USB flash — **egyetlen partíció** (IOS / IOS XE)
 
 A **Catalyst 9200**, **9300**, **3850**, **3650** és hasonló switch-ek **külső USB flash** meghajtója IOS image és konfiguráció szempontjából **nem** PC-s többpartíciós pendrive:
 
@@ -226,7 +292,7 @@ A §6 **több FAT32 partíció** példa **Linux/Windows** környezetre szól (pl
 
 ## 5. Példa A — egy FAT32 pendrive (~32 GB) — **Cisco IOS és általános adathordozó**
 
-**Cél:** Egyetlen, jól felismerhető FAT32 kötet — **Catalyst 9200 / 9300 / 3850 / 3650** IOS image és konfigurációhoz (**§4.6**), valamint általános PC-s adathordozónak. Példa lemez: **`/dev/sdc`**, ~29 GiB.
+**Cél:** Egyetlen, jól felismerhető FAT32 kötet — **Catalyst 9200 / 9300 / 3850 / 3650** IOS image és konfigurációhoz (**§4.7**), valamint általános PC-s adathordozónak. Példa lemez: **`/dev/sdc`**, ~29 GiB.
 
 > **Cisco:** csak **`sdc1`** legyen; a **Create partition** menüpontot **ne** futtasd második kötetre. Nagyobb fizikai pendrive-nál a **Vég:** mezőben **`+30GiB`** is elég — a maradék terület maradjon **allokálatlan**.
 
@@ -238,7 +304,7 @@ A §6 **több FAT32 partíció** példa **Linux/Windows** környezetre szól (pl
 | 4 | **Főmenü → `3`** → **Particio letrehozasa** | **Egyszer** — eredmény **`sdc1`**. Kezdő: **Enter** → **`2048s`**. Vég: **`100%`** (vagy **`+30GiB`** nagyobb lemezen; maradék unallocated). |
 | 5 | **Főmenü → `3`** → **Particio formazas** | `sdc1` → **`vfat`**. Utána automatikus típuskód: MBR → **`0C`**, GPT → *Microsoft basic data* (§4). |
 | 6 | *(Ellenőrzés)* típuskód | MBR: **MBR particio tipuskod** → **`0C`**, ha még nem az. GPT: részletekben *Microsoft basic data*. |
-| 7 | **Főmenü → `2`** | Ellenőrzés: `msdos`, `vfat`, típus **`0C`**. |
+| 7 | **Főmenü → `2`** | Ellenőrzés: `msdos`, `vfat`, típus **`0C`**; részletekben **MBR particio szerep: Elsodleges (Primary)** (§4.0). |
 | 8 | *(Opc.)* **Főmenü → `4` → `5`** | Címke: pl. **`CISCO_USB`** (max. 11 kar.). |
 
 **Eredmény**
@@ -257,13 +323,13 @@ A §6 **több FAT32 partíció** példa **Linux/Windows** környezetre szól (pl
 
 ## 6. Példa B — több FAT32 partíció (**Linux / Windows — nem Cisco IOS pendrive**)
 
-**Cél:** Egy pendrive-on **több külön FAT32 kötet** — **PC-n** külön mount pontokkal, hogy a **4 GiB-os egyfájl-limit** több kötetre legyen „szétosztható” (**egy fájl max. ~4 GiB** partíciónként, de **több partíció = több ilyen fájl**). Példa lemez: **`/dev/sdc`**, ~32 GiB.
+**Cél:** Egy pendrive-on **több külön FAT32 kötet** — **PC-n** külön mount pontokkal (pl. `/media/Storage1` …), hogy a **4 GiB-os egyfájl-limit** több kötetre legyen „szétosztható” (**egy fájl max. ~4 GiB** partíciónként, de **több partíció = több ilyen fájl**). Példa lemez: **`/dev/sdc`**, ~32 GiB.
 
-> **Fontos — Cisco switch:** A Catalyst 9200 / 9300 / … **nem** kezeli megbízhatóan a több FAT32 partíciót — IOS alatt tipikusan **csak** `usbflash0:` (egy kötet) érhető el. Firmware / IOS image **switch-re** töltéshez használd a **§5** / **§4.6** **egy partíciós** elrendezést és a [Cisco útmutatót](cisco-usb-flash-partctl-guide.md). A §6 példa **Partctl MBR/extended/logical** gyakorlatnak és **Linuxos** archiválásnak szól.
+> **Fontos — Cisco switch:** A Catalyst 9200 / 9300 / … **nem** kezeli megbízhatóan a több FAT32 partíciót — IOS alatt tipikusan **csak** `usbflash0:` (egy kötet) érhető el. Firmware / IOS image **switch-re** töltéshez használd a **§5** / **§4.7** **egy partíciós** elrendezést és a [Cisco útmutatót](cisco-usb-flash-partctl-guide.md). A §6 példa **Partctl MBR Primary / Extended / Logical** gyakorlatnak (§4.0) és **Linuxos** archiválásnak szól.
 
 > Megjegyzés: a FAT32 **4 GiB-os határa egyetlen fájlra** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is legfeljebb ~4 GiB lehet egy fájl.
 
-Az MBR **legfeljebb négy primary** partíciót enged — több zónához **extended** konténer kell (**`sdc4`**), benne **logikai** partíciókkal (`sdc5`…`sdc8`).
+Az MBR **legfeljebb négy primary** partíciót enged — több zónához **extended** konténer kell (**`sdc4`**), benne **logikai** partíciókkal (`sdc5`…`sdc8`). A szerepek összefoglalója: **§4.0**; a Partctl a **Particio letrehozasa** során és a **Particio reszletei** képernyőn is megjeleníti (*Elsodleges* / *Kiterjesztett* / *Logikai*).
 
 | Lépés | Menüút | Teendő |
 |-------|--------|--------|
@@ -272,20 +338,20 @@ Az MBR **legfeljebb négy primary** partíciót enged — több zónához **exte
 | 3 | **Főmenü → `3`** → **Particios tabla letrehozasa** | **MBR (msdos)**. |
 | 4a–g | **Particio letrehozasa** | Hét partíció: kezdő **`2048s`**, vég **`+4GiB`** (a program javasolt kezdőértékeit használd a 2.–8. sávnál). |
 | 5a–h | **Particio formazas** | `sdc1`–`sdc3`, `sdc5`–`sdc8` → **`vfat`**. **`sdc4`** extended: **ne** formázd. |
-| 6 | *(Ellenőrzés)* típuskód | Formázás után automatikus: FAT32 → **`0C`** (MBR). **`sdc4`**: **`0F`**. Lásd §4. |
-| 7 | *(Opc.)* **Főmenü → `4` → `5`** | Címkék: **`DATA1`** … **`DATA2`**. |
+| 6 | *(Ellenőrzés)* | Részletek: **`sdc1`–`sdc3`** → *Elsodleges*, **`sdc4`** → *Kiterjesztett*, **`sdc5`–`sdc8`** → *Logikai* (§4.0). Típuskód: FAT32 → **`0C`**, **`sdc4`**: **`0F`** (§4.2). |
+| 7 | *(Opc.)* **Főmenü → `4` → `5`** | Címkék: **`Storage1`** … **`Storage7`** (PC-n felismerhető nevek — **nem** Cisco esetében nincs `usbflash1:` stb.). |
 | 8 | **Főmenü → `2`** | Ellenőrzés: nyolc sor, típusok, címkék. |
 
 **Eredmény**
 
 | Partíció | Méret | FS | Címke | Példa tartalom |
 |----------|-------|-----|-------|----------------|
-| `sdc1` | 4 GiB | `vfat` | `DATA1` | `file1.bin` (≤4 GiB) — **PC mount** |
-| `sdc2` | 4 GiB | `vfat` | `DATA2` | `file2.bin` |
-| `sdc3` | 4 GiB | `vfat` | `DATA3` | `file3.bin` |
+| `sdc1` | 4 GiB | `vfat` | `Storage1` | `data1.bin` (≤4 GiB) — **PC mount** |
+| `sdc2` | 4 GiB | `vfat` | `Storage2` | `data2.bin` |
+| `sdc3` | 4 GiB | `vfat` | `Storage3` | `data3.bin` |
 | `sdc4` | ~1 KiB | — | — | Extended (LBA), konténer |
-| `sdc5` | 4 GiB | `vfat` | `DATA4` | … |
-| `sdc6`–`sdc8` | 4 GiB | `vfat` | `DATA5`–`7` | … |
+| `sdc5` | 4 GiB | `vfat` | `Storage4` | `data4.bin` |
+| `sdc6`–`sdc8` | 4 GiB | `vfat` | `Storage5`–`7` | `data5.bin`–`7` |
 
 | Lemez áttekintés | Fájlrendszer címke |
 | --- | --- |
@@ -360,4 +426,4 @@ https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-gu
 - ***Paypal (QR Code)***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 - ***Paypal (URL)***: [LINK](https://paypal.me/Kunee82)
 
-*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — **Cisco IOS USB flash: 1 db FAT32 partíció (MBR)**; §6 többpartíciós példa **PC-re**, nem switch-re. A **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
+*Utolsó frissítés jelleg: Partctl V1.0.0 — **§4.0** MBR (Primary / Extended / Logical) és GPT (bejegyzés, nincs MBR-hierarchia) a **Particio reszletei** képernyőn is; **Cisco IOS USB flash: 1 db FAT32 (MBR)**; §6 többpartíciós példa **PC-re**. A **Particio kezeles** lista ábécérendje miatt a **sorszámok** a futó programban ellenőrizendők.*
