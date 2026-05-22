@@ -1,89 +1,105 @@
-# Partíció létrehozás, törlés és célzott wipe — `partctl.sh` menüútmutató
+# Partíció-igazítás, fájlrendszer és teljesítmény — összefoglaló és `partctl.sh` menüútmutató
 
-> **Miről szól ez az útmutató?**  
-> Megmutatja, hogyan hozol létre és távolítasz el partíciókat a **Partctl** (`bash partctl.sh`) programmal úgy, hogy elkerüld a „látszólag még ott lévő”, hibás lemezállapotot (régi fájlrendszer-jelzések, elavult kernel-információ). Ugyanakkor **kíméled** a flash- vagy SSD-meghajtót: nem mindig kell a teljes lemezt nullázni — gyakran elég **egyetlen partíció** törlése vagy wipe-ja.
+**Kinek szól:** Linuxon **lemezt és partíciót kezelő** rendszergazdáknak, üzemeltetőknek és **haladó felhasználóknak**, akik már ismerik legalább alapszinten a partíció, a fájlrendszer és az eszköz (`/dev/…`) fogalmát, és szeretnék **egy helyen** látni: mi az a **1 MiB / 4 KiB** vonalú igazítás, **milyen teljesítmény- és megbízhatósági** következménye lehet (SSD, HDD, RAID), illetve **hogyan** érhető el mindez a **Partctl** menüiből. A szöveg helyenként **műszakilag sűrűbb** (LBA, IOPS, példa‑nagyságrendek), mint egy bevezető lemezkezelési útmutató; ha a partíciós tábla vagy a wipe még ismeretlen, érdemes előbb a projekt **MBR/GPT** vagy **általános Partctl** anyagait elolvasni.
 
-**Figyelem:** a partíciós tábla módosítása, a partíciók törlése, a **wipe** és a **formázás** **adatvesztéssel** jár. Csak **mentett**, **leválasztott** (unmount) adathordozón dolgozz, soha a futó rendszerlemezen. A **céllemezt** (pl. `/dev/sdc`) minden lépés előtt ellenőrizd a **Lemez attekintes** képernyőn.
+> **Cél:** Összefoglalni, **mit jelent** a partíció **optimális / nem optimális** létrehozása (pl. **1 MiB** határok, **2048s** / **4096s** kezdő LBA-k, lemez eleje–vége szabad sáv), és **milyen hatása** lehet eznek a **fájlrendszerre** és a **gyakorlati teljesítményre** — **szekvenciális MB/s**, **IOPS** és **késleltetés** szempontjából, **hozzávetőleges előtte/utána** nagyságrendekkel (lásd **§0** és a **§2.3** táblázatok). **HDD**, **SSD**, **RAID** környezetben, **ext4**, **NTFS** és hasonló rendszerek mellett.  
+> **Eszköz:** minden lépés a **Partctl** (`bash partctl.sh`) **menüpontjain** keresztül.
 
----
-
-## 0. Gyors áttekintés
-
-![](/img/particio-wipe-resized.png)
-
-| Mit szeretnél elérni? | Hol a Partctlben? | Mi történik a háttérben? |
-|------------------------|-------------------|---------------------------|
-| „Szellem” fájlrendszer-jelzés, de a tábla még látszik | **Lemez kezeles → Disk cleanup (Wipe)** | `wipefs -a`; opcionálisan jelölők, típuskód, nullázás |
-| Teljesen üres lemez, új indulás | Wipe + **partíciós tábla törlés** → **Particios tabla letrehozasa** | `sgdisk --zap-all` / `wipefs`, majd `parted mklabel` |
-| Új partíció, jó igazítással | **Particio letrehozasa** | Kezdő **`2048s`**, `parted -a optimal`, `partprobe` |
-| Csak egy zóna adatainak törlése | Wipe **egy partícióra** (nem a teljes lemezre) | `wipefs` pl. csak `/dev/sdc2`-n; opcionális `dd` nullázás |
-| Partíció eltávolítása, a többi marad | **Particio torlese** | `parted rm`, majd `partprobe` |
-| Tábla megmarad, minden aláírás megy | Teljes lemez wipe, **tábla törlés nélkül** | `wipefs` **partíciónként** (nem a lemez csomóponton) |
-| Kötet felismerhető neve (címke) | **Lemez kezeles → Fajlrendszer cimke** (`4` → `5`) | pl. `fatlabel` — **opcionális**, lásd §4.6 |
-| Partíció **szerepe** a táblában (MBR / GPT) | **Lemez attekintes** → partíció → **Enter** (*Particio reszletei*) | MBR: Primary / Extended / Logical — GPT: bejegyzés (nincs MBR-hierarchia) — lásd **§4.0** |
-| **Cisco IOS pendrive** (9200 / 9300 / …) | Wipe → **MBR** → **1×** partíció → **`vfat`** | **Egy** `sda1` → switch-en `usbflash0:` — lásd §4.7, §5, [Cisco útmutató](cisco-usb-flash-partctl-guide.md) |
+**Figyelem:** particiós tábla, partíciók, wipe és formázás **adatvesztést** okozhat. Csak **mentett**, **nem** futó rendszerlemezen, **leválasztott** (unmount) kötetekkel kísérletezz; éles környezetben mindig **biztonsági mentés**.
 
 ---
 
-## 1. Mi az a „látszólagos” artíciós tábla? (Ghost FS)
+## 0. Gyors áttekintés — teljesítmény **optimalizálás előtt / után** (hozzávetőleges)
 
-Akkor alakul ki, miután az MBR-, vagy a GPT tábla letörlése után nem történt teljes-, vagy célzott lemez tisztítás (wipe). Ettől függetlenül még az aláírások meg megmaradnak. Így ha pont ugyan attól a kezdő szektortól partícionálunk „látszólagos”, azaz fals fájlrendszert kapunk (VESZÉLYES). Illetve még pár helyzetben is előfordulhat:
+![](/img/Hard-Drive-speed.png)
 
-1. **Régi fájlrendszer- vagy LVM-aláírások** — a `lsblk` még `ext4`, `ntfs` vagy `LVM2_member` jelzést mutat, holott a partíciós bejegyzés már törölve lett vagy más.
-2. **GPT másodlagos fejléc, maradék GUID** — korábbi táblából maradt metaadat.
-3. **Kernel-gyorsítótár** — a tábla már frissült, de a régi `/dev/sdc2` node még látszik, amíg nincs `partprobe` vagy az eszköz nincs újradugva.
-4. **Félbemaradt művelet** — pl. csak `dd` nullázás **tábla törlés nélkül**, vagy fordítva: a tábla elment, de az aláírások megmaradtak.
+Az alábbi táblázat **nem** konkrét lemezmodell-mérések másolata, hanem **irodalmi / gyakorlati nagyságrendek**: a **„jó igazítás után”** a Partctl alapértelmezett **1 MiB**-hez igazított kezdő LBA + **`parted -a optimal`** vonalat, a **„rossz igazítás előtt”** pedig tipikus **eltolt** (nem 4 KiB / 1 MiB-hoz illeszkedő) partíciókezdő offsetekhez kötött **szintetikus** és **valós** mintákat jelent.
 
-**Hogyan segít a Partctl?**
+| Terhelés / mutató | Optimalizálás **előtt** (rossz igazítás, tipikus) | Optimalizálás **után** (jó igazítás) | Várható változás (hozzávetőleges) |
+|-------------------|--------------------------------------------------|---------------------------------------|-----------------------------------|
+| **Szekvenciális olvasás** (MB/s, nagy fájl) | Gyakran a lemez/busz **csúcsának közelében** | Ugyanígy | **≈ 0–3%** vagy **mérési zaj** — sok consumer SSD/HDD-n **nem** kimutatható MB/s különbség. |
+| **Szekvenciális írás** (MB/s, nagy fájl, SSD) | Néha **1–5%-kal** alacsonyabb a csúcshoz képest | Stabilabb csúcs | **≈ 0–5%** javulás **lehetséges**, de gyakori a **nulla** eltérés is. |
+| **Szekvenciális** (MB/s, HDD) | Fej + sáv dominál; offset másodlagos | Optimalizált offset | **≈ 0–5%** alatti, gyakran **kimérhetetlen** eltérés a szekvenciális MB/s-ben. |
+| **Véletlen 4 KiB írás** (IOPS vagy ms késleltetés) | **512e** SSD-n többlet **RMW** → IOPS csökkenhet, késleltetés nőhet | Kevesebb vezérlő-oldali többlet | **IOPS:** tipikusan **≈ 5–25%** jobb a jó igazításnál **szintetikus** 4K random íráson; extrém, régi/rossz párosításnál **akár ~30–40%** is előfordulhat. **MB/s** itt kevésbé értelmes mutató. |
+| **RAID + kis blokk** (stripe vs offset) | „Split write” több lemezre | Egy lemezre eső 4K-sáv | **IOPS / késleltetés:** **≈ 10–40%** romlás **rossz** párosításnál nem ritka szintetikus teszteken; extrém geometrián **nagyobb** is lehet. |
 
-- **Wipe** előtt: a kötet leválasztása.
-- **Partíció törlés** előtt: friss kernel-tábla (`refresh_disk_block_layer`).
-- **Új particiós tábla** előtt: `sgdisk --zap-all` és `wipefs -a` (ha elérhető).
-- **Teljes lemez wipe** táblatörlés **nélkül**: a program **nem** a `/dev/sdc` eszközön futtatja a `wipefs`-t (az törölné a táblát), hanem **minden partíción külön** (`/dev/sdc1`, `sdc2`, …).
+**Példa MB/s skálán (csak illusztráció):** ha egy SSD szekvenciális olvasási csúcsa pl. **~500–550 MB/s**, a rossz → jó igazítás váltás a szekvenciális olvasásban gyakran **nem** ad **10–20 MB/s**-nál nagyobb eltérést — inkább **±0–15 MB/s** zaj és **<3%** tartomány. Ahol **érzékelhető** javulás van, ott jellemzően a **kis írások** és az **IOPS**, nem egyetlen nagy **MB/s** szám.
 
----
-
-## 2. Lemez tisztítás (Wipe) — mit válassz a partíció listából?
-
-**Menüút:** **főmenü → `4` Lemez kezeles → `10` Disk cleanup (Wipe)**.
-
-### 2.1 Cél kiválasztása
-
-| Cél | Mikor érdemes? |
-|-----|----------------|
-| **Teljes lemez** (`/dev/sdc`) | Nulláról indulsz, vagy minden partíciót egyszerre tisztítasz |
-| **Egy partíció** (`/dev/sdc2`) | Csak egy zónát törölsz — **kevesebb írás**, a többi érintetlen marad |
-
-![](/img/wipe_2.jpg)
-
-### 2.2 Lemez tisztítás (wipe) - mit válassz a végrehajtási listából?
-
-| Opció | Teljes lemez | Egy partíció | Mit csinál? |
-|-------|:------------:|:------------:|-------------|
-| **`wipefs -a`** (mindig) | ✓ | ✓ | Fájlrendszer- és LVM-**aláírások** törlése |
-| **Partíciós tábla törlése** | ✓ | — | A lemez **struktúrája** is törlődik (üres lemez) |
-| **GPT/MBR jelölők** | ✓ | ✓ | `parted set … off` |
-| **Partíció típuskód** | ✓ | ✓ | Hex / GUID visszaállítás |
-| **Partíció nullázás (`dd`)** | — | ✓ | Csak a kiválasztott sáv nullázása |
-| **Teljes lemez nullázás** | ✓ (opc.) | — | Nagyon lassú, maximális kopás |
-| **LVM (LV / VG / PV)** | ✓ | ✓ | Kapcsolódó LVM-bejegyzések törlése wipe előtt |
-
-> Megjegyzés: **Kopás flash / SSD esetén** megnőhet
-
-![](/img/wipe_3.jpg)
-
-| Művelet | Írási terhelés | Jellemző használat |
-|---------|----------------|---------------------|
-| `wipefs` egy partíción | Alacsony | Formázás előtti tisztítás. Csak azokat a „magic string” / aláírás bájtokat törli, amelyeket a libblkid felismer. |
-| Partíció törlése | Minimális | A táblában eltűnik a bejegyzés; az adat a sávban **maradhat** |
-| Partíció `dd` nullázás | Közepes | Adat megsemmisítése **egy zónában** |
-| Teljes lemez `dd` nullázás | Maximális | Biztonságos megsemmisítés vagy teljes újrakezdés |
-
-> **Fontos:** a `wipefs` **nem** biztonságos adattörlés — csak az aláírásokat távolítja el. Valódi megsemmisítéshez használj **nullázást**, vagy titkosítást (LUKS) kulcs eldobásával.
+**Hogyan ellenőrizd a saját lemezeden:** ugyanaz a teszt **ugyanazzal** a kötettel, csak partíciós geometria változtatás előtt/után (vagy másolat lemezen) — pl. **`fio`** szekvenciális és **4k randwrite** profilokkal; **fontos:** abszolút MB/s a **modell**, **firmware**, **hőmérséklet** és **tömörítettség** miatt csak önmagadhoz hasonlítható.
 
 ---
 
-## 3. Indítás és navigáció
+## 1. Fogalmak — mi az az „igazítás”?
+
+| Fogalom | Rövid magyarázat |
+|--------|-------------------|
+| **Logikai szektor (LBA)** | A partíciós tábla és az operációs rendszer **szektoronként** számol; tipikus méret ma gyakran **512 bájt** (régebbi és sok **512e** SSD/HDD is így jelent meg). |
+| **Fizikai szektor (4 KiB AF)** | Sok modern lemez **4096 bájtos** fizikai blokkon dolgozik („Advanced Format”). Ha a **logikai** 512 B, egy fizikai blokk **8** logikai szektornak felel. |
+| **1 MiB igazítás** | **1 MiB = 1024 × 1024 bájt**. **512 B** logikai szektor mellett ez **2048** szektornak felel meg → ezért látjuk gyakran a **`2048s`** kezdő LBA-t jó gyakorlatként. **4096 B** logikai szektor mellett ugyanaz a határ **256** szektor (**256s**). |
+| **`parted -a optimal`** | A GNU Parted **igazítási módja**; a Partctl a partíció létrehozásakor ezt használja, hogy a megadott tartomány a lemez és a tábla szabályai szerint **használható** legyen. |
+
+**Fontos:** A **„2048s vagy 4096s”** nem két egymást kizáró „jó” választás ugyanazon lemezen — a **jó** határ a **logikai szektor méret** és a **1 MiB / 4 KiB** igény **közös** eredménye. Ugyanazon lemezen a cél: a partíció **kezdete** és a rajta lévő **fájlrendszer metaadatai** (pl. ext4 szuperblokk, NTFS clusters) **ne essenek fél fizikai blokkokra** hosszú távon.
+
+---
+
+## 2. Ha nem optimálisan hozzuk létre a partíciót (és a fájlrendszert) — mit eredményez?
+
+### 2.1 Negatív hatások (valós, de nem mindig „mérhető nagy MB/s csökkenés”)
+
+1. **SSD (NAND, 512e / 4Kn)**  
+   - **Rossz igazítás** esetén egy **4 KiB** (vagy nagyobb) írási egység **két** fizikai programozási egységet is érinthet → többlet **olvasás–módosítás–írás (RMW)** a vezérlőben.  
+   - **Következmény:** főleg **kis, véletlenszerű írásoknál** nőhet a késleltetés és a **TBW** (kopás) terhelése; **nagy sorozatos olvasásnál** (szekvenciális MB/s) sok consumer SSD-n a különbség **kicsi vagy elveszik** a másik nyakszűkületek mögött.
+
+2. **HDD**  
+   - A **fejmozgás** és a **sáv / szektor** elrendezés miatt a **rossz** (vagy túl finomra nem igazított) elhelyezés **elméletben** ronthatja a hatékonyságot; a gyakorlatban a **fragmentáció** és a **mechanikai** jellegű késleltetés gyakran **dominál** az igazítási hiba felett.  
+   - **Nagy sorozatos** folyamoknál a **MB/s** gyakran inkább a **sáv külső/belső** pozíciójától és a forgalom mintájától függ.
+
+3. **RAID / mdadm / hardver RAID**  
+   - Ha a **stripe méret** (chunk) és a **partíció / fájlrendszer** kezdő offset **nincs összhangban**, egy alkalmazás szintű **4 KiB / nagyobb** blokk **több lemezes I/O**-ra eshet szét („split write”).  
+   - Ez **nem** mindig látszik egyetlen „MB/s” számban: **IOPS** és **késleltetés** romlhat, különösen **kis blokkoknál**.
+
+4. **ext4**  
+   - Alapértelmezett **blokk** gyakran **4 KiB**; a partíció elején lévő **szuperblokk + journal** elhelyezkedése **igazított** lemezhez van optimalizálva. Rossz igazítás **extrém** esetben **ritka** edge case-eket adhat; tipikus asztali használatban a **fő rizikó** inkább a **SSD RMW** és a **RAID stripe** együttese.
+
+5. **NTFS**  
+   - A **cluster méret** (telepítő / `mkfs.ntfs` beállítás) és a **partíció offset** együtt dönti el, hogy a fájlrendszer belső struktúrái **4 KiB** (vagy nagyobb) határokhoz illeszkednek-e. Rossz párosítás **főleg írásnál** és **kis fájloknál** fájhat.
+
+### 2.2 Pozitív hatások, ha követjük a szabályokat
+
+- **Kisebb** vezérlő- és kernel-oldali **többletmunka** (kevesebb RMW, kiszámíthatóbb I/O).  
+- **RAID** alatt **jobb** stripe-egyezés → stabilabb **IOPS** / késleltetés.  
+- **Hosszú távú** előny: kevésbé „csúsznak el” a metaadatok a fizikai blokkokhoz képest — különösen **SSD + RAID + adatbázis / VM** esetén érezhető.  
+- **Vég-oldali 1 MiB rés (V1.0.0)** — a Partctl alapértelmezésben a **lemez végén is** ~1 MiB szabad helyet hagy a partíció után. Ennek **közvetlen** értéke: **GPT tartalék (backup) fejléc** biztos helye, **LUKS / cryptsetup** fejlécek és **mdadm superblock** stabil pozíciója, valamint kisebb eséllyel ütközik **`sgdisk -v`** „doesn't end on a 32-sector boundary” típusú figyelmeztetésekkel. **MB/s-ban** nem ad mérhető nyereséget — **megbízhatósági** és **eszközkompatibilitási** előny.
+
+### 2.3 Terhelés és egyéb mutatók — mit várjunk reálisan?
+
+| Terhelés típusa | Mit mérünk | Igazítás hatása (tipikus nagyságrend) | Előtte / utána (röviden) |
+|-----------------|------------|--------------------------------------|--------------------------|
+| **Szekvenciális olvasás** nagy fájlok | **MB/s** közel maximális | Gyakran **minimális** eltérés (más limit: SATA/NVMe, külső busz, CPU). | **≈ 0–3%** vagy zaj — lásd §0. |
+| **Szekvenciális írás** | **MB/s** | SSD-n **kicsi** eltérés lehetséges; HDD-n inkább **pozíció** és **sáv** dominál. | **≈ 0–5%** javulás **lehetséges**, gyakran **0**. |
+| **Véletlen 4K írás** | IOPS / ms késleltetés | Itt **inkább** látszik az igazítás hiánya (nem feltétlenül „MB/s” mutatóban). | **IOPS:** tipikusan **≈ 5–25%** jobb jó igazításnál; extrémnél **~30–40%**. |
+| **RAID + kis blokkok** | IOPS, késleltetés | **Stripe + offset** együtt kritikus; egyetlen **MB/s** szám félrevezető lehet. | **≈ 10–40%** IOPS/késleltetés romlás rossz párosításnál nem ritka. |
+
+**Összegzés:** A **„nem optimális partíció = fix X MB/s kevesebb”** általánosítás **ritkán** igaz egyetlen **X**-szel — **százalékos** nagyságrendek **hozzávetőleges** irányt adnak. A **valós kár** inkább: **többlet írási terhelés**, **ingadozó késleltetés**, **RAID alatti szétcsúszott I/O** — ezeket **benchmark** (pl. `fio`) és **diszk monitor** segítségével érdemes a **saját** lemezen ellenőrizni.
+
+---
+
+## 3. Hogyan segít ebben a Partctl (`partctl.sh`)?
+
+A Partctl a **partíció létrehozás** során:
+
+- **Alapértelmezett kezdő LBA:** a szabad sáv elejét **felkerekíti** a következő **1 MiB** határra a logikai szektor méret alapján (példa: 512 B-nél **2048s** lépésköz).  
+- **Alapértelmezett vég LBA:** Levonunk egy **1 MiB**-nek megfelelő szektorszámot — **`mib_step`** = `ceil(1 MiB / logikai szektor)` (512 B-nél **2048**, 4096 B-nél **256**); (2) **vég-igazítás**: a végszektort **lefelé `mib_step`-re** (azaz **1 MiB-os határra**) igazítjuk, hogy a `(end + 1)` osztható legyen `mib_step`-pel. Így a `sgdisk -v` „Partition doesn't end on a 2048-sector boundary” figyelmeztetés is elkerülhető, és a következő partíció pontosan a következő 1 MiB-on indulhat. A gyakorlatban a vég `N − 1..2 MiB` környékén esik — pl. **`34s..30842846s`** (14,7 GiB stick) szabad sávon a javaslat **`end = 30838783s`** (tail ≈ 2 MiB), **`2048s..488397167s`** (233 GiB SSD) sávon **`end = 488394751s`** (tail ≈ 1,18 MiB). A **„Vég”** mezőt **kézzel bármikor felülírhatod** (pl. tényleges `Ns` maximumra, ha tudatosan minden szektort fel akarsz használni — ekkor viszont `sgdisk -v` panaszt adhat).
+- **`parted`** hívás: **`parted -s -a optimal … mkpart …`** — az **optimal** igazítás a Parted része.  
+- A felületen a **„Kezdet”** mező súgója jelzi: **LBA `…s` formátum**, és hogy az alapértelmezés **1 MiB-hoz igazított** a szabad tartományon belül. A **„Vég”** mező súgója szintén utal a **~1 MiB-os vég-réskeretre** a javaslati értéknél.
+
+**Mit jelent a gyakorlatban?** Ha a varázsló a kezdetnél **`2048s`**-t, a végnél pl. **`488394751s`**-t kínál fel egy ~233 GiB-os szabad sávon, akkor a partíció a lemez legutolsó **~1–2 MiB-ját** szabadon hagyja, és a vég pontosan **1 MiB-os határra esik** (`(end+1) mod 2048 = 0` 512 B-nél). Ez tudatos tervezés — **ne** írd át nullára a véget abszolút `free_end`-re, hacsak nem konkrét okod van rá (pl. nem-GPT, nem-LUKS, és minden bájt számít, vállalva a `sgdisk -v` warningot).
+
+**Kiegészítő funkció:** **„Particio igazitas”** / **Partition alignment** — teljes lemezes **újraigazítás** (belsőleg **`sfdisk`**), **csak** akkor engedélyezett, ha **nincs** csatolt kötet, **nincs** LVM jelleg a listában, és a partíciókon **nincs** felismert fájlrendszer (tiszta, üres particiók). Ez **nem** helyettesíti az új partíció **tervezett** létrehozását — de **előkészített** lemezen segíthet.
+
+---
+
+## 4. Közös előkészület — indítás és főmenü
 
 ```bash
 bash partctl.sh
@@ -91,10 +107,10 @@ bash partctl.sh
 
 ![](/img/terminal_1.jpg)
 
-**Főmenü (rögzített sorszámok):**
+### Főmenü (rögzített sorszámok — minden nyelven ugyanaz)
 
-| # | Angol | Magyar |
-|---|--------|--------|
+| # | Angol | Magyar felületen |
+|---|--------|---------------------|
 | **1** | Select Disk | Lemez kivalasztasa |
 | **2** | Disk Overview | Lemez attekintes |
 | **3** | Partition management | Particio kezeles |
@@ -103,322 +119,81 @@ bash partctl.sh
 | **6** | About | Rolunk |
 | **7** | Exit | Kilepes |
 
-**Vezérlés:** `Fel` / `Le` (vagy `k` / `j`), majd **Enter**; vagy a sor eleji **`N.`** szám begépelése. **Vissza:** **Backspace** vagy **`q`**.
+![](/img/lemez_kivalasztasa_2.jpg)
 
-A **Particio kezeles** menü **ábécérendben** van — a konkrét sorszámot mindig a **futó programban** nézd meg. Az alábbi lépések a **menüpont nevét** használják, nem a sorszámot.
+**Navigáció:** `Fel` / `Le` (vagy `k` / `j`), **Enter**; vagy a sor elején látható **`N.`** szám begépelése, majd **Enter**. **Vissza:** súgó szerint **Backspace** / **`q`**.
 
----
+**Particio kezeles** almenü: a tételek **ábécérendbe** vannak rendezve — a pontos **sorszámot** mindig a **képernyőn** ellenőrizd. Az alábbi útmutatóban a **menüpont címkéjét** (angol + magyar) használjuk.
 
-## 4. Partíció szerepe és típuskód — MBR és GPT
-
-Ez a fejezet két dolgot foglal össze: **(A)** hogyan osztja fel a lemezt a tábla (Primary / Extended / Logical **vagy** GPT bejegyzés), **(B)** milyen **típuskód** / GUID tartozik a formázott kötethez (pl. FAT32 → **`0C`** vagy *Microsoft basic data*).
-
-### 4.0 Partíció szerepe a táblában — MBR (Primary / Extended / Logical) és GPT
-
-A **partíciós tábla típusa** (MBR vagy GPT) meghatározza, hogy a partíciók **milyen szerepet** töltenek be. Ez **nem** ugyanaz, mint a **fájlrendszer** (`vfat`, `ext4` …) és **nem** ugyanaz, mint a **típuskód** (pl. MBR **`0C`**, GPT *Microsoft basic data*) — azokat a §4.2–§4.4 és a formázás kezeli.
-
-#### MBR (`msdos`) — három szerep
-
-Az MBR (Master Boot Record) partíciós táblában a Partctl **Particio letrehozasa** menüben és a **Particio reszletei** képernyőn az alábbi szerepeket különíti el:
-
-| Szerep (angol) | Magyar megnevezés a Partctlben | Hol jelenik meg? | Formázható? | Tipikus típuskód |
-|----------------|--------------------------------|---------------|-------------|------------------|
-| **Primary** | Elsodleges (Primary) | Partíciószám **1–4** (`sdc1` … `sdc4`) | Igen (adat / boot) | pl. **`0C`** (FAT32), **`07`** (NTFS), **`83`** (Linux) |
-| **Extended** | Kiterjesztett (Extended) | Egy **konténer** a 1–4 között (pl. **`sdc4`**) | **Nem** — nincs saját fájlrendszer | **`0F`** — *Extended (LBA)* |
-| **Logical** | Logikai (Logical) | **5-től** felfelé (`sdc5`, `sdc6`, …) az extended **belsejében** | Igen | Ugyanúgy pl. **`0C`** FAT32-nél |
-
-**Szabályok (MBR):**
-
-1. **Legfeljebb négy** bejegyzés látszik közvetlenül a táblában (1–4). Ezek közül lehet **Primary** és **egy** **Extended** konténer.
-2. Ha **több mint négy** külön kötet kell **egy lemezen**, egy primary helyett (vagy mellett) **Extended** konténert hozol létre, és abban **logikai** partíciókat — lásd §6 (`sdc4` extended + `sdc5`…`sdc8` logikai).
-3. Az **Extended** partíció **nem** adathordozó: csak „doboz” a logikai partícióknak. **Ne** formázd, **ne** állíts rá fájlrendszer címkét (§4.6).
-4. A Partctl **Particio letrehozasa** során MBR-n automatikusan választ: első kötetek → **primary**; ha kell több zóna → **extended** + **logical** (a program a szabad helyet és a meglévő extended konténert figyelembe veszi).
-5. **Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** → **Particio reszletei** → sor: **MBR particio szerep:** *Elsodleges* / *Kiterjesztett* / *Logikai*.
-
-```
-MBR példa (§6):  sdc1–sdc3 = Primary (FAT32)
-                 sdc4     = Extended (konténer, 0F)
-                 sdc5–sdc8 = Logical (FAT32 az extended-ben)
-```
-
-#### GPT — nincs Primary / Extended / Logical hierarchia
-
-A **GUID Partition Table (GPT)** lemezen **nem** léteznek MBR-stílusú *Primary*, *Extended* és *Logical* szerepek. Minden partíció egy **GPT bejegyzés** (partition entry) — tipikusan **1–128** slot, a kernel eszköznevei pl. `sdc1`, `sdc2` (ezek **nem** „logikai partíciók” MBR értelemben).
-
-| Fogalom | GPT-n |
-|---------|--------|
-| Primary / Extended / Logical | **Nincs** — ne keverd össze az MBR logikájával |
-| Partíció „szerepe” | **GPT bejegyzés** — egy sáv a lemezen, saját GUID típussal |
-| Több kötet | Több **független** bejegyzés (`sdc1`, `sdc2`, …), extended konténer **nélkül** |
-| Partctl **Particio letrehozasa** | Közvetlenül új bejegyzést hoz létre (nincs extended/logical választó) |
-| **Particio reszletei** | Sor: **GPT particio modell:** *GPT bejegyzes (nincs Primary/Extended/Logical)* |
-
-**Szabályok (GPT):**
-
-1. A kötet **szerepét** a **GPT típus GUID** jelzi (pl. *Microsoft basic data*, *EFI System*) — §4.4, nem „logical” címke.
-2. UEFI / modern PC és sok USB SSD **GPT**-t használ; **Cisco IOS USB flash** továbbra is **MBR + 1 partíció** (§4.7) — GPT pendrive sok IOS verzión problémás.
-3. A részletek képernyőn a **Tipus** sor (*Fizikai particio* / LVM) a Partctl **belső** kategóriája; a **GPT particio modell** sor külön jelzi, hogy **nincs** MBR-hierarchia.
-
-#### Összehasonlító tábla
-
-| Kérdés | MBR (`msdos`) | GPT |
-|--------|---------------|-----|
-| Hány „felső” slot? | **4** (1–4) | Sok (pl. **128** bejegyzés) |
-| Több mint 4 kötet? | **Extended** + **Logical** (5+) | Több **GPT bejegyzés** (`sdc1`…`sdcN`) |
-| Van extended konténer? | **Igen** (egy tipikus) | **Nem** |
-| `sdc5` jelentése | MBR-n: **logikai** partíció | GPT lemezen: **ötödik bejegyzés**, nem „logical” |
-| Partctl részletek | **MBR particio szerep** | **GPT particio modell** |
-| FAT32 típuskód / GUID | MBR **`0C`** | *Microsoft basic data* — §4.2 |
-
-> **Ne keverd:** a Linux **`lsblk`** „part” típusa és a Partctl **Tipus: Fizikai particio** sor **nem** az MBR Primary/Logical szerepet jelenti. MBR szerephez a **MBR particio szerep** sort nézd; GPT-n a **GPT particio modell** sort.
+Először mindig: **főmenü → `1`** — **Lemez kivalasztasa** — a listában válaszd ki a **`sdb`** (vagy cél) sort (**sorszám + Enter** vagy kurzor + Enter).
 
 ---
 
-### 4.1 Partíció típuskód (FAT32 / FAT16) — összefoglaló
+## 5. **Új partíció** „jó gyakorlat szerint” (alapértelmezett igazítás elfogadása)
 
-A **`vfat`** (FAT32) és **`fat16`** formázás után a Partctl **automatikusan** beállítja a partíció típuskódját — a lemez táblájától függően:
+**Cél:** Az első partíció kezdete **1 MiB** határon legyen; a **Particio parameterek** panelen **ne** írjunk be szándékosan „furcsa” kezdő szektort (pl. **1s**, **63s** klasszikus BIOS-offset), hacsak nem tudjuk pontosan, mit csinálunk.
 
-| Tábla | FAT32 (`vfat`) formázás után | FAT16 (`fat16`) formázás után |
-|-------|------------------------------|-------------------------------|
-| **MBR** | **`0C`** — *W95 FAT32 (LBA)* | **`0E`** — *W95 FAT16 (LBA)* |
-| **GPT** | **Microsoft basic data** (`EBD0A0A2-…`) + `msftdata` jelölő | ugyanígy: **Microsoft basic data** + `msftdata` |
+| Lépés | Menüút (rövid) | Mit csinálsz |
+|-------|----------------|--------------|
+| 1 | **Főmenü → `1`** Select Disk / Lemez kivalasztasa | Kiválasztod a **cél** lemezt (pl. teszt **`sdb`** — **ne** az élő rendszerlemez). |
+| 2 | *(Opcionális)* **Főmenü → `4` → `10`** Disk cleanup (Wipe) | „Tiszta lap”: teljes lemez + szükség szerint **partíciós tábla törlés** — részletek: [`win11-gpt-uefi-particio-whitepaper.md`](win11-gpt-uefi-particio-whitepaper.md) §3. |
+| 3 | **Főmenü → `3`** → **Create partition table** / **Particios tabla letrehozasa** | **GPT** vagy **MBR** igény szerint; megerősítés, figyelmeztetések elolvasása. |
+| 4 | **Főmenü → `3`** → **Create partition** / **Particio letrehozasa** | A **„Kezdet”** mezőnél **Enter** az **alapértelmezett** (1 MiB-hoz igazított) értékre; **„Vég”**-nél pl. **`+100GiB`**, **`100%`**, vagy abszolút **`…s`** — a súgó szerint. |
+| 5 | **Főmenü → `3`** → **Partition format** / **Particio formazas** | **ext4** / **ntfs** / stb. a cél szerint — a fájlrendszer **most** jön létre **már igazított** partíción. |
+| 6 | **Főmenü → `2`** Disk Overview / Lemez attekintes | Ellenőrzés: partíció **kezdete** (szektor), méret, tábla típusa. |
 
-> Megjegyzés: **NTFS** ugyanezen a logikán megy: MBR-en **`07`**, GPT-n **Microsoft basic data** — mint a FAT32 GPT ág.
+| Kezdet | Vég |
+|--------|-----|
+| ![particio_letrehozasa_2](/img/particio_letrehozasa_2.jpg "Partício létrehozása #2") | ![particio_letrehozasa_3](/img/particio_letrehozasa_3.jpg "Partício létrehozása #3") |
 
-**Kézi beállítás** (ha ellenőrzésnél rossz érték látszik):
-
-- **MBR:** **főmenü → `3`** → **MBR particio tipuskod**
-- **GPT:** **főmenü → `3`** → **GPT particio tipuskod**
-
-> Megjegyzés: A típuskód **nem** helyettesíti a fájlrendszert: a formázás hozza létre a FAT-ot; a kód azt jelzi, **milyen szerepet** vár el tőle a Windows, Linux OS.
-
-### 4.2 Gyors választási tábla (MBR) — típuskód
-
-| Partíció szerepe | Formázás | MBR kód a listában | Megjegyzés |
-|------------------|----------|--------------------|------------|
-| Adat / pendrive (általános, PC) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
-| **Cisco IOS USB flash** (9200 / 9300 / …) | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Egy** partíció, **MBR** — lásd §4.7 |
-| Adat (régi környezet) | **`vfat`** | **`0B`** — *W95 FAT32* | LBA nélkül; ma ritkán |
-| NTFS / exFAT adat | **`ntfs`** / exFAT | **`07`** — *Microsoft basic data* | NTFS után a Partctl **automatikusan** `07`-re állít |
-| Extended konténer | *ne formázd* | **`0F`** — *Extended (LBA)* | Pl. **`sdc4`** a §6 példában |
-| Logikai FAT32 | **`vfat`** | **`0C`** — *W95 FAT32 (LBA)* | **Ajánlott** modern USB, és HDD háttértárolóknál |
-| Linux adat | **`ext4`** stb. | **`83`** | - |
-| EFI (MBR-en ritka) | **`vfat`** | **`EF`** | - |
-
-> **Ne keverd össze:** a **`07`** típuskód az NTFS/exFAT adatpartícióhoz való. Sima **FAT32 pendrive**-ra **`0C`** típuskód kell, nem pedig a `07`. A Cisco IOS / IOS XE **FAT32** pendrive-ot **`0C`** + **egyetlen** partícióval várja — a `07` kód **nem** helyettesíti a helyes FAT32 előkészítést (részletek: [Cisco útmutató](cisco-usb-flash-partctl-guide.md)).
-
-![](/img/mbr_particio_tipuskod_1.jpg)
-
-### 4.3 Mi fut a háttérben? (*Particio formazas* után)
-
-A formázás varázsló egy második lépésben állítja a típuskódot (`format_operation_step_typecode`):
-
-| Fájlrendszer | MBR | GPT |
-|--------------|-----|-----|
-| **`vfat`** | `sfdisk` / `fdisk` → **`0C`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
-| **`fat16`** | → **`0E`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
-| **`ntfs`** | → **`07`** | `sgdisk --typecode=…:EBD0A0A2-…` + `parted … msftdata on` |
-
-**Ellenőrzés:** **Lemez attekintes** → partíció → **Enter** (*Particio reszletei*). **Szerep:** MBR-n **MBR particio szerep** (Primary / Extended / Logical), GPT-n **GPT particio modell** — §4.0. **Típuskód:** MBR-n a **Kod** / PARTTYPE sorban pl. **`0C`** (FAT32) vagy **`0F`** (extended); GPT-n *Microsoft basic data* / **`0700`** jellegű érték. Ha **`83`** (Linux) maradt FAT32-nél, futtasd újra a típuskód varázslót (§4.2 táblázat).
-
-### 4.4 GPT — mikor kell még kézzel beállítani?
-
-A **FAT32 / FAT16 formázás GPT-n is automatikusan** *Microsoft basic data* GUID-ot kap — **nem** kell utána külön kiválasztani a listából, ha a formázás sikeres volt.
-
-Kézi **GPT particio tipuskod** akkor kell, ha:
-
-- a formázás típuskód-lépése hibára futott (hiányzó `sgdisk` / `parted`),
-- régi, rossz GUID maradt, és csak a típust javítod formázás nélkül.
-
-| Szerep | GPT típus (lista / automatikus FAT32 után) |
-|--------|------------------------------------------|
-| Általános adat (FAT32, FAT16, NTFS, exFAT) | **Microsoft basic data** — `EBD0A0A2-B9E5-4433-87C0-68B6B72699C7` |
-| EFI rendszer (boot, kis ESP) | **EFI System** — `C12A7328-F81F-11D2-BA4B-00A0C93EC93B` — ezt **nem** állítja a sima `vfat` adat-formázás |
-
-![](/img/gpt_particio_tipuskod_1.jpg)
-
-### 4.5 §6 példa — partíciónkénti kód
-
-| Partíció | Típuskód | Formázás |
-|----------|----------|----------|
-| `sdc1` … `sdc3` | **`0C`** | **`vfat`** |
-| `sdc4` | **`0F`** (Extended) | **Ne** formázd — konténer |
-| `sdc5` … `sdc8` | **`0C`** | **`vfat`** |
-
-> Megjegyzés: MBR partíciós tábla esetében ha formázás után **`83`** vagy **`07`** típuskód látszik akkor, állítsd át **`0C`** típuskódra minden FAT32 fájlrendszer esetében ezeken a partíciókon. A **`0F`** típuskódot a **`sdc4`** extended partícion kell beállítani (A formázás általában már **`0C`**-t állít — lásd §4.2 táblázat.). Az extended **szerepét** a részletekben *Kiterjesztett (Extended)* mutatja — §4.0.
-
-### 4.6 Fájlrendszer címke *(opcionális)*
-
-**Menü:** **főmenü → `4` → `5` Fajlrendszer cimke** (a Lemez kezeles almenü **ötödik** sora).
-
-| | FAT32 (`vfat`) |
-|---|----------------|
-| **Mikor?** | Formázás és (ha kell) típuskód után — kötet **leválasztva** |
-| **Háttér** | `fatlabel /dev/sdc1 UJ_CIMKE` (`dosfstools`) |
-| **Hossz** | Max. **11 karakter**, szóköz nélkül |
-| **Kötelező?** | Nem |
-
-**Lépések:** válaszd a partíciót → írd be a címkét (pl. **`CISCO_USB`**) → ha kéri, erősítsd a **leválasztást**, vagy előbb **Kotet lecsatolasa** (`4` → `7`) → ellenőrzés: **Lemez attekintes** → **Enter** → **Fajlrendszer címke** sor.
-
-**Fontos:** Az **`sdc4`** extended konténerre **nincs** fájlrendszer — oda címkét ne állíts.
-
-> Megjegyzés: a címke **nem** helyettesíti a **`0C`** típuskódot. Windows és Linux a címkét kötetnévként mutatja; a Cisco továbbra is a **`usbflash0:`** számot használja.
-
-![](/img/fajlrendszer_cimke_1.jpg)
-
-### 4.7 Cisco Catalyst USB flash — **egyetlen partíció** (IOS / IOS XE)
-
-A **Catalyst 9200**, **9300**, **3850**, **3650** és hasonló switch-ek **külső USB flash** meghajtója IOS image és konfiguráció szempontjából **nem** PC-s többpartíciós pendrive:
-
-| Szabály | Érték |
-|---------|--------|
-| **Partíciók száma** | **1 db** (pl. `sdc1`) — **ne** hozz létre `sdc2`, `sdc3` … |
-| **Partíciós tábla** | **MBR (msdos)** — GPT-s pendrive sok IOS verzión problémás |
-| **Fájlrendszer** | **FAT32** (`vfat`) — típuskód **`0C`** |
-| **Méret** | **16–32 GB** ajánlott; nagyobb sticken **egy** ~30 GiB partíció, maradék **unallocated** |
-| **Switch CLI** | Egy mount: **`usbflash0:`** — a 2. FAT32 partíció **nem** jelenik meg megbízhatóan |
-
-**Wipe → újraépítés Cisco-célra (Partctl):**
-
-1. **Lemez kezeles → Disk cleanup (Wipe)** — teljes lemez + **[✓] Partíciós tábla törlése**.
-2. **Particios tabla letrehozasa** — **`2` MBR (msdos)**.
-3. **Particio letrehozasa** — **egyszer** (eredmény: `sdc1`); **Vég:** `100%` (≤32 GB) vagy `+30GiB` nagyobb lemezen.
-4. **Particio formazas** — `sdc1` → **`vfat`** (automatikus **`0C`**).
-5. *(Opc.)* **Fajlrendszer cimke** — pl. **`CISCO_USB`**.
-
-A §6 **több FAT32 partíció** példa **Linux/Windows** környezetre szól (pl. 4 GiB-os fájlhatár megkerülése **PC-n**, külön mount pontokkal) — **nem** helyettesíti a Cisco **egy kötetes** előkészítést. Teljes Cisco menüút és hibaelhárítás: **[Cisco kompatibilis USB flash útmutató](cisco-usb-flash-partctl-guide.md)**.
+- **Tanulság:** Ha a **4.** lépésben **módosítod** a kezdő szektort **szándékosan** (pl. kihagysz **2048** helyett csak **32** szektort), a Parted **`optimal`** módja megpróbálja a **biztonságos** tartományba terelni — de a **végső** geometria mindig a **megadott** és a **lemez** korlátok együttes eredménye.
+- **Jó gyakorlat:** bízd a **javasolt kezdő és vég** értéket a programra.
 
 ---
 
-## 5. Példa A — egy FAT32 pendrive (~32 GB) — **Cisco IOS és általános adathordozó**
+## 6. **Ellenőrzés** és **„rossz” geometria** felismerése
 
-**Cél:** Egyetlen, jól felismerhető FAT32 kötet — **Catalyst 9200 / 9300 / 3850 / 3650** IOS image és konfigurációhoz (**§4.7**), valamint általános PC-s adathordozónak. Példa lemez: **`/dev/sdc`**, ~29 GiB.
+| Lépés | Menüút | Mit nézel |
+|-------|--------|-----------|
+| 1 | **Főmenü → `1`** | Céllemez kiválasztva. |
+| 2 | **Főmenü → `2`** Lemez attekintes | Partíciós sorok: **kezdő szektor**, **vége**, típus. Ha a **kezdő** nem **2048** többszöröse 512 B-nél (vagy nem illik a **1 MiB** szabályhoz a lemez logikai szektorához), érdemes megfontolni az **újraparticionálást** (adatvesztéssel jár). |
+| 3 | *(Linux CLI, a Partctl mellett)* | `parted -m /dev/sdX unit s print` — részletes **szektor** nézet; `lsblk -o NAME,SIZE,TYPE,FSTYPE,PHY-SEC,LOG-SEC` — **logikai / fizikai** szektor jelzés (ha elérhető). |
 
-> **Cisco:** csak **`sdc1`** legyen; a **Create partition** menüpontot **ne** futtasd második kötetre. Nagyobb fizikai pendrive-nál a **Vég:** mezőben **`+30GiB`** is elég — a maradék terület maradjon **allokálatlan**.
-
-| Lépés | Menüút | Teendő |
-|-------|--------|--------|
-| 1 | **Főmenü → `1`** | Lemez: **`sdc`** — ellenőrizd, hogy **nem** a rendszerlemez. |
-| 2 | **Főmenü → `4` → `10`** | Wipe: **teljes lemez**, **[✓] Partíciós tábla törlése**. |
-| 3 | **Főmenü → `3`** → **Particios tabla letrehozasa** | **`2` — MBR (msdos)**. |
-| 4 | **Főmenü → `3`** → **Particio letrehozasa** | **Egyszer** — eredmény **`sdc1`**. Kezdő: **Enter** → **`2048s`**. Vég: **`100%`** (vagy **`+30GiB`** nagyobb lemezen; maradék unallocated). |
-| 5 | **Főmenü → `3`** → **Particio formazas** | `sdc1` → **`vfat`**. Utána automatikus típuskód: MBR → **`0C`**, GPT → *Microsoft basic data* (§4). |
-| 6 | *(Ellenőrzés)* típuskód | MBR: **MBR particio tipuskod** → **`0C`**, ha még nem az. GPT: részletekben *Microsoft basic data*. |
-| 7 | **Főmenü → `2`** | Ellenőrzés: `msdos`, `vfat`, típus **`0C`**; részletekben **MBR particio szerep: Elsodleges (Primary)** (§4.0). |
-| 8 | *(Opc.)* **Főmenü → `4` → `5`** | Címke: pl. **`CISCO_USB`** (max. 11 kar.). |
-
-**Eredmény**
-
-| Eszköz | Tábla | Címke | Fájlrendszer | Megjegyzés |
-|--------|-------|-----|---------------|------------|
-| `sdc` | `msdos` | — | — | Pendrive |
-| `sdc1` | `vfat` | `CISCO_USB` | Max. **~4 GiB / fájl** (FAT32 korlát) | **Egyetlen** kötet — Cisco: `usbflash0:` |
-| *(nincs `sdc2`)* | — | — | — | Második partíció **szándékosan nincs** (IOS nem támogatja) |
-
-| Lemez áttekintés | Partíció részletei |
-| --- | --- |
-| ![usb_partition_1](/img/usb_partition_1.jpg) | ![usb_partition_2](/img/usb_partition_2.jpg) |
+![gpt_tabla_ellenorzes_2](/img/gpt_tabla_ellenorzes_2.jpg "GPT tábla ellenőrzés #2")
 
 ---
 
-## 6. Példa B — több FAT32 partíció (**Linux / Windows — nem Cisco IOS pendrive**)
+## 7. **Particio igazitas** / **Partition alignment**
 
-**Cél:** Egy pendrive-on **több külön FAT32 kötet** — **PC-n** külön mount pontokkal (pl. `/media/Storage1` …), hogy a **4 GiB-os egyfájl-limit** több kötetre legyen „szétosztható” (**egy fájl max. ~4 GiB** partíciónként, de **több partíció = több ilyen fájl**). Példa lemez: **`/dev/sdc`**, ~32 GiB.
+**Előfeltételek (a program is blokkolja, ha nem teljesülnek):**
 
-> **Fontos — Cisco switch:** A Catalyst 9200 / 9300 / … **nem** kezeli megbízhatóan a több FAT32 partíciót — IOS alatt tipikusan **csak** `usbflash0:` (egy kötet) érhető el. Firmware / IOS image **switch-re** töltéshez használd a **§5** / **§4.7** **egy partíciós** elrendezést és a [Cisco útmutatót](cisco-usb-flash-partctl-guide.md). A §6 példa **Partctl MBR Primary / Extended / Logical** gyakorlatnak (§4.0) és **Linuxos** archiválásnak szól.
+- **`sfdisk`** elérhető a rendszeren.  
+- **Nincs** csatolt fájlrendszer a lemez partícióin; **nincs** LVM jelleg a listában.  
+- A partíciókon **nincs** felismert fájlrendszer (üres particiók) — a varázsló **biztonsági** okból nem fut le „éles” FS mellett.
 
-> Megjegyzés: a FAT32 **4 GiB-os határa egyetlen fájlra** vonatkozik, **nem** a partíció méretére. Egy 32 GB-os FAT32 partíción is legfeljebb ~4 GiB lehet egy fájl.
+| Lépés | Menüút | Megjegyzés |
+|-------|--------|------------|
+| 1 | **Főmenü → `1`** | Céllemez. |
+| 2 | **Főmenü → `3`** → **Particio igazitas** / **Partition alignment** | A belső cél: **4 KiB** (alapértelmezett konfiguráció) határhoz igazítás tipikus **512 B** logikai szektor mellett. |
+| 3 | Kövesd a **megerősítő** párbeszédeket | **Adatvesztés-mentes** újraigazítás **nem** garantálható minden geometrián — mindig olvasd el a figyelmeztetést. |
+| 4 | **Főmenü → `2`** | Eredmény ellenőrzése. |
 
-Az MBR **legfeljebb négy primary** partíciót enged — több zónához **extended** konténer kell (**`sdc4`**), benne **logikai** partíciókkal (`sdc5`…`sdc8`). A szerepek összefoglalója: **§4.0**; a Partctl a **Particio letrehozasa** során és a **Particio reszletei** képernyőn is megjeleníti (*Elsodleges* / *Kiterjesztett* / *Logikai*).
+| Partíció igazítás | Igazítási előnézet | Igazított |
+|-------------------|--------------------|-----------|
+| ![particio_igazitas_1](/img/particio_igazitas_1.jpg "Partíció igazítás #1") | ![particio_igazitas_1](/img/particio_igazitas_2.jpg "Partíció igazítás #2") | ![gpt_tabla_ellenorzes_3](/img/gpt_tabla_ellenorzes_3.jpg "GPT tábla ellenőrzés #3") |
 
-| Lépés | Menüút | Teendő |
-|-------|--------|--------|
-| 1 | **Főmenü → `1`** | Lemez: **`sdc`**. |
-| 2 | **Főmenü → `4` → `10`** | Wipe: teljes lemez + tábla törlés. |
-| 3 | **Főmenü → `3`** → **Particios tabla letrehozasa** | **MBR (msdos)**. |
-| 4a–g | **Particio letrehozasa** | Hét partíció: kezdő **`2048s`**, vég **`+4GiB`** (a program javasolt kezdőértékeit használd a 2.–8. sávnál). |
-| 5a–h | **Particio formazas** | `sdc1`–`sdc3`, `sdc5`–`sdc8` → **`vfat`**. **`sdc4`** extended: **ne** formázd. |
-| 6 | *(Ellenőrzés)* | Részletek: **`sdc1`–`sdc3`** → *Elsodleges*, **`sdc4`** → *Kiterjesztett*, **`sdc5`–`sdc8`** → *Logikai* (§4.0). Típuskód: FAT32 → **`0C`**, **`sdc4`**: **`0F`** (§4.2). |
-| 7 | *(Opc.)* **Főmenü → `4` → `5`** | Címkék: **`Storage1`** … **`Storage7`** (PC-n felismerhető nevek — **nem** Cisco esetében nincs `usbflash1:` stb.). |
-| 8 | **Főmenü → `2`** | Ellenőrzés: nyolc sor, típusok, címkék. |
-
-**Eredmény**
-
-| Partíció | Méret | FS | Címke | Példa tartalom |
-|----------|-------|-----|-------|----------------|
-| `sdc1` | 4 GiB | `vfat` | `Storage1` | `data1.bin` (≤4 GiB) — **PC mount** |
-| `sdc2` | 4 GiB | `vfat` | `Storage2` | `data2.bin` |
-| `sdc3` | 4 GiB | `vfat` | `Storage3` | `data3.bin` |
-| `sdc4` | ~1 KiB | — | — | Extended (LBA), konténer |
-| `sdc5` | 4 GiB | `vfat` | `Storage4` | `data4.bin` |
-| `sdc6`–`sdc8` | 4 GiB | `vfat` | `Storage5`–`7` | `data5.bin`–`7` |
-
-| Lemez áttekintés | Fájlrendszer címke |
-| --- | --- |
-| ![usb_multiple_partition_1](/img/usb_multiple_partition_1.jpg) | ![cisco_fat32_2](/img/usb_multiple_partition_2.jpg) |
+Ha már **formázott** partícióid vannak és csak „javítani” szeretnél: ez a varázsló **nem** erre való — ilyenkor **mentés**, **újraparticionálás**, majd **5.** szerinti **formázás** a helyes út.
 
 ---
 
-## 7. Példa C — Lemez tisztítás (wipe) egyetlen partíción
-
-**Kiindulás:** a §6 szerinti elrendezés. Csak **`sdc2`** adata törlődik, **`sdc1`** érintetlen marad.
-
-| Lépés | Menüút | Teendő |
-|-------|--------|--------|
-| 1 | **Főmenü → `1`** | Lemez: **`sdc`**. |
-| 2 | **Főmenü → `4` → `10`** | Cél: **`/dev/sdc2`** (ne a teljes lemez!). |
-| 3 | Jelölők | **`wipefs`** mindig; opcionálisan **[✓] Partíció nullázás**. Teljes lemez nullázás: **ki**. |
-| 4 | Megerősítés | A tábla és **`sdc1`** megmarad. |
-| 5 | *(Opc.)* **Particio formazas** | `sdc2` → **`vfat`** újra. |
-
-**Miért jobb, mint a teljes lemez nullázása?** A `dd` csak a **`sdc2`** ~4 GiB sávját írja felül, nem az egész 32 GiB-ot — **kevesebb kopás**.
-
----
-
-## 8. Példa D — egy partíció törlése a táblából
-
-**Cél:** **`sdc2`** eltűnik a partíciós táblából; **`sdc1`** megmarad; a felszabadult hely később újra partícionálható.
-
-| Lépés | Menüút | Teendő |
-|-------|--------|--------|
-| 1 | **Főmenü → `1`** | Lemez: **`sdc`**. |
-| 2 | **Főmenü → `3`** → **Particio torlese** | Válaszd **`sdc2`**-t, erősítsd meg. |
-| 3 | **Főmenü → `2`** | `sdc2` eltűnik; szabad sáv látszik. |
-
-> A törlés **nem** biztonságos adatmegsemmisítés — a régi adat a lemezen maradhat. Erre: **Wipe** + nullázás **törlés előtt**, vagy új partíció + nullázás utána.
-
-Ha **kernel figyelmeztetés** jön: húzd ki és csatlakoztasd újra az eszközt, vagy futtass **`partprobe`**-ot.
-
----
-
-## 9. Példa E — tábla és a partíciók megmaradnak, de az aláírások törlődnek
-
-**Cél:** a partíciós **szerkezet megmarad** (pl. `sdc1`…`sdc4`), de minden köteten eltűnnek a régi fájlrendszer- és LVM-jelzések — **teljes lemez `dd` nélkül**.
-
-| Lépés | Menüút | Teendő |
-|-------|--------|--------|
-| 1 | **Főmenü → `4` → `10`** | Cél: **teljes lemez** (`/dev/sdc`). |
-| 2 | Jelölők | **[ ] Partíciós tábla törlése** — **ki**. Szükség szerint jelölők / típuskód. |
-| 3 | Futtatás | Partíciónkénti `wipefs` (`sdc1`, `sdc2`, …). |
-
-Ha **nincs egyetlen partíció sem**, a program véletlen táblatörlés ellen **nem** wipe-olja a lemez csomópontot — előbb hozz létre partíciókat, vagy kapcsold be a **tábla törlést**.
-
----
-
-**Napló:** `log/partctl-*.log` mappában megtalálható és a program **Napló** panelján is megtekinthető.
-
+Partíció-igazítás, fájlrendszer és teljesítmény — háttér és `partctl.sh` menüútmutató
 ```markdown
-https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-guide.md
+https://github.com/drcyberg/partctl/blob/main/example/particio-igazitas-partctl-guide.md
 ```
 
 ### Fő oldal (Partctl)
 
 - [Partctl](https://drcyberg.github.io/partctl/web/partctl)
-
-### Kapcsolódó útmutatók
-
-- [Cisco kompatibilis USB flash és USB 3.0 SSD előkészítése](cisco-usb-flash-partctl-guide.md) — **1 db partíció**, FAT32, MBR, Catalyst 9200 / 9300 / …
-- [Cisco útmutató (web)](https://drcyberg.github.io/partctl/web/cisco-usb-flash-partctl-guide)
 
 ### Köszönöm ha támogatsz
 
@@ -426,4 +201,6 @@ https://github.com/drcyberg/partctl/blob/main/example/cisco-usb-flash-partctl-gu
 - ***Paypal (QR Code)***: [LINK](https://github.com/drcyberg/partctl/blob/main/img/qrcode.png)
 - ***Paypal (URL)***: [LINK](https://paypal.me/Kunee82)
 
-*Utolsó frissítés jelleg: Partctl V1.0.0 — **§4.0** MBR (Primary / Extended / Logical) és GPT (bejegyzés, nincs MBR-hierarchia) a **Particio reszletei** képernyőn is; **Cisco IOS USB flash: 1 db FAT32 (MBR)**; §6 többpartíciós példa **PC-re**. A **Particio kezeles** lista ábécérendje miatt a **sorszámok** a futó programban ellenőrizendők.*
+---
+
+*Utolsó frissítés jelleg: Partctl V1.0.0 viselkedés — a **Particio kezeles** lista ábécérendje miatt a konkrét **sorszámok** mindig a futó programban ellenőrizendők.*
