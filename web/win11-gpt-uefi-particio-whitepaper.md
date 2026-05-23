@@ -151,24 +151,7 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 
 ---
 
-## 6. GPT típus-GUID beállítása (Partctl listából)
-
-**Útvonal:** **főmenü → `3`** → **Partition type code (GUID, GPT)** / **GPT particio tipuskod** → válaszd ki a partíciót → a listából a megfelelő **GUID + név** pár:
-
-| Partíció | A Partctl listában választandó név (rövidítve) | Példa: eszköz + GUID (`/dev/sdc`) |
-|----------|-----------------------------------------------|-------------------------------------|
-| ESP | **EFI System** | **`sdc1`** → `C12A7328-F81F-11D2-BA4B-00A0C93EC93B` |
-| MSR | **Microsoft reserved** | **`sdc2`** → `E3C9E316-0B5C-4DB8-817D-F92DF00215AE` |
-| Windows | **Microsoft basic data** | **`sdc3`** → `EBD0A0A2-B9E5-4433-87C0-68B6B72699C7` |
-| WinRE | **Windows Recovery Environment (WinRE)** | **`sdc4`** → `DE94BBA4-06D1-4D40-A16A-BFD50179D6AC` |
-
-*(A lista a `GPT_GUID_TYPE_CHOICES` bejegyzéseit mutatja.)*
-
-![](/partctl/img/gpt_particio_tipuskod_1.jpg)
-
----
-
-## 7. Formázás (ESP: vfat; Windows + WinRE: NTFS)
+## 6. Formázás (ESP: vfat; Windows + WinRE: NTFS)
 
 **Útvonal:** **főmenü → `3`** → **Partition format** / **Particio formazas** → cél partíció → fájlrendszer a listából.
 
@@ -182,6 +165,23 @@ Minden lépés után várható egy **siker / hiba** összegző panel. Ha a negye
 Formázás előtt a partíciónak **ne legyen biztonságosan** fontos adata; a varázsló **leválasztást** is kérhet.
 
 ![](/partctl/img/formazas_1.jpg)
+
+---
+
+## 7. GPT típus-GUID beállítása (Partctl listából)
+
+**Útvonal:** **főmenü → `3`** → **Partition type code (GUID, GPT)** / **GPT particio tipuskod** → válaszd ki a partíciót → a listából a megfelelő **GUID + név** pár:
+
+| Partíció | A Partctl listában választandó név (rövidítve) | Példa: eszköz + GUID (`/dev/sdc`) |
+|----------|-----------------------------------------------|-------------------------------------|
+| ESP | **EFI System** | **`sdc1`** → `C12A7328-F81F-11D2-BA4B-00A0C93EC93B` |
+| MSR | **Microsoft reserved** | **`sdc2`** → `E3C9E316-0B5C-4DB8-817D-F92DF00215AE` |
+| Windows | **Microsoft basic data** | **`sdc3`** → `EBD0A0A2-B9E5-4433-87C0-68B6B72699C7` |
+| WinRE | **Windows Recovery Environment (WinRE)** | **`sdc4`** → `DE94BBA4-06D1-4D40-A16A-BFD50179D6AC` |
+
+*(A lista a `GPT_GUID_TYPE_CHOICES` bejegyzéseit mutatja.)*
+
+![](/partctl/img/gpt_particio_tipuskod_1.jpg)
 
 ---
 
