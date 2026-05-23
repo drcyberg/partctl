@@ -32,7 +32,7 @@ Az alábbi táblázat **ugyanazt a menetet** követi, mint a fejezetek **3–9**
 |----------|----------------|------------------------|------------|-----------------------------------|
 | `sdc1` | 512 MiB | FAT32 / `vfat` | EFI System (ESP) | `PARTTYPE` **EFI System**; GUID **`C12A7328-F81F-11D2-BA4B-00A0C93EC93B`** |
 | `sdc2` | 16 MiB | *MSR: Windows alatt tipikusan nincs formázva* | Microsoft Reserved (MSR) | `PARTTYPE` **Microsoft reserved**; GUID **`E3C9E316-0B5C-4DB8-817D-F92DF00215AE`** (Linux néha téves FS-jelzést mutathat) |
-| `sdc3` | 120 GiB | NTFS | Microsoft basic data (rendszer) | `PARTTYPE` **Microsoft basic data**; GUID **`EBD0A0A2-B9E5-4433-87C0-68B6B72699C7`**; példa csatolás: **`/media/usbflash0/partctl-v1-0-0`** |
+| `sdc3` | 120 GiB | NTFS | Microsoft basic data (rendszer) | `PARTTYPE` **Microsoft basic data**; GUID **`EBD0A0A2-B9E5-4433-87C0-68B6B72699C7`**; példa csatolás: **`/mnt/Win11`** |
 | `sdc4` | 1 GiB (1024 MiB) | NTFS vagy üres FS jelzés | Windows Recovery (WinRE) | `PARTTYPE` **Windows recovery environment**; GUID **`DE94BBA4-06D1-4D40-A16A-BFD50179D6AC`**; tipikus attribútum: **`0x8000000000000001`** |
 
 A lemez többi része lehet allokálatlan; ez nem akadály a Windows telepítőnek, ha a négy partíció sorrendje és típusa rendben van.
@@ -118,7 +118,7 @@ A varázslóban:
 1. **Enter** a varázslón.  
 2. **Tábla típusa:** válaszd **`1` — GPT** (a másik opció az MBR / `msdos`).  
 3. Olvasd el a **figyelmeztetést** (minden meglévő partíció törlődik), majd erősítsd meg.  
-4. Szükség esetén oldj fel **csatolásokat**, ha a program kéri (például ha a **`sdc3`** még csatolva volt — a példa szerint pl. **`/media/usbflash0/partctl-v1-0-0`**).
+4. Szükség esetén oldj fel **csatolásokat**, ha a program kéri (például ha a **`sdc3`** még csatolva volt — a példa szerint pl. **`/mnt/Win11`**).
 
 **Példa eredmény (`/dev/sdc`):** sikeres **`mklabel gpt`** után az áttekintőben **Partíciós tábla: GPT**, **0** partíció (vagy üres lemez-sor), majd jöhet a §5 négy **Create partition** lépése.
 
