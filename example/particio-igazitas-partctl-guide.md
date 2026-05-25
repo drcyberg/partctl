@@ -80,8 +80,7 @@ Az alábbi táblázat **nem** konkrét lemezmodell-mérések másolata, hanem **
 | **Véletlen 4K írás** | IOPS / ms késleltetés | Itt **inkább** látszik az igazítás hiánya (nem feltétlenül „MB/s” mutatóban). | **IOPS:** tipikusan **≈ 5–25%** jobb jó igazításnál; extrémnél **~30–40%**. |
 | **RAID + kis blokkok** | IOPS, késleltetés | **Stripe + offset** együtt kritikus; egyetlen **MB/s** szám félrevezető lehet. | **≈ 10–40%** IOPS/késleltetés romlás rossz párosításnál nem ritka. |
 
-**Összegzés:** A **„nem optimális partíció = fix X MB/s kevesebb”** általánosítás **ritkán** igaz egyetlen **X**-szel — **százalékos** nagyságrendek **hozzávetőleges** irányt adnak. A **valós kár** inkább: **többlet írási terhelés**, **ingadozó késleltetés**, **RAID alatti szétcsúszott I/O** — ezeket **benchmark** (pl. `fio`) és **diszk monitor** segítségével érdemes a **saját** lemezen ellenőrizni.
-
+**Összegzés:** a fenti százalékos tartományok csak iránytűk, nem garanciák. A gyakorlati probléma inkább az, hogy több felesleges írás történik, a válaszidő ingadozik, és RAID alatt szétcsúszhat az I/O. Ha konkrét számok kellenek, a saját lemezeden mérd le benchmarkkal (pl. fio) és lemezmonitorral, mielőtt általános szabályként kezeled a táblázatot.
 ---
 
 ## 3. Hogyan segít ebben a Partctl (`partctl.sh`)?
