@@ -81,6 +81,7 @@ Az alábbi táblázat **nem** konkrét lemezmodell-mérések másolata, hanem **
 | **RAID + kis blokkok** | IOPS, késleltetés | **Stripe + offset** együtt kritikus; egyetlen **MB/s** szám félrevezető lehet. | **≈ 10–40%** IOPS/késleltetés romlás rossz párosításnál nem ritka. |
 
 **Összegzés:** a fenti százalékos tartományok csak iránytűk, nem garanciák. A gyakorlati probléma inkább az, hogy több felesleges írás történik, a válaszidő ingadozik, és RAID alatt szétcsúszhat az I/O. Ha konkrét számok kellenek, a saját lemezeden mérd le benchmarkkal (pl. fio) és lemezmonitorral, mielőtt általános szabályként kezeled a táblázatot.
+
 ---
 
 ## 3. Hogyan segít ebben a Partctl (`partctl.sh`)?
